@@ -36,8 +36,8 @@ export function useTranslation(lng, ns, options) {
   const { i18n } = ret;
 
   useEffect(() => {
-    // let direction = i18n.language === "ar" ? "rtl" : "ltr";
-    let direction = i18n.language === "ar" ? "ltr" : "ltr";
+    let direction = i18n.language === "ar" ? "rtl" : "ltr";
+    // let direction = i18n.language === "ar" ? "ltr" : "ltr";
     document.dir = direction;
     localStorage.setItem("direction", direction);
   }, [i18n.language]);

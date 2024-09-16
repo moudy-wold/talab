@@ -12,7 +12,7 @@ type Item = {
   key: string;
   url: string;
   icon: any;
-  children?: Item[];  
+  children?: Item[];
 };
 type Props = {
   locale: string;
@@ -21,56 +21,62 @@ type Props = {
 function Sidebar({ locale }: Props) {
   const { t, i18n } = useTranslation(locale, "common");
 
-  const [whoUs, setWhoUs] = useState(true);
+  const [activeLink, setActiveLink] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [current, setCurrent] = useState("");
 
   const items: Item[] = [
     {
-      label: "منتجات",
+      label: t("categories"),
       key: "1",
       url: "/",
       icon: <AiOutlineProduct />,
-      children: [
+      children: [        
         {
-          label: "إضافة منتج",
-          key: "1.1",
-          url: "/",
-          icon: <RiAddCircleLine />
-        },
-        {
-          label: "إضافة منتج",
+          label: t("all_category"),
           key: "1.2",
           url: "/",
           icon: <RiAddCircleLine />
+        }
+      ]
+    },
+    {
+      label: t("add_product"),
+      key: "2",
+      url: "/",
+      icon: <TbCategoryFilled />
+    },
+    {
+      label: t("orders"),
+      key: "4",
+      url: "/",
+      icon: <IoSettingsOutline />,
+      children: [
+        {
+          label: t("all_orders"),
+          key: "4.1",
+          url: "/",
+          icon: <RiAddCircleLine />
         },
         {
-          label: "إضافة منتج",
-          key: "1.3",
+          label: t("return_order"),
+          key: "4.2",
           url: "/",
           icon: <RiAddCircleLine />
         }
       ]
     },
     {
-      label: "أقسام",
-      key: "2",
+      label: t("profile"),
+      key: "5",
       url: "/",
-      icon: <TbCategoryFilled />,
-      children: [
-        {
-          label: "المنتجات",
-          key: "2.1",
-          url: "/",
-          icon: <TbCertificate />
-        }
-      ]
+      icon: <TbCategoryFilled />
     },
     {
-      label: "إعدادات",
-      key: "4",
+      label: t("accounting"),
+      key: "6",
       url: "/",
-      icon: <IoSettingsOutline />
+      icon: <TbCategoryFilled />
     }
   ];
   const handleClick = (item: any) => {
@@ -90,63 +96,73 @@ function Sidebar({ locale }: Props) {
             >
               {item.children ? (
                 <div
-                  className={`rounded-lg ${
+                  className={`rounded-lg my-1 ${
                     current == item.key ? "bg-gray-400" : "bg-white"
                   } cursor-pointer `}
                 >
-                  {/* Start Whot Us */}
+                  {/* Start  */}
                   <div className="">
-                    <h2>
-                      <button
-                        type="button"
-                        className="flex items-center justify-between w-full text-left font-semibold py-2"
-                        onClick={() => setWhoUs(!whoUs)}
-                        aria-expanded={whoUs}
-                        aria-controls="faqs-text-01"
-                      >
+                    <button
+                      type="button"
+                      className="flex p-2 py-4 text-xl items-center justify-between w-full text-left font-semibold  hover:bg-gray-100 rounded-lg"
+                      onClick={() => {
+                        activeLink == item.key
+                          ? setActiveLink("")
+                          : setActiveLink(item.key);
+                      }}
+                      aria-controls="faqs-text-01"
+                    >
+                      <span className="flex items-center gap-2">
+                        <span>{item.icon}</span>
                         <span>{item.label}</span>
+                      </span>
 
-                        <svg
-                    width="12"
-                    height="15"
-                    viewBox="0 0 12 19"
-                    fill="none"
-                    className={`${
-                      whoUs ? "-rotate-180" : "rotate-90"
-                    } transition-all duration-200 mx-3`}
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M6.53033 0.469669C6.23744 0.176777 5.76256 0.176777 5.46967 0.469669L0.696699 5.24264C0.403806 5.53553 0.403806 6.01041 0.696699 6.3033C0.989593 6.59619 1.46447 6.59619 1.75736 6.3033L6 2.06066L10.2426 6.3033C10.5355 6.59619 11.0104 6.59619 11.3033 6.3033C11.5962 6.01041 11.5962 5.53553 11.3033 5.24264L6.53033 0.469669ZM6.75 19L6.75 1H5.25L5.25 19H6.75Z"
-                      fill="#110F0F"
-                    />
-                  </svg>
-
-                      </button>
-                    </h2>
+                      <svg
+                        width="12"
+                        height="15"
+                        viewBox="0 0 12 19"
+                        fill="none"
+                        className={`cursor-pointer ${
+                          activeLink == item.key ? "rotate-180" : "rotate-90"
+                        } transition-all duration-200 mx-3`}
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M6.53033 0.469669C6.23744 0.176777 5.76256 0.176777 5.46967 0.469669L0.696699 5.24264C0.403806 5.53553 0.403806 6.01041 0.696699 6.3033C0.989593 6.59619 1.46447 6.59619 1.75736 6.3033L6 2.06066L10.2426 6.3033C10.5355 6.59619 11.0104 6.59619 11.3033 6.3033C11.5962 6.01041 11.5962 5.53553 11.3033 5.24264L6.53033 0.469669ZM6.75 19L6.75 1H5.25L5.25 19H6.75Z"
+                          fill="#110F0F"
+                        />
+                      </svg>
+                    </button>
 
                     <div
                       id="faqs-text-01"
                       role="region"
                       aria-labelledby="faqs-title-01"
-                      className={`grid text-sm text-slate-600 overflow-hidden transition-all duration-300 ease-in-out ${
-                        whoUs
-                          ? "grid-rows-[1fr] opacity-100"
-                          : "grid-rows-[0fr] opacity-0"
+                      className={`grid overflow-hidden transition-all duration-300 ease-in-out -mt-1 ${
+                        activeLink == item.key
+                          ? " grid-rows-[1fr] opacity-100"
+                          : " grid-rows-[0fr] opacity-0"
                       }`}
                     >
-                      <div className="overflow-hidden">{item?.children?.map((child:any) =>(
-                          <div className="bg-red-500"> 
-                          {child.label}
-                            </div>
-
-                      ))}</div>
+                      <div className="overflow-hidden">
+                        {item?.children?.map((child: any) => (
+                          <div className="flex p-2 px-4 my-2 items-center gap-2  hover:bg-gray-100 rounded-lg">
+                            <span>{item.icon}</span>
+                            <p className="text-lg  text-black font-semibold ">
+                              {child.label}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                   {/* End Whot Us */}
                 </div>
               ) : (
-                <div className="font-semibold">{item.label}</div>
+                <div className="hover:bg-gray-100 p-2 my-1 rounded-lg flex items-center gap-2">
+                  <p className="">{item.icon}</p>
+                  <p className=" font-semibold p-2 text-xl">{item.label}</p>
+                </div>
               )}
             </div>
           ))}
