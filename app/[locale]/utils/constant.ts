@@ -25,7 +25,7 @@ export const ReturnStatus = [
     },
   ]
 
-export  const orderStatuss = [
+export const OrderStatus = [
     {
       value: "pending",
       id: "1",
@@ -49,6 +49,37 @@ export  const orderStatuss = [
     },
   ]
 
-
-
- 
+export const CategoriesList = [
+  {
+    id:1,
+    value:"الشاشات",
+  },
+  {
+    id:2,
+    value:"سوكة الشحن",
+  },
+  {
+    id:3,
+    value:"آيسيات",
+  },
+  {
+    id:4,
+    value:"إكسسوارات",
+  },
+  {
+    id:5,
+    value:"بطاريات",
+  },
+  {
+    id:6,
+    value:"لزقات حماية",
+  },
+  {
+    id:7,
+    value:"لمس",
+  },
+  {
+    id:8,
+    value:"سماعات",
+  },
+]

@@ -1,11 +1,11 @@
 import React from 'react'
 
-function PageContent({locale}:any) {
+function OffersPage({locale}:any) {
   return (
     <div>
-      
+      offers
     </div>
   )
 }
 
-export default PageContent
+export default OffersPage

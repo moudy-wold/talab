@@ -1,5 +1,5 @@
 import React from 'react'
-// import PageContent from '@/app/[locale]/components/Pages/Categories/PageContent';
+import OffersPage from '@/app/[locale]/components/Pages/Offers/PageContent';
 
 type Params = {
     params: {
@@ -8,7 +8,7 @@ type Params = {
 function Page({ params: { locale } }:Params) {
   return (
     <div>
-      {/* <PageContent locale={locale}/> */}
+      <OffersPage locale={locale}/>
     </div>
   )
 }
