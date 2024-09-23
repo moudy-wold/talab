@@ -1,11 +1,11 @@
 'use client'
 import { Login } from '@/app/[locale]/api/auth';
-import Loader from '@/app/[locale]/components/global/Loader/Loader';
+import Loader from '@/app/[locale]/components/Global/Loader/Loader';
 import { Form, Input, notification } from 'antd';
 import Link from 'next/link';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setIsLogend, setIsAdmin, setIsEmployee } from "@/app/[locale]/lib/todosSlice";
+// import { useDispatch, useSelector } from 'react-redux';
+// import { setIsLogend, setIsAdmin, setIsEmployee } from "@/app/[locale]/lib/todosSlice";
 import { useRouter } from "next/navigation"
 import Cookies from 'js-cookie';
 
@@ -16,8 +16,6 @@ type FieldType = {
 };
 
 function FormComponent() {
-  const dispatch = useDispatch();
-  const { islogendRedux } = useSelector((state: any) => state.counter)
   const [isLoading, setIsLoading] = useState(false);
   const [obj, setObj] = useState({});
   const router = useRouter()
@@ -36,12 +34,7 @@ function FormComponent() {
           localStorage.setItem("userId", JSON.stringify(res.data.data._id))
           const ids = res?.data?.data?.Wishlists?.map((obj: any) => obj._id);
           localStorage.setItem("userWishList", JSON.stringify(ids))          
-          dispatch(setIsLogend(!islogendRedux))
-          if (res?.data?.data?.role == "admin") {
-            dispatch(setIsAdmin(true))
-          } else if (res?.data?.data?.role == "employee") {
-            dispatch(setIsEmployee(true))
-          }
+        
           router.push("/")
           console.log(res.data.data)
         }
@@ -57,7 +50,7 @@ function FormComponent() {
 
   return (
     <>
-      <Loader isLoading={isLoading} />
+      {isLoading && <Loader />}
       <Form
         name="login-form"
         initialValues={{ remember: true }}

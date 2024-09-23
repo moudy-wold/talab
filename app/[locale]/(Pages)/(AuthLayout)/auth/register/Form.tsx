@@ -1,13 +1,13 @@
-'use client';
-import { useState } from 'react';
-import Loader from '@/app/[locale]/components/global/Loader/Loader';
-import { Checkbox, Form, Input, notification, Modal } from 'antd';
-import Link from 'next/link';
-import { RegisterForCustomer } from '@/app/[locale]/api/auth';
-import { useRouter } from "next/navigation"
-import OTPPopup from "@/app/[locale]/components/global/OTPPopup/OTPPopup"
-import Cookies from 'js-cookie';
-import ReCAPTCHA from 'react-google-recaptcha';
+"use client";
+import { useState } from "react";
+import Loader from "@/app/[locale]/components/Global/Loader/Loader";
+import { Checkbox, Form, Input, notification, Modal } from "antd";
+import Link from "next/link";
+import { RegisterForCustomer } from "@/app/[locale]/api/auth";
+import { useRouter } from "next/navigation";
+import OTPPopup from "@/app/[locale]/components/Global/OTPPopup/OTPPopup";
+import Cookies from "js-cookie";
+import ReCAPTCHA from "react-google-recaptcha";
 
 type FieldType = {
   userName: string;
@@ -23,30 +23,36 @@ const FormComponent: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [openVerifyPopup, setOpenVerifyPopup] = useState<boolean>(false);
   const [capched, setCapched] = useState<string | null>();
-  const { push } = useRouter()
-  const onFinish = ({ password, email, accept, userName, phoneNumber }: FieldType) => {
+  const { push } = useRouter();
+  const onFinish = ({
+    password,
+    email,
+    accept,
+    userName,
+    phoneNumber,
+  }: FieldType) => {
     setIsLoading(true);
     const formdata = new FormData();
-    
-    formdata.append('userName', userName);
-    formdata.append('phoneNumber', phoneNumber);
-    formdata.append('email', email);
-    formdata.append('password', password);
-    formdata.append('acceptTerms', accept ? '1' : '0');
+
+    formdata.append("userName", userName);
+    formdata.append("phoneNumber", phoneNumber);
+    formdata.append("email", email);
+    formdata.append("password", password);
+    formdata.append("acceptTerms", accept ? "1" : "0");
 
     RegisterForCustomer(formdata)
       .then((res) => {
         if (res?.data?.message == "the user exists already") {
           notification.error({
-            message: res?.data?.message
+            message: res?.data?.message,
           });
         } else {
-          Cookies.set('token', res.data.token, { expires: 7, path: "/" });
-          setOpenVerifyPopup(true)
+          Cookies.set("token", res.data.token, { expires: 7, path: "/" });
+          setOpenVerifyPopup(true);
         }
       })
       .catch((err: any) => {
-        console.log(err)
+        console.log(err);
         notification.error({
           message: err.responde.data.message,
         });
@@ -54,32 +60,28 @@ const FormComponent: React.FC = () => {
       .finally(() => {
         setIsLoading(false);
       });
-
   };
 
   return (
     <div>
-
-      <Loader isLoading={isLoading} />
+      {isLoading && <Loader />}
       <Form name="register-form" onFinish={onFinish} autoComplete="off">
         <div className="">
           <Form.Item<FieldType>
             name="userName"
-            rules={[{ required: true, message: 'يرجى إدخال الإسم!' }]}
+            rules={[{ required: true, message: "يرجى إدخال الإسم!" }]}
           >
             <Input
               placeholder="الاسم "
               className="!rounded-[2px] !py-3 placeholder:!text-[#646464]"
             />
           </Form.Item>
-
-
         </div>
 
         <div className="">
           <Form.Item<FieldType>
             name="phoneNumber"
-            rules={[{ required: true, message: 'يرجى إدخال رقم الهاتف!' }]}
+            rules={[{ required: true, message: "يرجى إدخال رقم الهاتف!" }]}
           >
             <Input
               placeholder="رقم الهاتف"
@@ -93,8 +95,8 @@ const FormComponent: React.FC = () => {
           rules={[
             {
               required: true,
-              type: 'email',
-              message: 'يرجى إدخال البريد الإلكتروني',
+              type: "email",
+              message: "يرجى إدخال البريد الإلكتروني",
             },
           ]}
         >
@@ -108,32 +110,40 @@ const FormComponent: React.FC = () => {
           <Form.Item<FieldType>
             name="password"
             rules={[
-              { required: true, message: 'يرجى إدخال كلمة المرور!' },
-              { min: 8, message: 'يجب أن تكون كلمة المرور مكونة من 8 أحرف على الأقل!' }
+              { required: true, message: "يرجى إدخال كلمة المرور!" },
+              {
+                min: 8,
+                message: "يجب أن تكون كلمة المرور مكونة من 8 أحرف على الأقل!",
+              },
             ]}
-
             className="!mb-3"
           >
-            <Input.Password placeholder=" كلمة المرور" className="!rounded-[2px] !py-3 placeholder:!text-[#646464]" />
+            <Input.Password
+              placeholder=" كلمة المرور"
+              className="!rounded-[2px] !py-3 placeholder:!text-[#646464]"
+            />
           </Form.Item>
 
           <Form.Item
             name="rePassword"
-            dependencies={['password']}
+            dependencies={["password"]}
             rules={[
-              { required: true, message: 'يرجى تأكيد كلمة المرور!' },
+              { required: true, message: "يرجى تأكيد كلمة المرور!" },
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  if (!value || getFieldValue('password') === value) {
+                  if (!value || getFieldValue("password") === value) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error('كلمة السر غير متطابقة'));
+                  return Promise.reject(new Error("كلمة السر غير متطابقة"));
                 },
               }),
             ]}
           >
             <div>
-              <Input.Password placeholder="تأكيد كلمة المرور" className="!rounded-[2px]    !py-3 placeholder:!text-[#646464]" />
+              <Input.Password
+                placeholder="تأكيد كلمة المرور"
+                className="!rounded-[2px]    !py-3 placeholder:!text-[#646464]"
+              />
             </div>
           </Form.Item>
         </div>
@@ -142,18 +152,18 @@ const FormComponent: React.FC = () => {
             name="accept"
             valuePropName="checked"
             rules={[
-              { required: true, message: 'يرجى الموافقة على الشروط والأحكام!' },
+              { required: true, message: "يرجى الموافقة على الشروط والأحكام!" },
             ]}
           >
-            <Checkbox rootClassName='gap-2'>
-              أوافق على{' '}
-              <Link href={'/terms-of-use'} className="text-[#006496] underline">
+            <Checkbox rootClassName="gap-2">
+              أوافق على{" "}
+              <Link href={"/terms-of-use"} className="text-[#006496] underline">
                 الشروط والأحكام
-              </Link>{' '}
+              </Link>{" "}
               و
               <Link
                 target="_blank"
-                href={'/privacy-policy'}
+                href={"/privacy-policy"}
                 className="text-[#006496] underline"
               >
                 سياسة الخصوصية
@@ -162,15 +172,14 @@ const FormComponent: React.FC = () => {
           </Form.Item>
         </div>
 
-        <div className=''>
-        <Form.Item<FieldType>
+        <div className="">
+          <Form.Item<FieldType>
             name="recaptcha"
-            rules={[{ required: true, message: 'يرجى تأكيد أنك لست إنسان آلي!' }]}
+            rules={[
+              { required: true, message: "يرجى تأكيد أنك لست إنسان آلي!" },
+            ]}
           >
-          <ReCAPTCHA
-            sitekey={process.env.SITE_KEY!}
-            onChange={setCapched}
-          />
+            <ReCAPTCHA sitekey={process.env.SITE_KEY!} onChange={setCapched} />
           </Form.Item>
         </div>
         <div className="flex flex-wrap gap-5 items-center justify-center">
@@ -183,20 +192,25 @@ const FormComponent: React.FC = () => {
         </div>
         <div className="flex items-center w-fit mr-auto mt-8">
           <span> لديك حساب؟ </span>
-          <Link href="/auth/login" className='text-[#006496] underline'> تسجيل الدخول</Link>
+          <Link href="/auth/login" className="text-[#006496] underline">
+            {" "}
+            تسجيل الدخول
+          </Link>
         </div>
       </Form>
       <Modal
         title="تفاصيل إنشاء الحساب"
         centered
         open={openVerifyPopup}
-        okButtonProps={{ style: { display: 'none' } }}
-        onCancel={() => { setOpenVerifyPopup(false); push("/auth/login"); }}
+        okButtonProps={{ style: { display: "none" } }}
+        onCancel={() => {
+          setOpenVerifyPopup(false);
+          push("/auth/login");
+        }}
         width={500}
       >
         <OTPPopup setOpenVerifyPopup={setOpenVerifyPopup} />
       </Modal>
-
     </div>
   );
 };

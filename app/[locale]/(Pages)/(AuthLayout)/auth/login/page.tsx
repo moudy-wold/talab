@@ -1,10 +1,8 @@
 "use client";
 import Image from 'next/image';
 import Form from './Form';
-import {   useSelector } from "react-redux";
 
  function Login() {
-  const {infoData} = useSelector((state:any) => state.counter)
   
   return (
 
@@ -13,12 +11,12 @@ import {   useSelector } from "react-redux";
         <div className="container relative py-5">
 
           <div className="mb-6 flex justify-center">
-            <Image
+            {/* <Image
               src={infoData?.data?.logo}
               width={95}
               height={159}
               alt="logo"
-            />
+            /> */}
           </div>
 
           <div className="max-w-xl mx-auto shadow-xl px-11 py-5 bg-white rounded-md">
