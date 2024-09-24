@@ -10,6 +10,7 @@ import { MdOutlineDoneOutline } from "react-icons/md";
 function OrdersList({locale}:any) {
   const { t, i18n } = useTranslation(locale, "common");
   const [isLoading, setIsLoading] = useState(false);
+  const [openUserDetails, setOpenUserDetails] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
