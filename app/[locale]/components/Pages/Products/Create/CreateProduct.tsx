@@ -36,7 +36,8 @@ function CreateProduct({ locale }: any) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [form] = useForm();
-  const [details, setDetails] = useState([{ title: "", content: "" }]);
+  const [details, setDetails] = useState(["", ""]);
+
 
   const onChange = (checked: boolean) => {
     console.log(`switch to ${checked}`);
@@ -96,12 +97,14 @@ function CreateProduct({ locale }: any) {
   };
 
   const addDetailField = () => {
-    setDetails([...details, { title: "", content: "" }]);
+    setDetails([...details, ""]);
+    
   };
+  
 
-  const handleDetailChange = (index: number, field: string, value: string) => {
+  const handleDetailChange = (index: number, value: string) => {
     const newDetails: any = [...details];
-    newDetails[index][field] = value;
+    newDetails[index] = value;
     setDetails(newDetails);
     console.log(newDetails);
   };
@@ -270,49 +273,50 @@ function CreateProduct({ locale }: any) {
           <Switch defaultChecked onChange={onChange} />;
         </Form.Item>
         {/* End offers */}
-        {/* Start Details */}
-        {details.map((detail, index) => {
-          return (
-            <div
-              key={index}
-              className="border-2 border-gray-300 rounded-xl p-2"
-            >
-              <Form.Item
-                label={`${t("feature_title")} ${index + 1}`}
-                rules={[{ required: false, message: t("please_enter_the_address") }]}
+
+            {/* Start Details */}
+            <div className="grid grid-cols-2 gap-5">
+          {details.map((detail, index) => {
+            return (
+              <div
+                key={index}
+                className="rounded-xl p-2 pb-0 "
               >
-                <Input
-                  value={detail.title}
-                  onChange={(e) =>
-                    handleDetailChange(index, "title", e.target.value)
-                  }
-                  className="!rounded-[8px] !py-3"
-                />
-              </Form.Item>
-              <Form.Item
-                label={`${t("feature_content")} ${index + 1}`}
-                rules={[{ required: false, message: t("please_enter_content") }]}
-              >
-                <Input
-                  value={detail.content}
-                  onChange={(e) =>
-                    handleDetailChange(index, "content", e.target.value)
-                  }
-                  className="!rounded-[8px] !py-3"
-                />
-              </Form.Item>
-              <div className="px-1">
-                <MdDelete
-                  onClick={() => {
-                    handleDeleteItemFromDetails(detail);
-                  }}
-                  className="text-xl hover:text-red-400 hover:scale-110 cursor-pointer transition-all duration-150"
-                />
+                <Form.Item
+                  rules={[{ required: false, message: t("please_enter_content") }]}
+                  className=""
+                >
+                  <div className="px-1 flex items-center justify-between">
+                    <p>{`${t("device")} ${index + 1}`}</p>
+                    <MdDelete
+                      onClick={() => {
+                        handleDeleteItemFromDetails(detail);
+                      }}
+                      className="text-xl hover:text-red-400 hover:scale-110 cursor-pointer transition-all duration-150"
+                    />
+                  </div>
+
+                  <Input
+                    value={detail}
+                    onChange={(e) =>
+                      handleDetailChange(index, e.target.value)
+                    }
+                    placeholder={t(`compatible_with_any_device`)}
+                    className="!rounded-[8px] !py-3 mt-1"
+                  />
+                </Form.Item>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+        <div className="w-full flex flex-col ">
+          <Button className="w-1/2 h-12" onClick={addDetailField}>
+            {t("add_new_details")}
+          </Button>
+
+        </div>
         {/* End Details */}
+
         <div className=" col-span-2">
           <button
             type="submit"

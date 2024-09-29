@@ -142,7 +142,7 @@ function Sidebar({ locale }: Props) {
   return (
     <>
       {isLoading && <Loader />}
-      <div className={`right-0 fixed z-10 top-0 w-[320px] h-[100vh]`}>
+      <div className={`${locale == "ar" ? "right-0" : "left-0" }  fixed z-10 top-0 w-[320px] h-[100vh]`}>
         <div className="px-6 py-1 mt-40">
           {items.map((item: any) => (
             <div

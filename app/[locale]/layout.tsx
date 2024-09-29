@@ -1,12 +1,14 @@
-import React ,{ReactNode } from "react";
+import React, { ReactNode } from "react";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { languages } from "@/app/i18n/settings";
 import { dir } from "i18next";
-import Navbar from "@/app/[locale]/components/Global/NavBar/Navbar";
 import { ToastContainer } from "react-toastify";
 import Sidebar from "@/app/[locale]/components/Global/Sidebar/Sidebar";
+import dynamic from "next/dynamic";
+
+const Navbar = dynamic(() => import("@/app/[locale]/components/Global/NavBar/Navbar"))
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -32,34 +34,33 @@ interface RootLayoutProps {
   };
   children: ReactNode;
 }
- 
+
 
 export default async function RootLayout({ params: { locale }, children }: RootLayoutProps) {
   return (
-    <html lang={locale}  dir={dir(locale)}>
+    <html lang={locale} dir={dir(locale)} style={{direction : locale == "ar" ? "rtl" : "ltr"}}>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-      <div className="absolute ">
-            {/* <BurgerMenu /> */}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <div className="absolute ">
+          {/* <BurgerMenu /> */}
+        </div>
+        <div className="fixed lg:relative z-40 bg-white w-full">
+          <Navbar locale={locale} />
+        </div>
+        <div className="grid lg:grid-cols-[25%_72%] pt-16 lg:pt-0 gap-3 lg-pt-0 ">
+          <div className="hidden lg:block">
+            <Sidebar locale={locale} />
           </div>
-          <div className="fixed lg:relative z-40 bg-white w-full">
-            <Navbar locale={locale} />
+          <div className={``}>
+            {children}
           </div>
-          <div className="grid lg:grid-cols-[25%_72%] pt-16 lg:pt-0 gap-3 lg-pt-0 ">          
-            <div className="hidden lg:block">
-              <Sidebar locale={locale} />
-            </div>
-            <div className={``}>          
-              {children}
-            </div>
-          </div>
-          <div className="">
-            {/* <Footer /> */}
-          </div>
+        </div>
+        <div className="">
+          {/* <Footer /> */}
+        </div>
 
-          <ToastContainer />
-        </body>
+        <ToastContainer />
+      </body>
     </html>
   );
 }

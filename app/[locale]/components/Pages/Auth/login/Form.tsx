@@ -21,26 +21,26 @@ type FieldType = {
 function FormComponent({ locale }: Props) {
   const { t } = useTranslation(locale, "common")
   const [isLoading, setIsLoading] = useState(false);
-  const [obj, setObj] = useState({});
+  const [obj, setObj] = useState({
+    email: "",
+    password: ""
+  });
+
   const router = useRouter()
   const onFinish = () => {
     setIsLoading(true)
     Cookies.remove('token');
-    Login(obj)
+    Login(obj.email, obj.password)
       .then((res) => {
         if (res.status == 201) {
           setIsLoading(false)
           notification.success({
-            message: t("register_success")
+            message: t("succeffly_login")
           })
           Cookies.set('token', res.data.token, { expires: 7, path: "/" });
-          localStorage.setItem("userRole", JSON.stringify(res?.data?.data?.role));
           localStorage.setItem("userId", JSON.stringify(res.data.data._id))
-          const ids = res?.data?.data?.Wishlists?.map((obj: any) => obj._id);
-          localStorage.setItem("userWishList", JSON.stringify(ids))
-
-          router.push("/")
           console.log(res.data.data)
+          router.push("/")
         }
       })
       .catch((err: any) => {

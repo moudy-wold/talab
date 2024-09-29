@@ -30,62 +30,21 @@ export async function Register(data: any): Promise<AxiosResponse<any>> {
   return await axios.post(`/talab/auth/register`, data);
 }
 
-export async function Login(data: any): Promise<AxiosResponse<any>> {
-  return await axios.post(`/api/login`, data);
-}
-
-export async function ChangePassword(data: any): Promise<AxiosResponse<any>> {
-  return await axios.post(`/api/change-password`, data);
-}
-
-export async function LogOut(): Promise<AxiosResponse<any>> {
-  return await axios.get(`/api/logout`);
-}
-
-export async function UpdatePassword(
-  user_id: string,
-  phoneNumber: string,
+export async function Login(
+  email: string,
   password: string
 ): Promise<AxiosResponse<any>> {
   return await axios.post(
-    `/api/users/update-password/${user_id}?phoneNumber=${phoneNumber}&password=${password}`
+    `/talab/auth/login?email=${email}&password=${password}`
   );
 }
 
-// Multibate
-
-export async function ResendVerifyEmail(): Promise<AxiosResponse<any>> {
-  return await axios.post(`/api/email/resend`);
-}
-
-// For Customer
-
-export async function RegisterForCustomer(
-  data: any
-): Promise<AxiosResponse<any>> {
-  return await axios.post(`/api/front/register-customer`, data);
-}
-
-export async function SendEmail(email: string): Promise<AxiosResponse<any>> {
-  return await axios.post(`/api/email/`, email);
-}
-
-export async function UpdateOrAddEmailAndName(
-  data: any
-): Promise<AxiosResponse<any>> {
-  return await axios.post(`/api/common/update/profil`, data);
-}
-
-export async function ConfirmOTP(otp: any): Promise<AxiosResponse<any>> {
-  return await axios.post(`/api/email/verify-otp?otp=${otp}`);
-}
-
-export async function ResendOTP(): Promise<AxiosResponse<any>> {
-  return await axios.post(`/api/email/resend`);
+export async function LogOut(): Promise<AxiosResponse<any>> {
+  return await axios.get(`/talab/auth/logout`);
 }
 
 export async function ForgetPass(email: string): Promise<AxiosResponse<any>> {
-  return await axios.post(`/api/forgot?email=${email}`);
+  return await axios.post(`/talab/auth/forgot?email=${email}`);
 }
 
 export async function ResetPass(
@@ -94,8 +53,18 @@ export async function ResetPass(
   password: string
 ): Promise<AxiosResponse<any>> {
   return await axios.post(
-    `/api/reset?otp=${otp}&email=${email}&password=${password}}`
+    `/talab/auth/reset?email=${email}&otp=${otp}&password=${password}`
   );
 }
 
-// {{url}}/users/update-password/c3fdf3ff-5fdc-4575-b672-cd9b6f784ecd?phoneNumber=1234567890&password=ayman123
+export async function ConfirmOTP(otp: any): Promise<AxiosResponse<any>> {
+  return await axios.post(`/talab/auth/email/verify-otp?otp=${otp}`);
+}
+
+export async function SendEmail(email: string): Promise<AxiosResponse<any>> {
+  return await axios.post(`/api/email/`, email);
+}
+
+export async function ResendOTP(email: string): Promise<AxiosResponse<any>> {
+  return await axios.post(`/talab/auth/email/resend?email=${email}`);
+}
