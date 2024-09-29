@@ -2,21 +2,22 @@
 import React, { useEffect, useState } from "react";
 import OtpInput from "react-otp-input";
 import Image from "next/image";
-import { useDispatch, useSelector } from "react-redux";
 import { usePathname, useRouter } from "next/navigation";
-import { Button, Form, Input, notification } from "antd";
+import { Form, Input, notification } from "antd";
 import { ConfirmOTP, ResendOTP, ResetPass } from "@/app/[locale]/api/auth";
 import Loader from "../Loader/Loader";
 import { useForm } from 'antd/es/form/Form';
+import { useTranslation } from "@/app/i18n/client";
 
 type FieldType = {
   otp: string;
   password: string;
   rePassword: string;
+  locale: string,
 };
 
 const OTPPopup = (props: any) => {
-  const dispatch = useDispatch();
+  const { t } = useTranslation(props.locale, "common")
   const [form] = useForm();
   const path = usePathname()
   const router = useRouter();
@@ -52,7 +53,7 @@ const OTPPopup = (props: any) => {
         if (res.status) {
 
           notification.success({
-            message: "تمت إعادة إرسال الرمز"
+            message: t("code_has_been_resent")
           });
         }
       })
@@ -79,7 +80,7 @@ const OTPPopup = (props: any) => {
           if (res.status) {
             setIsLoading(false)
             notification.success({
-              message: "تم إرسال الكود إلى البريد الإلكتروني"
+              message: t("code_has_been_sent_to_your_email")
             })
             props.setOpenVerifyPopup(false)
           }
@@ -95,11 +96,11 @@ const OTPPopup = (props: any) => {
       ConfirmOTP(otp)
         .then((res) => {
           console.log(res)
-          if(path.includes("regisrer")){
+          if (path.includes("regisrer")) {
             router.push("/auth/login")
           }
           notification.success({
-            message: "تم تأكيد الحساب بنجاح",
+            message: t("account_verified_successfully"),
           });
           props.setOpenVerifyPopup(false)
         })
@@ -153,7 +154,7 @@ const OTPPopup = (props: any) => {
             onClick={() => {
               setOtp("");
               props.setOpenVerifyPopup(false);
-              if(path.includes("register")){router.push("/auth/login")}
+              if (path.includes("register")) { router.push("/auth/login") }
             }}
             className="absolute -top-6 right-0 p-3 rounded-full"
           >
@@ -165,17 +166,14 @@ const OTPPopup = (props: any) => {
             />
           </button>
           <h2 className=" font-bold text-3xl text-[#003459] mb-2">
-            كود التحقق
+            {t("verification_code")}
           </h2>
           <p className="text-[#00171F]  w-full mt-5">
-            أدخل كود التحقق المكون من 6 حانات
+            {t("enter_6_bar_verification_code")}
 
           </p>
           <Form.Item<FieldType>
-            name="otp"
-
-
-          >
+            name="otp">
             <OtpInput
               value={otp}
               onChange={setOtp}
@@ -198,61 +196,61 @@ const OTPPopup = (props: any) => {
             />
           </Form.Item>
           <div className="flex items-center justify-cetner text-center gap-3 mb-10 w-full ">
-            <p className=" text-[#00171F]"> ألم تستلم الكود </p>
+            <p className=" text-[#00171F]"> {t("didnt_you_receive_code")} </p>
             <p className={`text-[#006496] underline cursor-pointer 
             ${resendDisabled && "text-gray-500"}`}
               onClick={handleResendOTP}
             >
               {resendDisabled
-                ? `إعادة الإرسال في ${countdown} ثانية`
-                : "إعادة الإرسال"}
+                ? `${t("resend_in")} ${countdown} ${t("secound")}`
+                : t("rebroadcast")}
             </p>
           </div>
-          {props.emailValue && 
-          <div className="flex items-center justify-between gap-5 w-full">
-            <Form.Item<FieldType>
-              name="password"
-              className="w-full"
-              rules={[
-                { required: true, message: 'يرجى إدخال كلمة المرور!' },
-                { min: 8, message: 'يجب أن تكون كلمة المرور مكونة من 8 أحرف على الأقل!' }
-              ]}
-            >
-              <Input.Password placeholder=" كلمة المرور" className="!rounded-[2px] !py-3 placeholder:!text-[#646464]" />
-            </Form.Item>
+          {props.emailValue &&
+            <div className="flex items-center justify-between gap-5 w-full">
+              <Form.Item<FieldType>
+                name="password"
+                className="w-full"
+                rules={[
+                  { required: true, message: t('please_enter_password') },
+                  { min: 8, message: t('password_must_at_least_8_characters_long') }
+                ]}
+              >
+                <Input.Password placeholder={t("password")} className="!rounded-[2px] !py-3 placeholder:!text-[#646464]" />
+              </Form.Item>
 
-            <Form.Item
-              name="rePassword"
-              dependencies={['password']}
-              className="w-full"
-              rules={[
-                { required: true, message: 'يرجى تأكيد كلمة المرور!' },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || getFieldValue('password') === value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error('كلمة السر غير متطابقة'));
-                  },
-                }),
-              ]}
-            >
-              <div>
-                <Input.Password placeholder="تأكيد كلمة المرور" className="!rounded-[2px]    !py-3 placeholder:!text-[#646464]" />
-              </div>
-            </Form.Item>
-          </div>}
+              <Form.Item
+                name="rePassword"
+                dependencies={['password']}
+                className="w-full"
+                rules={[
+                  { required: true, message: t('please_confirm_your_password') },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue('password') === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error(t('password_does_not_match')));
+                    },
+                  }),
+                ]}
+              >
+                <div>
+                  <Input.Password placeholder={t("confirm_password")} className="!rounded-[2px]    !py-3 placeholder:!text-[#646464]" />
+                </div>
+              </Form.Item>
+            </div>}
           {/* <div className=" col-span-2">
             <button
               type="submit" className="rounded-full w-28 py-2 flex items-center justify-center text-base lg:text-xl text-white bg-[#006496] transition-all hover:bg-white hover:text-[#006496] hover:translate-y-1"
             >
-              إرسال
+              {t("send")}
             </button>
           </div> */}
           <button
             // onClick={handleConfirm}
             type="submit"
-            className="w-full bg-[#006496] text-white font-bold text-xl lg:text-2xl  rounded-xl flex items-center justify-center pb-2 pt-2 hover:text-[#006496] hover:bg-white border-2 border-[#006496] transition-all duration-150"> confirm</button>
+            className="w-full bg-[#006496] text-white font-bold text-xl lg:text-2xl  rounded-xl flex items-center justify-center pb-2 pt-2 hover:text-[#006496] hover:bg-white border-2 border-[#006496] transition-all duration-150"> {t("confirm")}</button>
         </div>
       </Form>
 

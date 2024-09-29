@@ -4,10 +4,13 @@ import Loader from '@/app/[locale]/components/Global/Loader/Loader';
 import { Form, Input, notification } from 'antd';
 import Link from 'next/link';
 import { useState } from 'react';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { setIsLogend, setIsAdmin, setIsEmployee } from "@/app/[locale]/lib/todosSlice";
 import { useRouter } from "next/navigation"
 import Cookies from 'js-cookie';
+import { useTranslation } from '@/app/i18n/client';
+
+type Props = {
+  locale: string
+}
 
 type FieldType = {
   phoneNumber?: string;
@@ -15,7 +18,8 @@ type FieldType = {
   remember?: string;
 };
 
-function FormComponent() {
+function FormComponent({ locale }: Props) {
+  const { t } = useTranslation(locale, "common")
   const [isLoading, setIsLoading] = useState(false);
   const [obj, setObj] = useState({});
   const router = useRouter()
@@ -27,14 +31,14 @@ function FormComponent() {
         if (res.status == 201) {
           setIsLoading(false)
           notification.success({
-            message: "تم التسجيل بنجاح"
+            message: t("register_success")
           })
           Cookies.set('token', res.data.token, { expires: 7, path: "/" });
           localStorage.setItem("userRole", JSON.stringify(res?.data?.data?.role));
           localStorage.setItem("userId", JSON.stringify(res.data.data._id))
           const ids = res?.data?.data?.Wishlists?.map((obj: any) => obj._id);
-          localStorage.setItem("userWishList", JSON.stringify(ids))          
-        
+          localStorage.setItem("userWishList", JSON.stringify(ids))
+
           router.push("/")
           console.log(res.data.data)
         }
@@ -60,10 +64,10 @@ function FormComponent() {
         <Form.Item
           name="phoneNumber"
           rules={[
-            { required: true, message: 'يرجى ادخال رقم الهاتف بشكل صحيح !', },]}
+            { required: true, message: t('please_enter_phone_number_correctly') },]}
         >
           <Input
-            placeholder="رقم الهاتف"
+            placeholder={t("phone_number")}
             className="!rounded-[2px] !py-3 placeholder:!text-[#646464]"
             onChange={(e) => setObj((prevState) => ({ ...prevState, phoneNumber: e.target.value }))}
           />
@@ -71,10 +75,10 @@ function FormComponent() {
 
         <Form.Item<FieldType>
           name="password"
-          rules={[{ required: true, message: 'يرجى ادخال كلمة سر صالحة !' }]}
+          rules={[{ required: true, message: t('please_enter_valid_password') }]}
         >
           <Input.Password
-            placeholder="كلمة السر"
+            placeholder={t("password")}
             className="!rounded-[2px] !py-3 placeholder:!text-[#646464]"
             onChange={(e) => setObj((prevState) => ({ ...prevState, password: e.target.value }))} />
         </Form.Item>
@@ -84,7 +88,7 @@ function FormComponent() {
             href={'/auth/change-password'}
             className="text-primary-foreground underline "
           >
-            هل نسيت كلمة المرور؟
+            {t("forgot_your_password")}
           </Link>
         </div>
 
@@ -94,16 +98,16 @@ function FormComponent() {
               type="submit"
               className=" rounded-full py-2 md:pb-3 px-5 md:px-10 text-lg md:text-xl border-2 border-[#006496] bg-[#006496] text-white hover:text-[#006496] hover:bg-white transition-all duration-200"
             >
-              تسجيل دخول
+              {t("login")}
             </button>
           </div>
           <div className="flex items-center">
-            <span>ليس لديك حساب؟ </span>
-            <Link href="/auth/register" className='text-[#006496] underline'> إنشاء حساب </Link>
+            <span>{t("dnot_have_account")} </span>
+            <Link href="/auth/register" className='text-[#006496] underline'> {t("create_account")}</Link>
           </div>
         </div>
       </Form>
-      
+
     </>
   );
 };

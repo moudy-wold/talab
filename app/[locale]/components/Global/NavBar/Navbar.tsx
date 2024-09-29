@@ -10,16 +10,22 @@ import { CiLogin, CiSearch } from "react-icons/ci";
 import { GrUserAdmin } from "react-icons/gr";
 import { usePathname } from "next/navigation";
 import { IoMdClose } from "react-icons/io";
+import { useTranslation } from "@/app/i18n/client";
 
-function Navbar({ locale }: any) {
-  const path = usePathname();
+
+type Props = {
+  locale: string
+}
+
+function Navbar({ locale }: Props) {
+  const { t } = useTranslation(locale, "common")
   const [openSearch, setOpenSearch] = useState(false);
   const [isLogend, setIsLogend] = useState(false);
 
   const handleLogOut = () => {
     // LogOut()
     // .then((res) => {
-    //   toast.success( "تم تسجيل الخروج");
+    //   notification.success( t("succeffly_logout"));
     //   localStorage.clear()
     //   setTimeout(() => {
     //     window.location.reload();
@@ -27,7 +33,7 @@ function Navbar({ locale }: any) {
     // })
     // .catch((err) => {
     //   console.log(err)
-    //   toast.error( "لقد حدث خطأ");
+    //   notification.error({message:err.response.data.message});
     // })
     // .finally(() => {
     //   setIsLoading(false);
@@ -54,13 +60,12 @@ function Navbar({ locale }: any) {
             </div>
 
             <div className="mr-3 relative flex items-center  w-4/5 !z-50">
-              { !openSearch && (
+              {!openSearch && (
                 <div
-                  className={`${
-                    openSearch ? " right-0  " : " -right-[300px"
-                  } ${isLogend ? "block" :"hidden"} absolute !z-50 top-0  mr-5  transition-all duration-200 w-4/5`}
-                >                
-                  <SearchProducts />
+                  className={`${openSearch ? " right-0  " : " -right-[300px"
+                    } ${isLogend ? "block" : "hidden"} absolute !z-50 top-0  mr-5  transition-all duration-200 w-4/5`}
+                >
+                  <SearchProducts locale={locale} />
                 </div>
               )}
             </div>
@@ -98,13 +103,13 @@ function Navbar({ locale }: any) {
 
           {/* Start Search */}
           <div className="">
-            <SearchProducts />
+            <SearchProducts locale={locale} />
           </div>
           {/* End Search */}
 
           {/* Start User Icons */}
           <div className="flex justify-end ">
-            <UserIcons />
+            <UserIcons locale={locale} />
           </div>
           {/* End User Icons */}
         </div>

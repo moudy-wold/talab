@@ -79,7 +79,7 @@ function CreateProduct({ locale }: any) {
     //       form.resetFields();
     //       setOpenPrint(true)
     //       notification.success({
-    //         message: "تم الإضافة  بنجاح"
+    //         message: t("add_successfully")
     //       });
     //       // router.back();
 
@@ -132,8 +132,8 @@ function CreateProduct({ locale }: any) {
         </Form.Item>
         {/* End Producy Name */}
 
-    {/* Start images */}
-    <Form.Item<FieldType>
+        {/* Start images */}
+        <Form.Item<FieldType>
           name="images"
           label={<span className="text-sm md:text-base">{t("product_images")}</span>}
           rules={[{ required: true, message: t("please_enter_photos") }]}
@@ -158,7 +158,7 @@ function CreateProduct({ locale }: any) {
                 backgroundColor: "#f6f6f6"
               }}
             >
-              <p>  350px * 350px </p>
+              <p>{t("attach_photo_size")}  350px * 350px </p>
               <Image
                 src="/assets/svg/imageUplaod.svg"
                 alt="asd"
@@ -180,7 +180,7 @@ function CreateProduct({ locale }: any) {
             className="w-full border-2 border-gray-200 rounded-lg h-12"
           >
             <option disabled value="" key="1">
-             {t("please_select")}
+              {t("please_select")}
             </option>
             {CategoriesList.map((item) => (
               <option value={item.value} key={item.id}>
@@ -209,8 +209,6 @@ function CreateProduct({ locale }: any) {
           <Input className="!rounded-[8px] !py-3" />
         </Form.Item>
         {/* End suitable_devices */}
-
-    
 
         {/* Start price */}
         <Form.Item<FieldType>
@@ -252,7 +250,7 @@ function CreateProduct({ locale }: any) {
         </Form.Item>
         {/* End description */}
 
-       
+
 
         {/* Start discount */}
         <Form.Item<FieldType>
@@ -272,8 +270,8 @@ function CreateProduct({ locale }: any) {
           <Switch defaultChecked onChange={onChange} />;
         </Form.Item>
         {/* End offers */}
- {/* Start Details */}
- {details.map((detail, index) => {
+        {/* Start Details */}
+        {details.map((detail, index) => {
           return (
             <div
               key={index}

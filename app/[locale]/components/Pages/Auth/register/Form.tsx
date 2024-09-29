@@ -8,6 +8,11 @@ import { useRouter } from "next/navigation";
 import OTPPopup from "@/app/[locale]/components/Global/OTPPopup/OTPPopup";
 import Cookies from "js-cookie";
 import ReCAPTCHA from "react-google-recaptcha";
+import { useTranslation } from "@/app/i18n/client";
+
+type Props = {
+  locale: string;
+}
 
 type FieldType = {
   userName: string;
@@ -17,9 +22,12 @@ type FieldType = {
   rePassword: string;
   accept: boolean;
   recaptcha: boolean;
+  address: any;
+  avatar: any;
 };
 
-const FormComponent: React.FC = () => {
+const FormComponent = ({ locale }: Props) => {
+  const { t } = useTranslation(locale, "common")
   const [isLoading, setIsLoading] = useState(false);
   const [openVerifyPopup, setOpenVerifyPopup] = useState<boolean>(false);
   const [capched, setCapched] = useState<string | null>();
@@ -69,10 +77,10 @@ const FormComponent: React.FC = () => {
         <div className="">
           <Form.Item<FieldType>
             name="userName"
-            rules={[{ required: true, message: "يرجى إدخال الإسم!" }]}
+            rules={[{ required: true, message: t("please_enter_name") }]}
           >
             <Input
-              placeholder="الاسم "
+              placeholder={t("name")}
               className="!rounded-[2px] !py-3 placeholder:!text-[#646464]"
             />
           </Form.Item>
@@ -81,10 +89,10 @@ const FormComponent: React.FC = () => {
         <div className="">
           <Form.Item<FieldType>
             name="phoneNumber"
-            rules={[{ required: true, message: "يرجى إدخال رقم الهاتف!" }]}
+            rules={[{ required: true, message: t("please_enter_phoneNumber") }]}
           >
             <Input
-              placeholder="رقم الهاتف"
+              placeholder={t("phone_number")}
               className="!rounded-[2px] !py-3 placeholder:!text-[#646464]"
             />
           </Form.Item>
@@ -96,12 +104,12 @@ const FormComponent: React.FC = () => {
             {
               required: true,
               type: "email",
-              message: "يرجى إدخال البريد الإلكتروني",
+              message: t("please_enter_email"),
             },
           ]}
         >
           <Input
-            placeholder="البريد الالكتروني"
+            placeholder={t("email")}
             className="!rounded-[2px] !py-3 placeholder:!text-[#646464]"
           />
         </Form.Item>
@@ -110,16 +118,16 @@ const FormComponent: React.FC = () => {
           <Form.Item<FieldType>
             name="password"
             rules={[
-              { required: true, message: "يرجى إدخال كلمة المرور!" },
+              { required: true, message: t("please_enter_password") },
               {
                 min: 8,
-                message: "يجب أن تكون كلمة المرور مكونة من 8 أحرف على الأقل!",
+                message: t("password_must_at_least_8_characters_long"),
               },
             ]}
             className="!mb-3"
           >
             <Input.Password
-              placeholder=" كلمة المرور"
+              placeholder={t("password")}
               className="!rounded-[2px] !py-3 placeholder:!text-[#646464]"
             />
           </Form.Item>
@@ -128,20 +136,20 @@ const FormComponent: React.FC = () => {
             name="rePassword"
             dependencies={["password"]}
             rules={[
-              { required: true, message: "يرجى تأكيد كلمة المرور!" },
+              { required: true, message: t("please_confirm_your_password") },
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (!value || getFieldValue("password") === value) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error("كلمة السر غير متطابقة"));
+                  return Promise.reject(new Error(t("assword_does_not_match")));
                 },
               }),
             ]}
           >
             <div>
               <Input.Password
-                placeholder="تأكيد كلمة المرور"
+                placeholder={t("confirm_password")}
                 className="!rounded-[2px]    !py-3 placeholder:!text-[#646464]"
               />
             </div>
@@ -152,21 +160,21 @@ const FormComponent: React.FC = () => {
             name="accept"
             valuePropName="checked"
             rules={[
-              { required: true, message: "يرجى الموافقة على الشروط والأحكام!" },
+              { required: true, message: t("please_agree_to_terms_and_conditions") },
             ]}
           >
             <Checkbox rootClassName="gap-2">
-              أوافق على{" "}
+              {t("agree_to")}{" "}
               <Link href={"/terms-of-use"} className="text-[#006496] underline">
-                الشروط والأحكام
+                {t("terms_and_conditions")}
               </Link>{" "}
-              و
+              {t("and")}
               <Link
                 target="_blank"
                 href={"/privacy-policy"}
                 className="text-[#006496] underline"
               >
-                سياسة الخصوصية
+                {t("privacy_policy")}
               </Link>
             </Checkbox>
           </Form.Item>
@@ -176,7 +184,7 @@ const FormComponent: React.FC = () => {
           <Form.Item<FieldType>
             name="recaptcha"
             rules={[
-              { required: true, message: "يرجى تأكيد أنك لست إنسان آلي!" },
+              { required: true, message: t("please_confirm_that_you_are_not_robot") },
             ]}
           >
             <ReCAPTCHA sitekey={process.env.SITE_KEY!} onChange={setCapched} />
@@ -187,19 +195,19 @@ const FormComponent: React.FC = () => {
             type="submit"
             className=" rounded-full py-2 md:pb-3 px-5 md:px-10 text-lg md:text-xl border-2 border-[#006496] bg-[#006496] text-white hover:text-[#006496] hover:bg-white transition-all duration-200"
           >
-            التسجيل في الموقع
+            {t("register_onsite")}
           </button>
         </div>
         <div className="flex items-center w-fit mr-auto mt-8">
-          <span> لديك حساب؟ </span>
+          <span> {t("do_you_have_account")}</span>
           <Link href="/auth/login" className="text-[#006496] underline">
             {" "}
-            تسجيل الدخول
+            {t("login")}
           </Link>
         </div>
       </Form>
       <Modal
-        title="تفاصيل إنشاء الحساب"
+        title={t("account_creation_details")}
         centered
         open={openVerifyPopup}
         okButtonProps={{ style: { display: "none" } }}
@@ -209,7 +217,7 @@ const FormComponent: React.FC = () => {
         }}
         width={500}
       >
-        <OTPPopup setOpenVerifyPopup={setOpenVerifyPopup} />
+        <OTPPopup setOpenVerifyPopup={setOpenVerifyPopup} locale={locale} />
       </Modal>
     </div>
   );

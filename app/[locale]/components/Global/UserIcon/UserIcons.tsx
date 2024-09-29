@@ -1,25 +1,31 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { FaUserAlt } from "react-icons/fa";
-import { usePathname, useRouter } from "next/navigation" 
+import { usePathname, useRouter } from "next/navigation"
 import { CiLogin } from "react-icons/ci";
 import { LogOut } from "@/app/[locale]/api/auth";
 import { toast } from 'react-toastify';
 import Loader from "@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader";
- 
-function UserIcons() {
+import { useTranslation } from "@/app/i18n/client";
+import { notification } from "antd";
+
+type Props = {
+  locale: string
+}
+function UserIcons({ locale }: Props) {
+  const { t } = useTranslation(locale, "common")
   const router = useRouter();
   const path = usePathname()
   const [isLoading, setIsLoading] = useState(false);
- 
+
   const [id, setId] = useState("")
-  const [isLoggend, setIsLoggend] = useState<any>() 
+  const [isLoggend, setIsLoggend] = useState<any>()
 
   const handleLogOut = () => {
     setIsLoading(true)
     LogOut()
       .then((res) => {
-        toast.success("تم تسجيل الخروج");
+        notification.success({ message: t("succeffly_logout") });
         localStorage.clear();
         setTimeout(() => {
           window.location.reload();
@@ -27,15 +33,15 @@ function UserIcons() {
         router.push("/")
       })
       .catch((err) => {
-        toast.error( "لقد حدث خطأ");
+        notification.error({ message: err.response.data.message });
       })
       .finally(() => {
         setIsLoading(false);
       });
   }
-  
- 
-   
+
+
+
   return (
     <main className="">
       {isLoading && <Loader />}
@@ -45,21 +51,21 @@ function UserIcons() {
           {isLoggend ? <>
             <div
               className="flex items-center flex-col relative cursor-pointer mt-[2px]">
-              
-            
+
+
             </div>
           </> : <div className="ml-1">
             <Link href="/auth/login" className="flex flex-col items-center">
               <FaUserAlt className=" text-xl text-[#8c8c8c]" />
-              <span className=" hidden lg:block mt-[4px] text-center text-sm">تسجيل الدخول</span>
+              <span className=" hidden lg:block mt-[4px] text-center text-sm">{t("login")}</span>
             </Link>
           </div>
           }
         </div>
-        
-        
-        
-        
+
+
+
+
       </div>
     </main>
   );

@@ -1,17 +1,14 @@
 "use client";
 import React, { useState } from "react";
-import { CiCirclePlus, CiEdit, CiSearch } from "react-icons/ci";
-import { useRouter } from "next/navigation";
-import { RiDeleteBinLine } from "react-icons/ri";
-import { MdOutlineDoneOutline } from "react-icons/md";
-import { IoChatbubblesOutline } from "react-icons/io5";
-import { toast } from "react-toastify";
 import LargeLoades from "../../Loader/LargeLoader/LargeLoader";
 import Loader from "@/app/[locale]/components/Global/Loader/Loader";
+import { useTranslation } from "@/app/i18n/client";
+import { CiSearch } from "react-icons/ci";
 type Props = {
   locale?: string;
 };
 function SearchUser({ locale }: Props) {
+  const { t } = useTranslation(locale, "common")
   const [isLoading, setIsLoading] = useState(false);
   const [value, setValue] = useState("");
 
@@ -27,7 +24,7 @@ function SearchUser({ locale }: Props) {
     //   console.log(response.data.customers)
     // } catch (err: any) {
     //   setIsLoading(false)
-    //   toast.error( "هناك مشكلة لا يمكن البحث الأن")
+    //   notification.error({{message: err.response.data.message}})
     // }
   };
 
@@ -37,7 +34,7 @@ function SearchUser({ locale }: Props) {
       <form onSubmit={(e) => onFinish(e)} className="flex items-center w-full ">
         <input
           type="  text"
-          placeholder="البحث..."
+          placeholder={t("search...")}
           onChange={(e) => {
             setValue(e.target.value);
           }}
@@ -49,9 +46,8 @@ function SearchUser({ locale }: Props) {
           onClick={(e) => {
             onFinish(e);
           }}
-          className={`${
-            isLoading ? "bg-white" : "bg-[#006496]"
-          } bg-[#006496] w-7 h-7 lg:w-12 lg:h-12 text-xs text-white flex items-center justify-center rounded-e-md border-[2px] border-[#006496]`}
+          className={`${isLoading ? "bg-white" : "bg-[#006496]"
+            } bg-[#006496] w-7 h-7 lg:w-12 lg:h-12 text-xs text-white flex items-center justify-center rounded-e-md border-[2px] border-[#006496]`}
         >
           {isLoading ? (
             <Loader />

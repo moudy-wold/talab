@@ -25,7 +25,7 @@ function PageContent({ locale }: any) {
       )
     },
     {
-      title: "الإجرائات",
+      title: t("actions"),
       key: "action",
       render: (_, record) => <Space size="middle">
         <Switch defaultChecked onChange={onChange} />
