@@ -1,16 +1,17 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import SearchProducts from "../Search/SearchProducts/SearchProducts";
 import UserIcons from "@/app/[locale]/components/Global/UserIcon/UserIcons";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { CiLogin, CiSearch } from "react-icons/ci";
 // import { openBurgerMenu } from '@/app/[locale]/lib/todosSlice'
 import { GrUserAdmin } from "react-icons/gr";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { IoMdClose } from "react-icons/io";
 import { useTranslation } from "@/app/i18n/client";
+import { Languages } from "@/app/[locale]/utils/constant";
 
 
 type Props = {
@@ -18,9 +19,24 @@ type Props = {
 }
 
 function Navbar({ locale }: Props) {
-  const { t } = useTranslation(locale, "common")
+  const { t, i18n } = useTranslation(locale, "common")
   const [openSearch, setOpenSearch] = useState(false);
   const [isLogend, setIsLogend] = useState(false);
+  const [currentLocale, setCurrentLocale] = useState(locale);
+  const currentPathname = usePathname();
+  const router = useRouter();
+
+
+  // Handle Change Language
+  const handleLocaleChange = (newLocale: any) => {
+    if (!currentPathname) return;
+    const pathWithoutLocale = currentPathname.replace(/^\/[^\/]+/, "");
+    localStorage.setItem("direction", newLocale === "ar" ? "rtl" : "ltr");
+    document.dir = newLocale === "ar" ? "rtl" : "ltr";
+    i18n.changeLanguage(newLocale);
+    router.push(`/${newLocale}${pathWithoutLocale}`);
+    setCurrentLocale(newLocale); // Update the local state
+  };
 
   const handleLogOut = () => {
     // LogOut()
@@ -44,9 +60,10 @@ function Navbar({ locale }: Props) {
     <div className="">
       <main className={`container py-1 lg:py-6  `}>
         {/* Start Burger Menu */}
-        <div className={`grid lg:hidden ${isLogend ? "grid-cols-[78%_20%] " : "justify-center"}  items-center `}>
+        <div className={`grid lg:hidden ${isLogend ? "grid-cols-[78%_20%] " : "justify-between"}  items-center `}>
+
           <div className=" flex">
-            <div className="  ">
+            <div className="flex items-center gap-1">
               {isLogend && (
                 <div
                   className="border-2 border-gray-300  rounded-md cursor-pointer  py-1 flex items-center font-semibold"
@@ -57,6 +74,32 @@ function Navbar({ locale }: Props) {
                   <CiLogin className=" text-xl" />
                 </div>
               )}
+              {/* Start Select */}
+              <div className="">
+                <select
+                  onChange={(e) => {
+                    handleLocaleChange(e.target.value);
+                  }}
+                  className=""
+                >
+                  {Languages.map((item: { id: number; title: string; value: string }, index: number) => {
+                    return (
+                      <Fragment key={index}>
+                        {item.value == locale ? (
+                          <option value={item.value} key={index + 1} selected >
+                            {item.title}
+                          </option>
+                        ) : (
+                          <option value={item.value} key={index + 5}>
+                            {item.title}
+                          </option>
+                        )}
+                      </Fragment>
+                    );
+                  })}
+                </select>
+              </div>
+              {/* End Select */}
             </div>
 
             <div className="mr-3 relative flex items-center  w-4/5 !z-50">
@@ -83,6 +126,7 @@ function Navbar({ locale }: Props) {
               </Link>
             </div>
           </div>
+
         </div>
         {/* End Burger Menu */}
 

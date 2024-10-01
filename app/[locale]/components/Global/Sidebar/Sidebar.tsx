@@ -80,7 +80,7 @@ function Sidebar({ locale }: Props) {
   const items: Item[] = [
     {
       label: t("categories"),
-      key: "1",      
+      key: "1",
       icon: <AiOutlineProduct />,
       children: [
         {
@@ -92,10 +92,17 @@ function Sidebar({ locale }: Props) {
       ]
     },
     {
-      label: t("add_product"),
+      label: t("products"),
       key: "2",
-      url: "/products/create",
-      icon: <TbCategoryFilled />
+      icon: <TbCategoryFilled />,
+      children: [
+        {
+          label: t("add_product"),
+          key: "22",
+          url: "/products/create",
+          icon: <TbCategoryFilled />
+        },
+      ]
     },
     {
       label: t("orders"),
@@ -133,6 +140,25 @@ function Sidebar({ locale }: Props) {
       key: "6",
       url: "/",
       icon: <TbCategoryFilled />
+    },
+    {
+      label: t("setting"),
+      key: "7",
+      icon: <TbCategoryFilled />,
+      children: [
+        {
+        label: t("add_head_code"),
+        key: "7.1",
+        url: "/",
+        icon: <TbCategoryFilled />,
+      },
+      {
+        label: t("add_body_code"),
+        key: "7.2",
+        url: "/",
+        icon: <TbCategoryFilled />,
+      },
+      ]
     }
   ];
 
@@ -142,7 +168,7 @@ function Sidebar({ locale }: Props) {
   return (
     <>
       {isLoading && <Loader />}
-      <div className={`${locale == "ar" ? "right-0" : "left-0" }  fixed z-10 top-0 w-[320px] h-[100vh]`}>
+      <div className={`${locale == "ar" ? "right-0" : "left-0"}  fixed z-10 top-0 w-[320px] h-[100vh]`}>
         <div className="px-6 py-1 mt-40">
           {items.map((item: any) => (
             <div
@@ -153,9 +179,8 @@ function Sidebar({ locale }: Props) {
             >
               {item.children ? (
                 <div
-                  className={`rounded-lg my-1 ${
-                    current == item.key ? "bg-gray-400" : "bg-white"
-                  } cursor-pointer `}
+                  className={`rounded-lg my-1 ${current == item.key ? "bg-gray-400" : "bg-white"
+                    } cursor-pointer `}
                 >
                   {/* Start  */}
                   <div className="">
@@ -179,9 +204,8 @@ function Sidebar({ locale }: Props) {
                         height="15"
                         viewBox="0 0 12 19"
                         fill="none"
-                        className={`cursor-pointer ${
-                          activeLink == item.key ? "rotate-180" : "rotate-90"
-                        } transition-all duration-200 mx-3`}
+                        className={`cursor-pointer ${activeLink == item.key ? "rotate-180" : "rotate-90"
+                          } transition-all duration-200 mx-3`}
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
@@ -195,11 +219,10 @@ function Sidebar({ locale }: Props) {
                       id="faqs-text-01"
                       role="region"
                       aria-labelledby="faqs-title-01"
-                      className={`grid overflow-hidden transition-all duration-300 ease-in-out -mt-1 ${
-                        activeLink == item.key
+                      className={`grid overflow-hidden transition-all duration-300 ease-in-out -mt-1 ${activeLink == item.key
                           ? " grid-rows-[1fr] opacity-100"
                           : " grid-rows-[0fr] opacity-0"
-                      }`}
+                        }`}
                     >
                       <div className="overflow-hidden">
                         {item?.children?.map((child: any) => (
@@ -207,10 +230,10 @@ function Sidebar({ locale }: Props) {
                             <span>{item.icon}</span>
                             <span className="text-lg  text-black font-semibold ">
                               {child.label}
-                          </span>
-                            </Link>
+                            </span>
+                          </Link>
                         ))}
-                       
+
                       </div>
                     </div>
                   </div>

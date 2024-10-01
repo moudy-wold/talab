@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
 import { FaUserAlt } from "react-icons/fa";
 import { usePathname, useRouter } from "next/navigation"
@@ -8,18 +8,31 @@ import { toast } from 'react-toastify';
 import Loader from "@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader";
 import { useTranslation } from "@/app/i18n/client";
 import { notification } from "antd";
-
+import { Languages } from "@/app/[locale]/utils/constant"
 type Props = {
   locale: string
 }
 function UserIcons({ locale }: Props) {
-  const { t } = useTranslation(locale, "common")
-  const router = useRouter();
-  const path = usePathname()
+  const { t, i18n } = useTranslation(locale, "common");
+  const [currentLocale, setCurrentLocale] = useState(locale);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const currentPathname = usePathname();
 
   const [id, setId] = useState("")
   const [isLoggend, setIsLoggend] = useState<any>()
+
+  // Handle Change Language
+  const handleLocaleChange = (newLocale: any) => {
+    if (!currentPathname) return;
+    const pathWithoutLocale = currentPathname.replace(/^\/[^\/]+/, "");
+    localStorage.setItem("direction", newLocale === "ar" ? "rtl" : "ltr");
+    document.dir = newLocale === "ar" ? "rtl" : "ltr";
+    i18n.changeLanguage(newLocale);
+    router.push(`/${newLocale}${pathWithoutLocale}`);
+    setCurrentLocale(newLocale); // Update the local state
+  };
+
 
   const handleLogOut = () => {
     setIsLoading(true)
@@ -46,6 +59,33 @@ function UserIcons({ locale }: Props) {
     <main className="">
       {isLoading && <Loader />}
       <div className="flex items-center justify-between">
+        {/* Start Select */}
+        <div className="mx-5">
+          <select
+            onChange={(e) => {
+              handleLocaleChange(e.target.value);
+            }}
+            className=""
+          >
+            {Languages.map((item: { id: number; title: string; value: string }, index: number) => {
+              return (
+                <Fragment key={index}>
+                  {item.value == locale ? (
+                    <option value={item.value} key={index + 1} selected >
+                      {item.title}
+                    </option>
+                  ) : (
+                    <option value={item.value} key={index + 5}>
+                      {item.title}
+                    </option>
+                  )}
+                </Fragment>
+              );
+            })}
+          </select>
+        </div>
+        {/* End Select */}
+
 
         <div className="w-16 felx flex-col justify-center items-center relative  !z-[99999999] hover:scale-110 transition-all duration-200 ">
           {isLoggend ? <>

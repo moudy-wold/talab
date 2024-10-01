@@ -13,8 +13,8 @@ type Props = {
 }
 
 type FieldType = {
-  phoneNumber?: string;
   password?: string;
+  email:string;
   remember?: string;
 };
 
@@ -62,12 +62,12 @@ function FormComponent({ locale }: Props) {
         autoComplete="off"
       >
         <Form.Item
-          name="phoneNumber"
+          name="email"
           rules={[
-            { required: true, message: t('please_enter_phone_number_correctly') },]}
+            { required: true, message: t('please_enter_email') },]}
         >
           <Input
-            placeholder={t("phone_number")}
+            placeholder={t("email")}
             className="!rounded-[2px] !py-3 placeholder:!text-[#646464]"
             onChange={(e) => setObj((prevState) => ({ ...prevState, phoneNumber: e.target.value }))}
           />
@@ -96,7 +96,7 @@ function FormComponent({ locale }: Props) {
           <div>
             <button
               type="submit"
-              className=" rounded-full py-2 md:pb-3 px-5 md:px-10 text-lg md:text-xl border-2 border-[#006496] bg-[#006496] text-white hover:text-[#006496] hover:bg-white transition-all duration-200"
+              className=" rounded-full py-2 md:pb-3 px-5 md:px-6 text-lg md:text-xl border-2 border-[#006496] bg-[#006496] text-white hover:text-[#006496] hover:bg-white transition-all duration-200"
             >
               {t("login")}
             </button>

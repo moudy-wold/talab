@@ -36,7 +36,7 @@ function CreateProduct({ locale }: any) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [form] = useForm();
-  const [details, setDetails] = useState(["", ""]);
+  const [details, setDetails] = useState(["","",""]);
 
 
   const onChange = (checked: boolean) => {
@@ -58,20 +58,28 @@ function CreateProduct({ locale }: any) {
   }: FieldType) => {
     setIsLoading(true);
 
-    const formData = new FormData();
-    formData.append("product_name", product_name);
-    formData.append("category", category);
-    formData.append("quality", quality);
-    formData.append("suitable_devices", suitable_devices);
-    for (let i = 0; i < images.length; i++) {
-      formData.append("images[]", images[i].originFileObj!);
-    }
-    formData.append("details", JSON.stringify(details));
+    const formData: any = new FormData();
+// For Delete Empty VIte From Details
+let filteredDetails = details.filter(item => item !== '');
 
-    formData.append("currency", currency);
-    formData.append("price", price);
-    formData.append("quantity", quantity);
-    formData.append("discount", discount);
+
+    // formData.append("product_name", product_name);
+    // formData.append("category", category);
+    // formData.append("quality", quality);
+    // formData.append("suitable_devices", suitable_devices);
+    // for (let i = 0; i < images.length; i++) {
+    //   formData.append("images[]", images[i].originFileObj!);
+    // }
+    // formData.append("details", JSON.stringify(filteredDetails));
+
+    // formData.append("currency", currency);
+    // formData.append("price", price);
+    // formData.append("quantity", quantity);
+    // formData.append("discount", discount);
+    // for (var pair of formData.entries()) {
+    //   console.log(pair[0] + ', ' + pair[1]);
+    // }
+    
     // formData.append('offers', "tr");
 
     // AddService(formData)
@@ -98,9 +106,8 @@ function CreateProduct({ locale }: any) {
 
   const addDetailField = () => {
     setDetails([...details, ""]);
-    
   };
-  
+
 
   const handleDetailChange = (index: number, value: string) => {
     const newDetails: any = [...details];
@@ -274,16 +281,16 @@ function CreateProduct({ locale }: any) {
         </Form.Item>
         {/* End offers */}
 
-            {/* Start Details */}
-            <div className="grid grid-cols-2 gap-5">
+        {/* Start Details */}
+        <div className="grid grid-cols-2 gap-5">
           {details.map((detail, index) => {
             return (
               <div
                 key={index}
-                className="rounded-xl p-2 pb-0 "
+                className="rounded-xl p-2 pb-0 border-2 border-gray-300 rounded-lg  "
               >
                 <Form.Item
-                  rules={[{ required: false, message: t("please_enter_content") }]}
+                  rules={[{ required: true, message: t("please_enter_content") }]}
                   className=""
                 >
                   <div className="px-1 flex items-center justify-between">
@@ -308,12 +315,12 @@ function CreateProduct({ locale }: any) {
               </div>
             );
           })}
-        </div>
-        <div className="w-full flex flex-col ">
-          <Button className="w-1/2 h-12" onClick={addDetailField}>
-            {t("add_new_details")}
+        <div className="w-full flex items-center ">
+          <Button className="w-full h-12" onClick={addDetailField}>
+            {t("add_new_device")}
           </Button>
 
+        </div>
         </div>
         {/* End Details */}
 

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Loader from "@/app/[locale]/components/Global/Loader/Loader";
 import { Checkbox, Form, Input, notification, Modal, Button, Upload, Select, Space } from "antd";
 import type { SelectProps } from 'antd';
@@ -10,6 +10,7 @@ import OTPPopup from "@/app/[locale]/components/Global/OTPPopup/OTPPopup";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useTranslation } from "@/app/i18n/client";
 import Image from "next/image";
+import axios from "axios";
 
 type Props = {
   locale: string;
@@ -24,9 +25,11 @@ type FieldType = {
   avatar: any;
   accept: boolean;
   rePassword: string;
+  district: string;
+  cities: string;
   categories: any;
   recaptcha: boolean;
-  areas_covered:any;
+  areas_covered: any;
 };
 
 const FormComponent = ({ locale }: Props) => {
@@ -34,12 +37,19 @@ const FormComponent = ({ locale }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [openVerifyPopup, setOpenVerifyPopup] = useState<boolean>(false);
   const [capched, setCapched] = useState<string | null>();
-  const [areasCovered ,setAreasCovered] = useState([{country:"",city:"",district:""}])
+  const [areasCovered, setAreasCovered] = useState([{ country: "", city: "", district: "" }])
   const { push } = useRouter();
+  const AllOption = 'all';
 
+  const [istDistrict, setIstDistrict] = useState<any>([]);
+  const [selectedDistricts, setSelectedDistricts] = useState<string[]>([]);
+  const [isAllDistrictsSelected, setIsAllDistrictsSelected] = useState(false);
 
+  const [cities, setCities] = useState<any>([]);
+  const [selectedCities , setSelectedCities] = useState<string[]>([])
+  const [isAllCitiesSelected, setIsAllCitiesSelected] = useState(false);
   
-  const [options, setOptions] = useState([
+  const [categories, setCategories] = useState([
     { label: 1, value: 1 },
     { label: 2, value: 2 },
     { label: 3, value: 3 },
@@ -51,9 +61,66 @@ const FormComponent = ({ locale }: Props) => {
     { label: 9, value: 9 },
     { label: 10, value: 10 }
   ])
-  const handleChange = (value: string[]) => {
+  const handleChangeCategories = (value: string[]) => {
     console.log(`selected ${value}`);
   };
+
+  const handleChangeDistrict = (value: string[]) => {
+    if (value.includes(AllOption)) {
+      setSelectedDistricts([AllOption]);
+      setIsAllDistrictsSelected(true);
+    } else {
+      setSelectedDistricts(value);
+      setIsAllDistrictsSelected(false);
+    }
+  };
+
+  const handleChangeCities = (value: string[]) => {
+    if (value.includes(AllOption)) {
+      setSelectedCities([AllOption]);
+      setIsAllCitiesSelected(true);
+    } else {
+      setSelectedCities(value);
+      setIsAllCitiesSelected(false);
+    }
+  };
+
+  const districtsWithAll = [
+    { label: 'Select All', value: AllOption },
+    ...istDistrict.map((item: any) => ({ ...item, disabled: isAllDistrictsSelected })),
+  ];
+
+  const citiesWithAll = [
+    { label: 'Select All', value: AllOption },
+    ...cities.map((item: any) => ({ ...item, disabled: isAllCitiesSelected })),
+  ];
+
+  const GetCities = async () => {
+    const url = "https://turkiyeapi.dev/api/v1/";
+    
+    axios.get(`${url}provinces?fields=name`)
+      .then((res) => {
+        res?.data?.data?.forEach((item: any) => {
+          let obj = { label: item.name, value: item.name }
+          setCities((prev: any) => [...prev, obj])
+        })        
+      })
+      .catch((err: any) => {
+        console.log(err)
+      })
+
+    axios.get(`${url}provinces?name=istanbul`)
+      .then((res) => {
+        res?.data?.data[0].districts.forEach((item: any) => {
+          let obj = { label: item.name, value: item.name }
+          setIstDistrict((prev: any) => [...prev, obj])
+        })
+
+      })
+      .catch((err: any) => {
+        console.log(err)
+      })
+  }
 
   const onFinish = ({
     password,
@@ -100,6 +167,9 @@ const FormComponent = ({ locale }: Props) => {
       });
   };
 
+  useEffect(() => {
+    GetCities()
+  }, [])
   return (
     <div>
       {isLoading && <Loader />}
@@ -121,7 +191,7 @@ const FormComponent = ({ locale }: Props) => {
         <Form.Item<FieldType>
           name="avatar"
           label={
-            <span className="text-sm md:text-base">{t("product_iamge")}</span>
+            <span className="text-sm md:text-base">{t("profile_image")}</span>
           }
           rules={[{ required: true, message: t("please_enter_image") }]}
           valuePropName="fileList"
@@ -235,7 +305,7 @@ const FormComponent = ({ locale }: Props) => {
           ]}
         >
           <Input
-            placeholder={t("address")}
+            placeholder={t("primary_business_address")}
             className="!rounded-[2px] !py-3 placeholder:!text-[#646464]"
           />
         </Form.Item>
@@ -257,12 +327,63 @@ const FormComponent = ({ locale }: Props) => {
               allowClear
               style={{ width: '100%' }}
               placeholder={t("Please select")}
-              onChange={handleChange}
-              options={options}
+              onChange={handleChangeCategories}
+              options={categories}
             />
           </Space>
         </Form.Item>
         {/* End Categories */}
+
+        {/* Start Areas Covered */}
+
+        {/* Start Istanbul District */}
+        <Form.Item<FieldType>
+          name="district"
+          label={
+            <span className="text-sm md:text-base block w-full">{t("areas_covred_istanbul")}</span>
+          }
+          rules={[
+            { required: true, message: t("please_enter_address") },
+          ]}
+        >
+          <Space style={{ width: '100%' }} direction="vertical">
+            <Select
+              mode="multiple"
+              allowClear
+              style={{ width: '100%' }}
+              placeholder={t("Please select")}
+              onChange={handleChangeDistrict}
+              value={selectedDistricts}
+              options={districtsWithAll}
+            />
+          </Space>
+        </Form.Item>
+        {/* End Istanbul District */}
+
+        {/* Start cities */}
+        <Form.Item<FieldType>
+          name="cities"
+          label={
+            <span className="text-sm md:text-base block w-full">{t("areas_covred_turkey")}</span>
+          }
+          rules={[
+            { required: true, message: t("please_enter_address") },
+          ]}
+        >
+          <Space style={{ width: '100%' }} direction="vertical">
+            <Select
+              mode="multiple"
+              allowClear
+              style={{ width: '100%' }}
+              placeholder={t("Please select")}
+              onChange={handleChangeCities}
+              value={selectedCities}
+              options={citiesWithAll}
+            />
+          </Space>
+        </Form.Item>
+        {/* End cities */}
+        {/* End Areas Covered */}
 
         {/* Start accept */}
         <Form.Item<FieldType>

@@ -83,3 +83,10 @@ export const CategoriesList = [
     value:"سماعات",
   },
 ]
+
+
+export const Languages = [
+  { id: 1, title: "AR", value: "ar" },
+  { id: 2, title: "EN", value: "en" },
+  { id: 3, title: "TR", value: "tr" },
+];
