@@ -11,6 +11,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { useTranslation } from "@/app/i18n/client";
 import Image from "next/image";
 import axios from "axios";
+import { GetMainCategories } from "@/app/[locale]/api/categories";
 
 type Props = {
   locale: string;
@@ -37,7 +38,7 @@ const FormComponent = ({ locale }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [openVerifyPopup, setOpenVerifyPopup] = useState<boolean>(false);
   const [capched, setCapched] = useState<string | null>();
-  const [areasCovered, setAreasCovered] = useState([{ country: "", city: "", district: "" }])
+  const [areasCovered, setAreasCovered] = useState<any>([{ country: "turkey", city: { "": [] } }])
   const { push } = useRouter();
   const AllOption = 'all';
 
@@ -46,9 +47,9 @@ const FormComponent = ({ locale }: Props) => {
   const [isAllDistrictsSelected, setIsAllDistrictsSelected] = useState(false);
 
   const [cities, setCities] = useState<any>([]);
-  const [selectedCities , setSelectedCities] = useState<string[]>([])
+  const [selectedCities, setSelectedCities] = useState<string[]>([])
   const [isAllCitiesSelected, setIsAllCitiesSelected] = useState(false);
-  
+
   const [categories, setCategories] = useState([
     { label: 1, value: 1 },
     { label: 2, value: 2 },
@@ -61,9 +62,20 @@ const FormComponent = ({ locale }: Props) => {
     { label: 9, value: 9 },
     { label: 10, value: 10 }
   ])
+
   const handleChangeCategories = (value: string[]) => {
     console.log(`selected ${value}`);
   };
+
+  const areassCovered = [
+    {
+      country: 'turkey',
+      city: {
+        istanbul: ['Kadıköy', 'Beşiktaş', 'Üsküdar'],
+        gaziantep: ['Şahinbey', 'Şehitkamil', 'Oğuzeli'],
+      },
+    },
+  ];
 
   const handleChangeDistrict = (value: string[]) => {
     if (value.includes(AllOption)) {
@@ -79,9 +91,33 @@ const FormComponent = ({ locale }: Props) => {
     if (value.includes(AllOption)) {
       setSelectedCities([AllOption]);
       setIsAllCitiesSelected(true);
+      console.log("all")
+      let newCity = { "all": [] }
+      setAreasCovered((prevAreasCovered: any) =>
+        prevAreasCovered.map((area: any) =>
+          area.country === "turkey" ? { ...area, city: newCity } : area
+        )
+      );
     } else {
       setSelectedCities(value);
       setIsAllCitiesSelected(false);
+      // console.log(value)
+      let newCity: any = {};
+
+      value.map((val: any) => {
+        console.log(val);
+        newCity = {
+          ...newCity,
+          [val]: "all"
+        };
+      });
+      console.log(newCity)
+
+      setAreasCovered((prevAreasCovered: any) =>
+        prevAreasCovered.map((area: any) =>
+          area.country === "turkey" ? { ...area, city: newCity } : area
+        )
+      );
     }
   };
 
@@ -95,15 +131,15 @@ const FormComponent = ({ locale }: Props) => {
     ...cities.map((item: any) => ({ ...item, disabled: isAllCitiesSelected })),
   ];
 
-  const GetCities = async () => {
+  const GetCiteisAndDistricts = async () => {
     const url = "https://turkiyeapi.dev/api/v1/";
-    
+
     axios.get(`${url}provinces?fields=name`)
       .then((res) => {
         res?.data?.data?.forEach((item: any) => {
           let obj = { label: item.name, value: item.name }
           setCities((prev: any) => [...prev, obj])
-        })        
+        })
       })
       .catch((err: any) => {
         console.log(err)
@@ -120,7 +156,23 @@ const FormComponent = ({ locale }: Props) => {
       .catch((err: any) => {
         console.log(err)
       })
+
   }
+
+  const getCategories = async () => {
+    try {
+      const res = await GetMainCategories();
+      res.data.data.forEach((item: any) => {
+        let obj = { label: item.name, value: item.id }
+        setCategories((prev) => [...prev, obj])
+
+      })
+    } catch (err: any) {
+      console.log(err)
+    }
+
+  }
+
 
   const onFinish = ({
     password,
@@ -130,45 +182,47 @@ const FormComponent = ({ locale }: Props) => {
     address,
     accept,
   }: FieldType) => {
-    setIsLoading(true);
-    const formdata = new FormData();
+    console.log(areasCovered)
+    // setIsLoading(true);
+    // const formdata = new FormData();
 
-    formdata.append("userName", userName);
-    formdata.append("phoneNumber", phoneNumber);
-    formdata.append("password", password);
-    formdata.append("email", email);
-    formdata.append("address", address);
-    formdata.append("acceptTerms", accept ? "1" : "0");
-    formdata.append("areas_covered", "0");
-    formdata.append("categories", "categories");
+    // formdata.append("userName", userName);
+    // formdata.append("phoneNumber", phoneNumber);
+    // formdata.append("password", password);
+    // formdata.append("email", email);
+    // formdata.append("address", address);
+    // formdata.append("acceptTerms", accept ? "1" : "0");
+    // formdata.append("areas_covered", "0");
+    // formdata.append("categories", "categories");
 
 
-    Register(formdata)
-      .then((res) => {
-        if (res?.data?.message == "the user exists already") {
-          notification.error({
-            message: res?.data?.message,
-          });
-        } else {
-          notification.error({
-            message: t("register_success"),
-          });
+    // Register(formdata)
+    //   .then((res) => {
+    //     if (res?.data?.message == "the user exists already") {
+    //       notification.error({
+    //         message: res?.data?.message,
+    //       });
+    //     } else {
+    //       notification.error({
+    //         message: t("register_success"),
+    //       });
 
-        }
-      })
-      .catch((err: any) => {
-        console.log(err);
-        notification.error({
-          message: err.responde.data.message,
-        });
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    //     }
+    //   })
+    //   .catch((err: any) => {
+    //     console.log(err);
+    //     notification.error({
+    //       message: err.responde.data.message,
+    //     });
+    //   })
+    //   .finally(() => {
+    //     setIsLoading(false);
+    //   });
   };
 
   useEffect(() => {
-    GetCities()
+    GetCiteisAndDistricts();
+    // getCategories();
   }, [])
   return (
     <div>
@@ -178,7 +232,7 @@ const FormComponent = ({ locale }: Props) => {
         {/* Start name */}
         <Form.Item<FieldType>
           name="userName"
-          rules={[{ required: true, message: t("please_enter_name") }]}
+          rules={[{ required: false, message: t("please_enter_name") }]}
         >
           <Input
             placeholder={t("name")}
@@ -193,7 +247,7 @@ const FormComponent = ({ locale }: Props) => {
           label={
             <span className="text-sm md:text-base">{t("profile_image")}</span>
           }
-          rules={[{ required: true, message: t("please_enter_image") }]}
+          rules={[{ required: false, message: t("please_enter_image") }]}
           valuePropName="fileList"
           getValueFromEvent={(e: any) => {
             if (Array.isArray(e)) {
@@ -226,7 +280,7 @@ const FormComponent = ({ locale }: Props) => {
         {/* Start Phone */}
         <Form.Item<FieldType>
           name="phoneNumber"
-          rules={[{ required: true, message: t("please_enter_phoneNumber") }]}
+          rules={[{ required: false, message: t("please_enter_phoneNumber") }]}
         >
           <Input
             placeholder={t("phone_number")}
@@ -240,7 +294,7 @@ const FormComponent = ({ locale }: Props) => {
           name="email"
           rules={[
             {
-              required: true,
+              required: false,
               type: "email",
               message: t("please_enter_email"),
             },
@@ -258,7 +312,7 @@ const FormComponent = ({ locale }: Props) => {
           <Form.Item<FieldType>
             name="password"
             rules={[
-              { required: true, message: t("please_enter_password") },
+              { required: false, message: t("please_enter_password") },
               {
                 min: 8,
                 message: t("password_must_at_least_8_characters_long"),
@@ -276,7 +330,7 @@ const FormComponent = ({ locale }: Props) => {
             name="rePassword"
             dependencies={["password"]}
             rules={[
-              { required: true, message: t("please_confirm_your_password") },
+              { required: false, message: t("please_confirm_your_password") },
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (!value || getFieldValue("password") === value) {
@@ -301,7 +355,7 @@ const FormComponent = ({ locale }: Props) => {
         <Form.Item<FieldType>
           name="address"
           rules={[
-            { required: true, message: t("please_enter_address") },
+            { required: false, message: t("please_enter_address") },
           ]}
         >
           <Input
@@ -318,7 +372,7 @@ const FormComponent = ({ locale }: Props) => {
             <span className="text-sm md:text-base">{t("categories")}</span>
           }
           rules={[
-            { required: true, message: t("please_enter_address") },
+            { required: false, message: t("please_enter_address") },
           ]}
         >
           <Space style={{ width: '100%' }} direction="vertical">
@@ -343,7 +397,7 @@ const FormComponent = ({ locale }: Props) => {
             <span className="text-sm md:text-base block w-full">{t("areas_covred_istanbul")}</span>
           }
           rules={[
-            { required: true, message: t("please_enter_address") },
+            { required: false, message: t("please_enter_address") },
           ]}
         >
           <Space style={{ width: '100%' }} direction="vertical">
@@ -367,7 +421,7 @@ const FormComponent = ({ locale }: Props) => {
             <span className="text-sm md:text-base block w-full">{t("areas_covred_turkey")}</span>
           }
           rules={[
-            { required: true, message: t("please_enter_address") },
+            { required: false, message: t("please_enter_address") },
           ]}
         >
           <Space style={{ width: '100%' }} direction="vertical">
@@ -383,6 +437,7 @@ const FormComponent = ({ locale }: Props) => {
           </Space>
         </Form.Item>
         {/* End cities */}
+
         {/* End Areas Covered */}
 
         {/* Start accept */}
@@ -390,7 +445,7 @@ const FormComponent = ({ locale }: Props) => {
           name="accept"
           valuePropName="checked"
           rules={[
-            { required: true, message: t("please_agree_to_terms_and_conditions") },
+            { required: false, message: t("please_agree_to_terms_and_conditions") },
           ]}
         >
           <Checkbox rootClassName="gap-2">
@@ -414,7 +469,7 @@ const FormComponent = ({ locale }: Props) => {
         <Form.Item<FieldType>
           name="recaptcha"
           rules={[
-            { required: true, message: t("please_confirm_that_you_are_not_robot") },
+            { required: false, message: t("please_confirm_that_you_are_not_robot") },
           ]}
         >
           {/* <ReCAPTCHA sitekey={process.env.SITE_KEY!} onChange={setCapched} /> */}
