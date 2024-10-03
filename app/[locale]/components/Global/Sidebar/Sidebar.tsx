@@ -170,8 +170,9 @@ function Sidebar({ locale }: Props) {
       {isLoading && <Loader />}
       <div className={`${locale == "ar" ? "right-0" : "left-0"}  fixed z-10 top-0 w-[320px] h-[100vh]`}>
         <div className="px-6 py-1 mt-40">
-          {items.map((item: any) => (
+          {items.map((item: any,index:number) => (
             <div
+            key={index}
               className=""
               onClick={() => {
                 handleClick(item);
@@ -225,8 +226,8 @@ function Sidebar({ locale }: Props) {
                         }`}
                     >
                       <div className="overflow-hidden">
-                        {item?.children?.map((child: any) => (
-                          <Link href={child.url} className="flex p-2 px-4 my-2 items-center gap-2 hover:text-black hover:no-underline hover:bg-gray-100 rounded-lg">
+                        {item?.children?.map((child: any,ind:number) => (
+                          <Link href={child.url} key={ind} className="flex p-2 px-4 my-2 items-center gap-2 hover:text-black hover:no-underline hover:bg-gray-100 rounded-lg">
                             <span>{item.icon}</span>
                             <span className="text-lg  text-black font-semibold ">
                               {child.label}

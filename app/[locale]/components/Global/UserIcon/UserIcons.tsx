@@ -62,6 +62,8 @@ function UserIcons({ locale }: Props) {
         {/* Start Select */}
         <div className="mx-5">
           <select
+                defaultValue={locale}
+
             onChange={(e) => {
               handleLocaleChange(e.target.value);
             }}
@@ -70,15 +72,11 @@ function UserIcons({ locale }: Props) {
             {Languages.map((item: { id: number; title: string; value: string }, index: number) => {
               return (
                 <Fragment key={index}>
-                  {item.value == locale ? (
-                    <option value={item.value} key={index + 1} selected >
-                      {item.title}
-                    </option>
-                  ) : (
+                  
                     <option value={item.value} key={index + 5}>
                       {item.title}
                     </option>
-                  )}
+                  
                 </Fragment>
               );
             })}
