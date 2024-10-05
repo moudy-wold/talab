@@ -23,10 +23,17 @@ type FieldType = {
   email: string;
   password: string;
   address: any;
+  city: string;
+  district: string,
+  neighborhoods: string,
+  sokak_no: string,
+  building_no: string,
+  dukkan_no: string;
+  flat_no?: string;
   avatar: any;
   accept: boolean;
   rePassword: string;
-  district: string;
+  district_istanbul: string;
   cities: string;
   categories: any;
   recaptcha: boolean;
@@ -52,9 +59,12 @@ const FormComponent = ({ locale }: Props) => {
   const [isAllCitiesSelected, setIsAllCitiesSelected] = useState(false);
 
   const [categories, setCategories] = useState<any>([])
+  const [dynamicDistrict, setDynamicDistrict] = useState<any>();
+  const [neighborhoodss, setNeighborhoods] = useState()
 
   const handleChangeCategories = (value: string[]) => {
-    setSlectedCategories((prev: any) => [...prev, value])
+    console.log(value)
+    setSlectedCategories(value)
   };
 
 
@@ -135,6 +145,41 @@ const FormComponent = ({ locale }: Props) => {
 
   }
 
+  const onChangeCity = async (value: any) => {
+    let distrObj: any = []
+    const url = `https://turkiyeapi.dev/api/v1/provinces?name=${value}`
+    axios.get(url)
+      .then((res: any) => {
+        res?.data?.data[0]?.districts.map((item: any) => {
+          let obj = { label: item.name, value: item.name, id: item.id }
+          distrObj.push(obj)
+        })
+        setDynamicDistrict(distrObj)
+      })
+      .catch((err: any) => {
+        console.log(err)
+      })
+  };
+
+  const onChangeDistrict = async (value: any, option: any) => {
+    let neighborhoodsObj: any = []
+
+    const url = `https://turkiyeapi.dev/api/v1/districts/${option?.id}`
+
+    axios.get(url)
+      .then((res: any) => {
+        console.log(res.data.data)
+        res?.data?.data?.neighborhoods?.map((item: any) => {
+          let obj = { label: item.name, value: item.name, id: item.id }
+          neighborhoodsObj.push(obj)
+        })
+        setNeighborhoods(neighborhoodsObj)
+
+      })
+      .catch((err: any) => {
+        console.log(err)
+      })
+  };
 
   const onFinish = ({
     password,
@@ -143,8 +188,16 @@ const FormComponent = ({ locale }: Props) => {
     phoneNumber,
     address,
     avatar,
+    city,
+    district,
+    neighborhoods,
+    sokak_no,
+    building_no,
+    dukkan_no,
+    flat_no,
     accept,
   }: FieldType) => {
+    //  setIsLoading(true);
     let areas_covered: any = [{ country: "turkey", city: { "": [] } }]
     if (isAllDistrictsSelected && isAllCitiesSelected) {
       areas_covered = [{ country: "turkey", city: { all: ["all"] } }]
@@ -182,24 +235,22 @@ const FormComponent = ({ locale }: Props) => {
         };
       });
     }
-    console.log(areas_covered)
-    // setIsLoading(true);
-    const formdata: any = new FormData();
 
+    let Address = { city: city, district: district, neighborhoods: neighborhoods, sokak_no: sokak_no, building_no: building_no, dukkan_no: dukkan_no, flat_no: flat_no }
+    const formdata: any = new FormData();
+    console.log(areas_covered)
     formdata.append("userName", userName);
     formdata.append("password", password);
     formdata.append("phoneNumber", phoneNumber);
-    formdata.append("address", address);
+    formdata.append("address", JSON.stringify(Address));
     formdata.append("email", email);
     for (let i = 0; i < avatar.length; i++) {
       formdata.append("avatar", avatar[i].originFileObj!);
     }
-    formdata.append("categories[]", selectedCategories);
-    formdata.append("areas_covered[]", JSON.stringify(areas_covered));
+    formdata.append("categories", JSON.stringify(selectedCategories));
+    formdata.append("areas_covered", JSON.stringify(areas_covered));
 
-    // for (var pair of formdata.entries()) {
-    //   console.log(pair[0] + ', ' + pair[1]);
-    // }
+    
     Register(formdata)
       .then((res) => {
         if (res?.data?.message == "the user exists already") {
@@ -207,7 +258,7 @@ const FormComponent = ({ locale }: Props) => {
             message: res?.data?.message,
           });
         } else {
-          notification.error({
+          notification.success({
             message: t("register_success"),
           });
 
@@ -216,7 +267,7 @@ const FormComponent = ({ locale }: Props) => {
       .catch((err: any) => {
         console.log(err);
         notification.error({
-          message: err.responde.data.message,
+          message: err.response.data.message,
         });
       })
       .finally(() => {
@@ -262,11 +313,11 @@ const FormComponent = ({ locale }: Props) => {
         {/* Start name */}
         <Form.Item<FieldType>
           name="userName"
-          rules={[{ required: false, message: t("please_enter_name") }]}
+          rules={[{ required: true, message: t("please_enter_name") }]}
         >
           <Input
             placeholder={t("name")}
-            className="!rounded-[2px] !py-3 placeholder:!text-[#646464]"
+            className="!rounded-[2px] !py-3 "
           />
         </Form.Item>
         {/* End name */}
@@ -274,10 +325,8 @@ const FormComponent = ({ locale }: Props) => {
         {/* Start Image */}
         <Form.Item<FieldType>
           name="avatar"
-          label={
-            <span className="text-sm md:text-base">{t("profile_image")}</span>
-          }
-          rules={[{ required: false, message: t("please_enter_image") }]}
+          label={<span className="text-sm md:text-base">{t("profile_image")}</span>}
+          rules={[{ required: true, message: t("please_enter_image") }]}
           valuePropName="fileList"
           getValueFromEvent={(e: any) => {
             if (Array.isArray(e)) {
@@ -311,11 +360,11 @@ const FormComponent = ({ locale }: Props) => {
         {/* Start Phone */}
         <Form.Item<FieldType>
           name="phoneNumber"
-          rules={[{ required: false, message: t("please_enter_phoneNumber") }]}
+          rules={[{ required: true, message: t("please_enter_phoneNumber") }]}
         >
           <Input
             placeholder={t("phone_number")}
-            className="!rounded-[2px] !py-3 placeholder:!text-[#646464]"
+            className="!rounded-[2px] !py-3 "
           />
         </Form.Item>
         {/* End Phone */}
@@ -325,7 +374,7 @@ const FormComponent = ({ locale }: Props) => {
           name="email"
           rules={[
             {
-              required: false,
+              required: true,
               type: "email",
               message: t("please_enter_email"),
             },
@@ -333,7 +382,7 @@ const FormComponent = ({ locale }: Props) => {
         >
           <Input
             placeholder={t("email")}
-            className="!rounded-[2px] !py-3 placeholder:!text-[#646464]"
+            className="!rounded-[2px] !py-3 "
           />
         </Form.Item>
         {/* End Email*/}
@@ -343,7 +392,7 @@ const FormComponent = ({ locale }: Props) => {
           <Form.Item<FieldType>
             name="password"
             rules={[
-              { required: false, message: t("please_enter_password") },
+              { required: true, message: t("please_enter_password") },
               {
                 min: 8,
                 message: t("password_must_at_least_8_characters_long"),
@@ -353,7 +402,7 @@ const FormComponent = ({ locale }: Props) => {
           >
             <Input.Password
               placeholder={t("password")}
-              className="!rounded-[2px] !py-3 placeholder:!text-[#646464]"
+              className="!rounded-[2px] !py-3 "
             />
           </Form.Item>
 
@@ -361,7 +410,7 @@ const FormComponent = ({ locale }: Props) => {
             name="rePassword"
             dependencies={["password"]}
             rules={[
-              { required: false, message: t("please_confirm_your_password") },
+              { required: true, message: t("please_confirm_your_password") },
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (!value || getFieldValue("password") === value) {
@@ -375,7 +424,7 @@ const FormComponent = ({ locale }: Props) => {
             <div>
               <Input.Password
                 placeholder={t("confirm_password")}
-                className="!rounded-[2px]    !py-3 placeholder:!text-[#646464]"
+                className="!rounded-[2px]    !py-3 "
               />
             </div>
           </Form.Item>
@@ -383,39 +432,126 @@ const FormComponent = ({ locale }: Props) => {
         {/*End Password */}
 
         {/* Start address */}
-        <Form.Item<FieldType>
-          name="address"
-          rules={[
-            { required: false, message: t("please_enter_address") },
-          ]}
-        >
-          <Input
-            placeholder={t("primary_business_address")}
-            className="!rounded-[2px] !py-3 placeholder:!text-[#646464]"
-          />
-        </Form.Item>
+        <div className="">
+          <p className="mb-5">{t("primary_business_address")} :</p>
+
+          <div className="grid grid-cols-3 gap-2">
+
+            {/* Start City */}
+            <Form.Item<FieldType>
+              name="city"
+              rules={[{ required: true, message: t("please_enter_city") }]}
+            >
+
+              <Select
+                showSearch
+                placeholder={t("enter_city")}
+                optionFilterProp="label"
+                onChange={(e) => onChangeCity(e)}
+                options={cities}
+              />
+            </Form.Item>
+            {/* End City */}
+
+            {/* Start District */}
+            <Form.Item<FieldType>
+              name="district"
+              rules={[{ required: true, message: t("please_enter_district") }]}
+            >
+              <Select
+                showSearch
+                placeholder={t("enter_district")}
+                optionFilterProp="label"
+                onChange={(value, option) => onChangeDistrict(value, option)}
+                options={dynamicDistrict}
+              />
+            </Form.Item>
+            {/* End District */}
+
+            {/* Start neighborhoods */}
+            <Form.Item<FieldType>
+              name="neighborhoods"
+              rules={[
+                { required: true, message: t("please_enter_neighborhoods") },
+              ]}
+            >
+              <Select
+                placeholder={t("select_neighborhoods")}
+                optionFilterProp="label"
+                options={neighborhoodss}
+              />
+            </Form.Item>
+            {/* End District */}
+          </div>
+
+          <div className="grid grid-cols-4 gap-2">
+            {/* Start Sokak */}
+            <Form.Item<FieldType>
+              name="sokak_no"
+              rules={[{ required: true, message: t("please_enter_sokak_no") }]}
+            >
+              <Input
+                placeholder={t("sokak_no")}
+                className="!rounded-[7px] !py-2 "
+              />
+            </Form.Item>
+            {/* End Sokak */}
+
+            {/* Start Building_no */}
+            <Form.Item<FieldType>
+              name="building_no"
+              rules={[{ required: true, message: t("please_enter_building_no") }]}
+            >
+              <Input
+                placeholder={t("building_no")}
+                className="!rounded-[7px] !py-2 "
+              />
+            </Form.Item>
+            {/* End Building_no */}
+
+            {/* Start Dukkan_no */}
+            <Form.Item<FieldType>
+              name="dukkan_no"
+              rules={[{ required: true, message: t("please_enter_dukkan_no") }]}
+            >
+              <Input
+                placeholder={t("dukkan_no")}
+                className="!rounded-[7px] !py-2 "
+              />
+            </Form.Item>
+            {/* end Dukkan_no */}
+
+            {/* Start Flat */}
+            <Form.Item<FieldType>
+              name="flat_no"
+              rules={[{ required: true, message: t("please_enter_flat") }]}
+            >
+              <Input
+                placeholder={t("flat")}
+                className="!rounded-[7px] !py-2 "
+              />
+            </Form.Item>
+            {/* End Flat */}
+
+            {/* Start  */}
+          </div>
+        </div>
         {/* End address*/}
 
         {/* Start Categories */}
         <Form.Item<FieldType>
           name="categories"
-          label={
-            <span className="text-sm md:text-base">{t("categories")}</span>
-          }
-          rules={[
-            { required: false, message: t("please_enter_address") },
-          ]}
+          label={<span className="text-sm md:text-base">{t("categories")}</span>}
+          rules={[{ required: true, message: t("please_enter_categories") }]}
         >
-          <Space style={{ width: '100%' }} direction="vertical">
-            <Select
-              mode="multiple"
-              allowClear
-              style={{ width: '100%' }}
-              placeholder={t("Please select")}
-              onChange={handleChangeCategories}
-              options={categories}
-            />
-          </Space>
+          <Select
+            mode="multiple"
+            allowClear
+            style={{ width: '100%' }}
+            placeholder={t("select_categories")}
+            onChange={handleChangeCategories}
+            options={categories}
+          />
         </Form.Item>
         {/* End Categories */}
 
@@ -423,49 +559,37 @@ const FormComponent = ({ locale }: Props) => {
 
         {/* Start Istanbul District */}
         <Form.Item<FieldType>
-          name="district"
-          label={
-            <span className="text-sm md:text-base block w-full">{t("areas_covred_istanbul")}</span>
-          }
-          rules={[
-            { required: false, message: t("please_enter_address") },
-          ]}
+          name="district_istanbul"
+          label={<span className="text-sm md:text-base block w-full">{t("areas_covred_istanbul")}</span>}
+          rules={[{ required: true, message: t("please_enter_areas_covred_istanbul") }]}
         >
-          <Space style={{ width: '100%' }} direction="vertical">
-            <Select
-              mode="multiple"
-              allowClear
-              style={{ width: '100%' }}
-              placeholder={t("Please select")}
-              onChange={handleChangeIstanbulDistrict}
-              value={selectedDistricts}
-              options={districtsWithAll}
-            />
-          </Space>
+          <Select
+            mode="multiple"
+            allowClear
+            style={{ width: '100%' }}
+            placeholder={t("select_areas_covred_istanbul")}
+            onChange={handleChangeIstanbulDistrict}
+            value={selectedDistricts}
+            options={districtsWithAll}
+          />
         </Form.Item>
         {/* End Istanbul District */}
 
         {/* Start cities */}
         <Form.Item<FieldType>
           name="cities"
-          label={
-            <span className="text-sm md:text-base block w-full">{t("areas_covred_turkey")}</span>
-          }
-          rules={[
-            { required: false, message: t("please_enter_address") },
-          ]}
+          label={<span className="text-sm md:text-base block w-full">{t("areas_covred_turkey")}</span>}
+          rules={[{ required: true, message: t("please_enter_areas_covred_turkey") }]}
         >
-          <Space style={{ width: '100%' }} direction="vertical">
-            <Select
-              mode="multiple"
-              allowClear
-              style={{ width: '100%' }}
-              placeholder={t("Please select")}
-              onChange={handleChangeCities}
-              value={selectedCities}
-              options={citiesWithAll}
-            />
-          </Space>
+          <Select
+            mode="multiple"
+            allowClear
+            style={{ width: '100%' }}
+            placeholder={t("select_areas_covred_turkey")}
+            onChange={handleChangeCities}
+            value={selectedCities}
+            options={citiesWithAll}
+          />
         </Form.Item>
         {/* End cities */}
 
@@ -475,9 +599,7 @@ const FormComponent = ({ locale }: Props) => {
         <Form.Item<FieldType>
           name="accept"
           valuePropName="checked"
-          rules={[
-            { required: false, message: t("please_agree_to_terms_and_conditions") },
-          ]}
+          rules={[{ required: true, message: t("please_agree_to_terms_and_conditions") },]}
         >
           <Checkbox rootClassName="gap-2">
             {t("agree_to")}{" "}
@@ -499,9 +621,7 @@ const FormComponent = ({ locale }: Props) => {
         {/* Start recaptcha*/}
         <Form.Item<FieldType>
           name="recaptcha"
-          rules={[
-            { required: false, message: t("please_confirm_that_you_are_not_robot") },
-          ]}
+          rules={[{ required: false, message: t("please_confirm_that_you_are_not_robot") },]}
         >
           {/* <ReCAPTCHA sitekey={process.env.SITE_KEY!} onChange={setCapched} /> */}
         </Form.Item>
