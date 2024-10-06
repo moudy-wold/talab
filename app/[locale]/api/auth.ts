@@ -38,7 +38,6 @@ export async function Login(
     `/talab/auth/login?email=${email}&password=${password}`
   );
 }
-
 export async function LogOut(): Promise<AxiosResponse<any>> {
   return await axios.get(`/talab/auth/logout`);
 }
@@ -48,15 +47,14 @@ export async function ForgetPass(email: string): Promise<AxiosResponse<any>> {
 }
 
 export async function ResetPass(
-  otp: string,
   email: string,
+  otp: string,
   password: string
 ): Promise<AxiosResponse<any>> {
   return await axios.post(
     `/talab/auth/reset?email=${email}&otp=${otp}&password=${password}`
   );
 }
-
 export async function ConfirmOTP(otp: any): Promise<AxiosResponse<any>> {
   return await axios.post(`/talab/auth/email/verify-otp?otp=${otp}`);
 }

@@ -118,6 +118,7 @@ body {
 
 /* HTML: <div class="loader"></div> */
 .loaders {
+  z-index:999999999999999999999 ! important;
   width: 90px;
   height: 14px;
   --c:#00a9fe 90deg,#0000 0;

@@ -1,26 +1,30 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import { FaUserAlt } from "react-icons/fa";
 import { usePathname, useRouter } from "next/navigation"
-import { CiLogin } from "react-icons/ci";
+import { CiLogout } from "react-icons/ci";
 import { LogOut } from "@/app/[locale]/api/auth";
-import { toast } from 'react-toastify';
 import Loader from "@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader";
 import { useTranslation } from "@/app/i18n/client";
-import { notification } from "antd";
+import { Modal, notification } from "antd";
 import { Languages } from "@/app/[locale]/utils/constant"
+import Cookies from 'js-cookie';
+import { MyContext } from "@/app/[locale]/context/myContext";
+
 type Props = {
-  locale: string
+  locale: string;
+  isLogend: boolean;
 }
-function UserIcons({ locale }: Props) {
+function UserIcons({ locale, isLogend }: Props) {
   const { t, i18n } = useTranslation(locale, "common");
-  const [currentLocale, setCurrentLocale] = useState(locale);
   const [isLoading, setIsLoading] = useState(false);
+  const [openLogOut, setOpenLogOut] = useState(false);
+  const [currentLocale, setCurrentLocale] = useState(locale);
   const router = useRouter();
   const currentPathname = usePathname();
+  const { logined, setLogined } = useContext(MyContext);
 
   const [id, setId] = useState("")
-  const [isLoggend, setIsLoggend] = useState<any>()
 
   // Handle Change Language
   const handleLocaleChange = (newLocale: any) => {
@@ -35,15 +39,18 @@ function UserIcons({ locale }: Props) {
 
 
   const handleLogOut = () => {
+    setOpenLogOut(false)
     setIsLoading(true)
     LogOut()
       .then((res) => {
         notification.success({ message: t("succeffly_logout") });
         localStorage.clear();
+        Cookies.remove('token');
+        setLogined(false)
         setTimeout(() => {
           window.location.reload();
         }, 100);
-        router.push("/")
+        router.push("/auth/login")
       })
       .catch((err) => {
         notification.error({ message: err.response.data.message });
@@ -62,7 +69,7 @@ function UserIcons({ locale }: Props) {
         {/* Start Select */}
         <div className="mx-5">
           <select
-                defaultValue={locale}
+            defaultValue={locale}
 
             onChange={(e) => {
               handleLocaleChange(e.target.value);
@@ -72,11 +79,11 @@ function UserIcons({ locale }: Props) {
             {Languages.map((item: { id: number; title: string; value: string }, index: number) => {
               return (
                 <Fragment key={index}>
-                  
-                    <option value={item.value} key={index + 5}>
-                      {item.title}
-                    </option>
-                  
+
+                  <option value={item.value} key={index + 5}>
+                    {item.title}
+                  </option>
+
                 </Fragment>
               );
             })}
@@ -84,26 +91,34 @@ function UserIcons({ locale }: Props) {
         </div>
         {/* End Select */}
 
-
+        {/* Start Login &&& */}
         <div className="w-16 felx flex-col justify-center items-center relative  !z-[99999999] hover:scale-110 transition-all duration-200 ">
-          {isLoggend ? <>
-            <div
-              className="flex items-center flex-col relative cursor-pointer mt-[2px]">
-
-
+          {isLogend ? <>
+            <div className="flex items-center flex-col relative cursor-pointer mt-[2px]" onClick={() => { setOpenLogOut(true) }}>
+              <CiLogout className=" text-xl text-[#8c8c8c]" />
+              <span className=" hidden lg:block mt-[4px]   text-center text-sm">{t("logout")}</span>
             </div>
           </> : <div className="ml-1">
             <Link href="/auth/login" className="flex flex-col items-center">
               <FaUserAlt className=" text-xl text-[#8c8c8c]" />
-              <span className=" hidden lg:block mt-[4px] text-center text-sm">{t("login")}</span>
+              <span className="hidden lg:block mt-[4px] text-center text-sm">{t("login")}</span>
             </Link>
           </div>
           }
         </div>
+        {/* End Login &&& */}
 
-
-
-
+        <Modal
+          title={t("logout")}
+          centered
+          open={openLogOut}
+          okButtonProps={{}}
+          onOk={() => { handleLogOut() }}
+          onCancel={() => { setOpenLogOut(false) }}
+          width={500}
+        >
+          <p>{t("are_you_sure_log_out")} </p>
+        </Modal>
       </div>
     </main>
   );

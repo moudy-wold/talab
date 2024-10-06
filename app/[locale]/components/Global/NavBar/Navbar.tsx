@@ -1,17 +1,18 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 import SearchProducts from "../Search/SearchProducts/SearchProducts";
 import UserIcons from "@/app/[locale]/components/Global/UserIcon/UserIcons";
-import { GiHamburgerMenu } from "react-icons/gi";
-import { CiLogin, CiSearch } from "react-icons/ci";
-// import { openBurgerMenu } from '@/app/[locale]/lib/todosSlice'
-import { GrUserAdmin } from "react-icons/gr";
+import { CiLogin } from "react-icons/ci";
 import { usePathname, useRouter } from "next/navigation";
-import { IoMdClose } from "react-icons/io";
 import { useTranslation } from "@/app/i18n/client";
 import { Languages } from "@/app/[locale]/utils/constant";
+import { LogOut } from "@/app/[locale]/api/auth";
+import { notification } from "antd";
+import Loader from "../Loader/LargeLoader/LargeLoader";
+import { MyContext } from "@/app/[locale]/context/myContext";
+import Cookies from 'js-cookie';
 
 
 type Props = {
@@ -20,12 +21,14 @@ type Props = {
 
 function Navbar({ locale }: Props) {
   const { t, i18n } = useTranslation(locale, "common")
+  const [isLoading, setIsLoading] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
   const [isLogend, setIsLogend] = useState(false);
   const [currentLocale, setCurrentLocale] = useState(locale);
   const currentPathname = usePathname();
   const router = useRouter();
-
+  const path = usePathname();
+  const { logined, setLogined } = useContext(MyContext);
 
   // Handle Change Language
   const handleLocaleChange = (newLocale: any) => {
@@ -39,25 +42,36 @@ function Navbar({ locale }: Props) {
   };
 
   const handleLogOut = () => {
-    // LogOut()
-    // .then((res) => {
-    //   notification.success( t("succeffly_logout"));
-    //   localStorage.clear()
-    //   setTimeout(() => {
-    //     window.location.reload();
-    //   }, 100);
-    // })
-    // .catch((err) => {
-    //   console.log(err)
-    //   notification.error({message:err.response.data.message});
-    // })
-    // .finally(() => {
-    //   setIsLoading(false);
-    // });
+    LogOut()
+      .then((res) => {
+        notification.success({ message: t("succeffly_logout") });
+        localStorage.clear()
+        Cookies.remove('token');
+        setLogined(false)
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+      })
+      .catch((err) => {
+        console.log(err)
+        notification.error({ message: err.response.data.message });
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
+  useEffect(() => {
+    let logend = localStorage.getItem("isLogend");
+    if (logend != undefined && logend == "true") {
+      setIsLogend(true)
+    } else {
+      setIsLogend(false)
+    }
+  }, [logined])
   return (
     <div className="">
+      {isLoading && <Loader />}
       <main className={`container py-1 lg:py-6  `}>
         {/* Start Burger Menu */}
         <div className={`grid lg:hidden ${isLogend ? "grid-cols-[78%_20%] " : "justify-between"}  items-center `}>
@@ -77,7 +91,7 @@ function Navbar({ locale }: Props) {
               {/* Start Select */}
               <div className="">
                 <select
-                defaultValue={locale}
+                  defaultValue={locale}
                   onChange={(e) => {
                     handleLocaleChange(e.target.value);
                   }}
@@ -86,11 +100,11 @@ function Navbar({ locale }: Props) {
                   {Languages.map((item: { id: number; title: string; value: string }, index: number) => {
                     return (
                       <Fragment key={index}>
-                        
-                          <option value={item.value} key={index + 5}>
-                            {item.title}
-                          </option>
-                        
+
+                        <option value={item.value} key={index + 5}>
+                          {item.title}
+                        </option>
+
                       </Fragment>
                     );
                   })}
@@ -128,7 +142,7 @@ function Navbar({ locale }: Props) {
         {/* End Burger Menu */}
 
         {/* Start Lg Screen */}
-        <div className="hidden lg:grid grid-cols-[25%_50%_25%] items-center justify-between">
+        <div className={`hidden lg:grid ${path.includes("auth") ? "grid-cols-[75%_25%] md:w-1/2 mx-auto md:px-20" : "grid-cols-[25%_50%_25%]"}   items-center justify-between`}>
           {/* Start Logo */}
           <div className="flex items-center justify-start  ">
             <Link href="/" className="mr-2">
@@ -143,14 +157,14 @@ function Navbar({ locale }: Props) {
           {/* End Logo */}
 
           {/* Start Search */}
-          <div className="">
+          <div className={`${path.includes("auth") ? "hidden" : "block"} `}>
             <SearchProducts locale={locale} />
           </div>
           {/* End Search */}
 
           {/* Start User Icons */}
           <div className="flex justify-end ">
-            <UserIcons locale={locale} />
+            <UserIcons locale={locale} isLogend={isLogend} />
           </div>
           {/* End User Icons */}
         </div>

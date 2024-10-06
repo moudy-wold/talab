@@ -77,29 +77,22 @@ function Sidebar({ locale }: Props) {
     //  getCategories()
   }, []);
 
-  const items: Item[] = [
-    {
-      label: t("categories"),
-      key: "1",
-      icon: <AiOutlineProduct />,
-      children: [
-        {
-          label: t("all_category"),
-          key: "1.2",
-          url: "/categories",
-          icon: <RiAddCircleLine />
-        }
-      ]
-    },
+  const items: Item[] = [    
     {
       label: t("products"),
       key: "2",
       icon: <TbCategoryFilled />,
       children: [
         {
+          label: t("all_products"),
+          key: "22",
+          url: "/dashboard/products",
+          icon: <TbCategoryFilled />
+        },
+        {
           label: t("add_product"),
           key: "22",
-          url: "/products/create",
+          url: "/dashboard/products/create",
           icon: <TbCategoryFilled />
         },
       ]
@@ -112,13 +105,13 @@ function Sidebar({ locale }: Props) {
         {
           label: t("all_orders"),
           key: "4.1",
-          url: "/orders",
+          url: "/dashboard/orders",
           icon: <RiAddCircleLine />
         },
         {
           label: t("return_order"),
           key: "4.2",
-          url: "/orders/return-orders",
+          url: "/dashboard/orders/return-orders",
           icon: <RiAddCircleLine />
         }
       ]
@@ -126,7 +119,7 @@ function Sidebar({ locale }: Props) {
     {
       label: t("offers"),
       key: "5",
-      url: "/offers",
+      url: "/dashboard/offers",
       icon: <TbCategoryFilled />
     },
     {
@@ -138,7 +131,7 @@ function Sidebar({ locale }: Props) {
     {
       label: t("accounting"),
       key: "6",
-      url: "/",
+      url: "/dashboard/accounting",
       icon: <TbCategoryFilled />
     },
     {

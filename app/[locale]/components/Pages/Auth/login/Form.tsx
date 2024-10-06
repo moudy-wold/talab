@@ -1,12 +1,13 @@
 'use client'
 import { Login } from '@/app/[locale]/api/auth';
-import Loader from '@/app/[locale]/components/Global/Loader/Loader';
+import Loader from '@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader';
 import { Form, Input, notification } from 'antd';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useRouter } from "next/navigation"
 import Cookies from 'js-cookie';
 import { useTranslation } from '@/app/i18n/client';
+import { MyContext } from "@/app/[locale]/context/myContext";
 
 type Props = {
   locale: string
@@ -21,6 +22,7 @@ type FieldType = {
 function FormComponent({ locale }: Props) {
   const { t } = useTranslation(locale, "common")
   const [isLoading, setIsLoading] = useState(false);
+  const { logined, setLogined } = useContext(MyContext);
   const [obj, setObj] = useState({
     email: "",
     password: ""
@@ -38,9 +40,9 @@ function FormComponent({ locale }: Props) {
             message: t("succeffly_login")
           })
           Cookies.set('token', res.data.token, { expires: 7, path: "/" });
-          localStorage.setItem("userId", JSON.stringify(res.data.data._id))
-          console.log(res.data.data)
-          router.push("/")
+          localStorage.setItem("isLogend", "true");
+          setLogined(true)
+          router.push("/dashboard")
         }
       })
       .catch((err: any) => {
@@ -69,7 +71,7 @@ function FormComponent({ locale }: Props) {
           <Input
             placeholder={t("email")}
             className="!rounded-[2px] !py-3 placeholder:!text-[#646464]"
-            onChange={(e) => setObj((prevState) => ({ ...prevState, phoneNumber: e.target.value }))}
+            onChange={(e) => setObj((prevState) => ({ ...prevState, email: e.target.value }))}
           />
         </Form.Item>
 

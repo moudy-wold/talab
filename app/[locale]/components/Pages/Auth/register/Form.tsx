@@ -62,8 +62,7 @@ const FormComponent = ({ locale }: Props) => {
   const [dynamicDistrict, setDynamicDistrict] = useState<any>();
   const [neighborhoodss, setNeighborhoods] = useState()
 
-  const handleChangeCategories = (value: string[]) => {
-    console.log(value)
+  const handleChangeCategories = (value: string[]) => {    
     setSlectedCategories(value)
   };
 
@@ -111,24 +110,48 @@ const FormComponent = ({ locale }: Props) => {
     ...istDistrict.map((item: any) => ({ ...item, disabled: isAllDistrictsSelected })),
   ];
 
+// إضافة خيار "اختيار الكل" إلى القائمة
+const w = [
+  { label: 'Select All', value: AllOption },
+  ...cities.map((item: any) => ({
+    ...item, 
+    disabled: false // تعطيل الخيارات يعتمد على handleChangeCities
+  })),
+];
+
+
   const citiesWithAll = [
     { label: 'Select All', value: AllOption },
-    ...cities.map((item: any) => ({ ...item, disabled: isAllCitiesSelected })),
+    ...cities.map((item: any) => ({ ...item, disabled: item.value == 'İstanbul'? true : isAllCitiesSelected })),
   ];
 
   const GetCiteisAndDistricts = async () => {
     const url = "https://turkiyeapi.dev/api/v1/";
+    
+      // const updatedCities = res?.data?.data?.filter((item: any) => item.name !== `İstanbul`)
+      //   .map((item: any) => {
+      //     return { 
+      //       label: item.name, 
+      //       value: item.name,
+      //     };
+      //   });
+      // setCities(updatedCities);
+
+    
 
     axios.get(`${url}provinces?fields=name`)
-      .then((res) => {
-        res?.data?.data?.forEach((item: any) => {
-          let obj = { label: item.name, value: item.name }
-          setCities((prev: any) => [...prev, obj])
-        })
-      })
-      .catch((err: any) => {
-        console.log(err)
-      })
+    .then((res) => {
+      const updatedCities = res?.data?.data?.map((item: any) => {
+        return { 
+          label: item.name, 
+          value: item.name,          
+        }
+      });
+      setCities(updatedCities);
+    })
+    .catch((err: any) => {
+      console.log(err);
+    });
 
     axios.get(`${url}provinces?name=istanbul`)
       .then((res) => {
@@ -168,13 +191,11 @@ const FormComponent = ({ locale }: Props) => {
 
     axios.get(url)
       .then((res: any) => {
-        console.log(res.data.data)
         res?.data?.data?.neighborhoods?.map((item: any) => {
           let obj = { label: item.name, value: item.name, id: item.id }
           neighborhoodsObj.push(obj)
         })
         setNeighborhoods(neighborhoodsObj)
-
       })
       .catch((err: any) => {
         console.log(err)
@@ -185,8 +206,7 @@ const FormComponent = ({ locale }: Props) => {
     password,
     email,
     userName,
-    phoneNumber,
-    address,
+    phoneNumber,    
     avatar,
     city,
     district,
@@ -250,7 +270,6 @@ const FormComponent = ({ locale }: Props) => {
     formdata.append("categories", JSON.stringify(selectedCategories));
     formdata.append("areas_covered", JSON.stringify(areas_covered));
 
-    
     Register(formdata)
       .then((res) => {
         if (res?.data?.message == "the user exists already") {
@@ -261,7 +280,7 @@ const FormComponent = ({ locale }: Props) => {
           notification.success({
             message: t("register_success"),
           });
-
+          push("/auth/login")
         }
       })
       .catch((err: any) => {
@@ -524,7 +543,7 @@ const FormComponent = ({ locale }: Props) => {
             {/* Start Flat */}
             <Form.Item<FieldType>
               name="flat_no"
-              rules={[{ required: true, message: t("please_enter_flat") }]}
+              rules={[{ required: false, message: t("please_enter_flat") }]}
             >
               <Input
                 placeholder={t("flat")}
@@ -579,7 +598,7 @@ const FormComponent = ({ locale }: Props) => {
         <Form.Item<FieldType>
           name="cities"
           label={<span className="text-sm md:text-base block w-full">{t("areas_covred_turkey")}</span>}
-          rules={[{ required: true, message: t("please_enter_areas_covred_turkey") }]}
+          rules={[{ required: false, message: t("please_enter_areas_covred_turkey") }]}
         >
           <Select
             mode="multiple"
@@ -623,7 +642,7 @@ const FormComponent = ({ locale }: Props) => {
           name="recaptcha"
           rules={[{ required: false, message: t("please_confirm_that_you_are_not_robot") },]}
         >
-          {/* <ReCAPTCHA sitekey={process.env.SITE_KEY!} onChange={setCapched} /> */}
+          <ReCAPTCHA sitekey={process.env.SITE_KEY!} onChange={setCapched} />
         </Form.Item>
         {/*End  recaptcha*/}
 

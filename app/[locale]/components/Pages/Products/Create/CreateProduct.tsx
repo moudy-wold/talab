@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "@/app/i18n/client";
 import {
   Button,
@@ -9,78 +9,133 @@ import {
   Select,
   Switch,
   Upload,
-  notification
+  notification,
+  DatePickerProps,
+  DatePicker
 } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { MdDelete } from "react-icons/md";
 import { CategoriesList } from "@/app/[locale]/utils/constant";
+import { GetMainCategories, GetSubCategories } from "@/app/[locale]/api/categories";
 
 type FieldType = {
   product_name: string;
   category: string;
   quality: string;
-  suitable_devices: string;
+  compatible_models: string;
   images: any;
+  brand: any;
   currency: string;
+  main_categories: string;
+  sub_categories: string;
   price: string;
   quantity: string;
-  discount: string;
+  discount_price: string;
   description: string;
+  is_on_offer: boolean;
   details: {};
-  offers: boolean;
+  offer_expiry_date: string;
 };
 function CreateProduct({ locale }: any) {
   const { t, i18n } = useTranslation(locale, "common");
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [form] = useForm();
-  const [details, setDetails] = useState(["","",""]);
+  const [details, setDetails] = useState([{ title: "", content: "" }]);
+  const [compatible_models, setCompatible_models] = useState([""]);
+  const [mainCategories, setMainCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [subCategory_id, setSubCategory_id] = useState("");
+  const [is_offer, setIs_offer] = useState(false);
+  const [loading_cate, setLoading_cate] = useState(false)
 
+  const Get_main_categories = async () => {
+    try {
+      const res = await GetMainCategories();
+      let sub = res.data.data.map((item: any) => ({ label: item.name, value: item.id }))
+      setMainCategories(sub)
+    } catch (err: any) {
+      console.log(err)
+    }
+  }
 
-  const onChange = (checked: boolean) => {
-    console.log(`switch to ${checked}`);
+  const onChange_main_categories = async (value: string, option: any) => {
+    setLoading_cate(true)
+    try {
+      const res = await GetSubCategories(option.value)
+      let cate = res.data.data.map((item: any) => ({ label: item.name, value: item.id }))
+      setLoading_cate(false)
+      setSubCategories(cate)
+    }
+    catch (err: any) {
+      console.log(err)
+      setLoading_cate(false)
+    }
+  }
+
+  const onChange_datePicker: DatePickerProps['onChange'] = (date, dateString) => {
+    console.log(dateString);
   };
 
   const onFinish = ({
     product_name,
-    category,
-    quality,
-    suitable_devices,
+    sub_categories,
     images,
-    currency,
-    price,
     quantity,
-    description,
-    discount,
-    offers
+    price,
+    quality,
+    brand,
+    description,    
+    discount_price,
+    is_on_offer,
+    offer_expiry_date,
+    currency,
   }: FieldType) => {
-    setIsLoading(true);
+    // setIsLoading(true);
 
     const formData: any = new FormData();
-// For Delete Empty VIte From Details
-let filteredDetails = details.filter(item => item !== '');
+    // For Delete Empty item From Details
+    let filteredModles = compatible_models.filter((item:any) => item !== '');
+    let filteredDetails = details.filter((item:any) => item.title !== '');
+console.log( 
+  "product_name",product_name,  
+  "sub_categories,",sub_categories,
+  "images,",images,
+  "quantity,",quantity,
+  "price,",price,
+  "quality,",quality,
+  "brand,",brand,
+  "description,",description,
+  "compatible_models,",filteredModles,
+  "details,",filteredDetails,
+  "is_on_offer,",is_on_offer,
+  "discount_price,",discount_price,
+  "offer_expiry_date,",offer_expiry_date,
+  "currency,",currency,
+)
 
-
-    // formData.append("product_name", product_name);
-    // formData.append("category", category);
+    // formData.append("name", product_name);
+    // formData.append("categoryId", category);
+    // formData.append("quantity", quantity);
+    // formData.append("price", price);
+    // formData.append("details", JSON.stringify(filteredDetails));
+    // formData.append("brand", brand)
+    // formData.append("description", description)
     // formData.append("quality", quality);
-    // formData.append("suitable_devices", suitable_devices);
+    // formData.append("compatible_models", compatible_models);
     // for (let i = 0; i < images.length; i++) {
     //   formData.append("images[]", images[i].originFileObj!);
     // }
-    // formData.append("details", JSON.stringify(filteredDetails));
 
     // formData.append("currency", currency);
-    // formData.append("price", price);
-    // formData.append("quantity", quantity);
     // formData.append("discount", discount);
     // for (var pair of formData.entries()) {
     //   console.log(pair[0] + ', ' + pair[1]);
     // }
-    
-    // formData.append('offers', "tr");
+
+    // formData.append('is_on_offer', is_on_offer);
 
     // AddService(formData)
     //   .then((res) => {
@@ -104,23 +159,47 @@ let filteredDetails = details.filter(item => item !== '');
     //   });
   };
 
+  // Start Details
   const addDetailField = () => {
-    setDetails([...details, ""]);
+    setDetails([...details, { title: "", content: "" }]);
+    
   };
-
-
-  const handleDetailChange = (index: number, value: string) => {
-    const newDetails: any = [...details];
-    newDetails[index] = value;
+  
+  const handleDetailChange = (index: number, field: string, value: string) => {
+    const newDetails:any = [...details];
+    newDetails[index][field] = value;
     setDetails(newDetails);
-    console.log(newDetails);
+  };
+  
+ 
+  const handleDeleteItemFromDetails = (detail:any)=>{
+    let newArr  = details.filter((item:any) => item.title !== detail.title);
+    setDetails(newArr)
+  }
+
+  // End Details
+
+  // Start compatible_models
+  const addModelField = () => {
+    setCompatible_models([...compatible_models, ""]);
   };
 
-  const handleDeleteItemFromDetails = (detail: any) => {
-    let newArr = details.filter((item: any) => item.title !== detail.title);
-    setDetails(newArr);
+  const handleModelChange = (index: number, value: string) => {
+    // setCompatible_models((prev: any) => [...prev, value]); 
+    const newDetails:any = [...details];
+    newDetails[index] = value;
+    setCompatible_models(newDetails);
   };
 
+  const handleDeleteItemFromModel = (detail: any) => {
+    let newArr = compatible_models.filter((item: any) => item !== detail);
+    setCompatible_models(newArr);
+  };
+  // End compatible_models
+
+  useEffect(() => {
+    Get_main_categories()
+  }, [])
   return (
     <div className="">
       <Form
@@ -179,27 +258,41 @@ let filteredDetails = details.filter(item => item !== '');
           </Upload>
         </Form.Item>
         {/* Start images */}
-        {/* Start Category */}
+
+        {/* Start Main Category */}
         <Form.Item<FieldType>
-          name="category"
-          label={<span className="text-sm  md:text-base"> {t("cateory")}</span>}
-          rules={[{ required: true, message: t("please_selecte_category") }]}
+          name="main_categories"
+          label={<span className="text-sm  md:text-base">{t("main_category")}</span>}
+          rules={[{ required: true, message: t("please_enter_main_category") }]}
         >
-          <select
-            style={{ width: "100%" }}
-            className="w-full border-2 border-gray-200 rounded-lg h-12"
-          >
-            <option disabled value="" key="1">
-              {t("please_select")}
-            </option>
-            {CategoriesList.map((item) => (
-              <option value={item.value} key={item.id}>
-                {item.value}
-              </option>
-            ))}
-          </select>
+          <Select
+            showSearch
+            placeholder={t("select_main_category")}
+            optionFilterProp="label"
+            onChange={(value, option) => onChange_main_categories(value, option)}
+            options={mainCategories}
+            className="!h-12"
+          />
         </Form.Item>
-        {/* End Category */}
+        {/* End Main  Category */}
+
+        {/* Start Sub Category */}
+        <Form.Item<FieldType>
+          name="sub_categories"
+          label={<span className="text-sm  md:text-base">{t("sub_category")}</span>}
+          rules={[{ required: true, message: t("please_enter_sub_category") }]}
+        >
+          <Select
+            showSearch
+            placeholder={t("select_sub_category")}
+            optionFilterProp="label"
+            onChange={(value, option: any) => { setSubCategory_id(option?.value) }}
+            options={subCategories}
+            loading={loading_cate}
+            className="!h-12"
+          />
+        </Form.Item>
+        {/* End Sub Category */}
 
         {/* Start quality */}
         <Form.Item<FieldType>
@@ -209,16 +302,7 @@ let filteredDetails = details.filter(item => item !== '');
         >
           <Input className="!rounded-[8px] !py-3" />
         </Form.Item>
-        {/* End quality */}
-
-        {/* Start suitable_devices */}
-        <Form.Item<FieldType>
-          name="suitable_devices"
-          label={<span className="text-sm  md:text-base">{t("devices_that_accept_this_part")}</span>}
-        >
-          <Input className="!rounded-[8px] !py-3" />
-        </Form.Item>
-        {/* End suitable_devices */}
+        {/* End quality */}        
 
         {/* Start price */}
         <Form.Item<FieldType>
@@ -229,6 +313,16 @@ let filteredDetails = details.filter(item => item !== '');
           <Input className="!rounded-[8px] !py-3" />
         </Form.Item>
         {/* End price */}
+
+        {/* Start brand */}
+        <Form.Item<FieldType>
+          name="brand"
+          label={<span className="text-sm  md:text-base">{t("brand")}</span>}
+          rules={[{ required: true, message: t("please_enter_brand") }]}
+        >
+          <Input className="!rounded-[8px] !py-3" />
+        </Form.Item>
+        {/* End brand */}
 
         {/* Start currency */}
         <Form.Item<FieldType>
@@ -260,34 +354,53 @@ let filteredDetails = details.filter(item => item !== '');
         </Form.Item>
         {/* End description */}
 
-
-
-        {/* Start discount */}
+        {/* Start offers On Of */}
         <Form.Item<FieldType>
-          name="discount"
-          label={<span className="text-sm  md:text-base">{t("discount_if_there_is")}</span>}
-        >
-          <Input className="!rounded-[8px] !py-3" />
-        </Form.Item>
-        {/* End discount */}
-
-        {/* Start offers */}
-        <Form.Item<FieldType>
-          name="offers"
+          name="is_on_offer"
           label={<span className="text-sm  md:text-base">{t("is_it_included_in_the_list_of_offers")}</span>}
-          className="col-span-2"
         >
-          <Switch defaultChecked onChange={onChange} />;
+          <Switch onChange={() => { setIs_offer(!is_offer) }} />
         </Form.Item>
-        {/* End offers */}
+        {/* End offers On Of*/}
 
-        {/* Start Details */}
-        <div className="grid grid-cols-2 gap-5">
-          {details.map((detail, index) => {
+        {/* Start Offer Details */}
+        {is_offer &&
+          <div className="col-span-2 flex gap-8 items-center ">
+            {/* Start discount */}
+            <Form.Item<FieldType>
+              name="discount_price"
+              label={<span className="text-sm  md:text-base">{t("discount_price")}</span>}
+              className="w-1/2"
+            >
+              <Input className="!rounded-[8px] !py-3" />
+            </Form.Item>
+            {/* End discount */}
+
+            {/* Start Date For Offer */}
+            <Form.Item<FieldType>
+              name="offer_expiry_date"
+              label={<span className="text-sm  md:text-base">{t("offer_start_date")}</span>}
+              rules={[{ required: false, message: t("please_enter_start_date") }]}
+              className={` w-1/2`}
+            >
+              <DatePicker onChange={onChange_datePicker} className={`w-full`} />
+            </Form.Item>
+
+            {/* End Date For Offer */}
+          </div>
+        }
+        {/* End Offer Details */}
+
+  
+
+        {/* Start compatible_models */}
+        <p className="mt-8 col-span-2">{t("suitable_devices_for_this_product")} </p>
+        <div className="col-span-2 grid grid-cols-4 gap-5">
+          {compatible_models.map((model, index) => {
             return (
               <div
                 key={index}
-                className="rounded-xl p-2 pb-0 border-2 border-gray-300 rounded-lg  "
+                className="p-2 pb-0 border-2 border-gray-300 rounded-lg  "
               >
                 <Form.Item
                   rules={[{ required: true, message: t("please_enter_content") }]}
@@ -297,16 +410,16 @@ let filteredDetails = details.filter(item => item !== '');
                     <p>{`${t("device")} ${index + 1}`}</p>
                     <MdDelete
                       onClick={() => {
-                        handleDeleteItemFromDetails(detail);
+                        handleDeleteItemFromModel(model);
                       }}
                       className="text-xl hover:text-red-400 hover:scale-110 cursor-pointer transition-all duration-150"
                     />
                   </div>
 
                   <Input
-                    value={detail}
+                    value={model}
                     onChange={(e) =>
-                      handleDetailChange(index, e.target.value)
+                      handleModelChange(index, e.target.value)
                     }
                     placeholder={t(`compatible_with_any_device`)}
                     className="!rounded-[8px] !py-3 mt-1"
@@ -315,19 +428,68 @@ let filteredDetails = details.filter(item => item !== '');
               </div>
             );
           })}
-        <div className="w-full flex items-center ">
-          <Button className="w-full h-12" onClick={addDetailField}>
-            {t("add_new_device")}
-          </Button>
 
+          <div className="w-full flex items-center ">
+            <Button className="w-full h-12" onClick={addModelField}>
+              {t("add_new_device")}
+            </Button>
+
+          </div>
         </div>
+        {/* End compatible_models */}
+
+
+      {/* Start Details */}
+      <p className="mt-8 ">{t("product_details")} </p>
+        <div className="col-span-2 grid grid-cols-4 gap-5">
+        {
+          details.map((detail, index) => {
+            return (
+              <div key={index} className="border-2 border-gray-300 rounded-xl p-2 my-3">
+                <Form.Item
+                  label={`${t("feature_title")} ${index + 1}`}
+                  rules={[{ required: false, message: t("please_enter_title") }]}
+                >
+                  <Input
+                    value={detail.title}
+                    onChange={(e) => handleDetailChange(index, "title", e.target.value)}
+                    className="!rounded-[8px] !py-3"
+                  />
+                </Form.Item>
+                <Form.Item
+                  label={`${t("feature_content")} ${index + 1}`}
+                  rules={[{ required: false, message: t("please_enter_content") }]}
+                >
+                  <Input
+                    value={detail.content}
+                    onChange={(e) => handleDetailChange(index, "content", e.target.value)}
+                    className="!rounded-[8px] !py-3"
+                  />
+                </Form.Item>
+                <div className="px-1 my-3">
+                  
+                  <MdDelete 
+                  onClick={()=>{handleDeleteItemFromDetails(detail)}}
+                  className="text-xl hover:text-red-400 hover:scale-110 cursor-pointer transition-all duration-150" />
+                
+                </div>
+              </div>
+            );
+          })
+          }
+
+          <div className="w-full flex items-center ">
+            <Button className="w-full h-12" onClick={addDetailField}>
+              {t("add_new_feature")}
+            </Button>
+
+          </div>
         </div>
         {/* End Details */}
-
         <div className=" col-span-2">
           <button
             type="submit"
-            className="rounded-full w-28 py-2 flex items-center justify-center text-base lg:text-xl text-white bg-[#006496] transition-all hover:bg-white hover:text-[#006496] hover:translate-y-1"
+            className="my-10 border-2 border-[#006496] rounded-full w-28 py-2 flex items-center justify-center text-base lg:text-xl text-white bg-[#006496] transition-all hover:bg-white hover:text-[#006496]"
           >
             {t("add")}
           </button>

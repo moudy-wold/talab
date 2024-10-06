@@ -1,6 +1,6 @@
 'use client';
 import { ForgetPass } from "@/app/[locale]/api/auth";
-import Loader from '@/app/[locale]/components/Global/Loader/Loader';
+import LargeLoader from '@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader';
 import { Alert, Form, Input, Modal, notification } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -47,7 +47,7 @@ function FormComponent(props: any) {
 
   return (
     <div className="m-auto p-4">
-      {isLoading && <Loader />}
+      {isLoading && <LargeLoader />}
       {errors.length !== 0 && (
         <div className="my-4">
           <Alert message="خطأ" description={errors} type="error" showIcon />
@@ -95,13 +95,14 @@ function FormComponent(props: any) {
           {t("login")}
         </Link>
       </div>
+
       <Modal
         title={t("account_creation_details")}
         centered
         open={openVerifyPopup}
         okButtonProps={{ style: { display: 'none' } }}
         onCancel={() => { setOpenVerifyPopup(false); router.push("/auth/login"); }}
-        width={500}
+        width={700}
       >
         <OTPPopup setOpenVerifyPopup={setOpenVerifyPopup} emailValue={emailValue} locale={props.locale} />
       </Modal>

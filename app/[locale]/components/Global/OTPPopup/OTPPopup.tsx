@@ -5,7 +5,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { Form, Input, notification } from "antd";
 import { ConfirmOTP, ResendOTP, ResetPass } from "@/app/[locale]/api/auth";
-import Loader from "../Loader/Loader";
+import LargeLoader from "../Loader/LargeLoader/LargeLoader";
 import { useForm } from 'antd/es/form/Form';
 import { useTranslation } from "@/app/i18n/client";
 
@@ -22,32 +22,15 @@ const OTPPopup = (props: any) => {
   const path = usePathname()
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-
   const [otp, setOtp] = useState<string>("");
   const [resendDisabled, setResendDisabled] = useState<boolean>(false);
   const [countdown, setCountdown] = useState<number>(60);
 
-  const handleConfirm = async () => {
-    setIsLoading(true)
-    ConfirmOTP(otp)
-      .then((res) => {
-        console.log(res)
-        router.push("/auth/login")
-      })
-      .catch((err: any) => {
-        notification.error({
-          message: err.data.message,
-        });
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }
-
 
   const handleResendOTP = async () => {
+    setIsLoading(true)
 
-    ResendOTP()
+    ResendOTP(props.emailValue)
       .then((res) => {
         console.log(res.status)
         if (res.status) {
@@ -70,11 +53,10 @@ const OTPPopup = (props: any) => {
   };
 
   const onFinish = async (data: any) => {
-    console.log(data)
-    console.log(props.emailValue)
     setIsLoading(true)
     if (props.emailValue) {
-      ResetPass(data.otp, props.emailValue, data.password)
+      console.log(props.emailValue, data.otp, data.password)
+      ResetPass(props.emailValue, data.otp, data.password)
         .then((res: any) => {
           console.log(res)
           if (res.status) {
@@ -83,6 +65,7 @@ const OTPPopup = (props: any) => {
               message: t("code_has_been_sent_to_your_email")
             })
             props.setOpenVerifyPopup(false)
+            router.push("/auth/login")
           }
         })
         .catch((err: any) => {
@@ -93,6 +76,7 @@ const OTPPopup = (props: any) => {
           setIsLoading(false)
         })
     } else {
+      console.log(data)
       ConfirmOTP(otp)
         .then((res) => {
           console.log(res)
@@ -137,9 +121,8 @@ const OTPPopup = (props: any) => {
 
   return (
     <div
-      className={`absolute inset-0 top-0 flex items-center justify-center z-50`}>
-      {isLoading && <Loader />}
-      <div className="fixed inset-0 bg-black opacity-50 z-30"></div>
+      className={`flex items-center justify-center `}>
+      {isLoading && <LargeLoader />}      
       <Form
         form={form}
         name="send-email"
@@ -150,7 +133,8 @@ const OTPPopup = (props: any) => {
         className=""
       >
         <div className="flex flex-col bg-white px-10 py-10 rounded-3xl z-50 relative items-center justify-center ">
-          <button
+          {/* Start Close Modal */}
+          {/* <button
             onClick={() => {
               setOtp("");
               props.setOpenVerifyPopup(false);
@@ -159,19 +143,24 @@ const OTPPopup = (props: any) => {
             className="absolute -top-6 right-0 p-3 rounded-full"
           >
             <Image
-              src={"/assets/cancel.svg"}
+              src={"/assets/svg/cancel.svg"}
               alt="cancele"
               width={30}
               height={30}
             />
-          </button>
+          </button> */}
+          {/* End Close Modal */}
+
+          {/* Start Titles */}
           <h2 className=" font-bold text-3xl text-[#003459] mb-2">
             {t("verification_code")}
           </h2>
           <p className="text-[#00171F]  w-full mt-5">
             {t("enter_6_bar_verification_code")}
-
           </p>
+          {/* End Titles */}
+
+          {/* Start Otp Field */}
           <Form.Item<FieldType>
             name="otp">
             <OtpInput
@@ -195,6 +184,9 @@ const OTPPopup = (props: any) => {
               }}
             />
           </Form.Item>
+          {/* End Otp Field */}
+
+          {/* Start Text */}
           <div className="flex items-center justify-cetner text-center gap-3 mb-10 w-full ">
             <p className=" text-[#00171F]"> {t("didnt_you_receive_code")} </p>
             <p className={`text-[#006496] underline cursor-pointer 
@@ -206,6 +198,9 @@ const OTPPopup = (props: any) => {
                 : t("rebroadcast")}
             </p>
           </div>
+          {/* End Text */}
+
+          {/* Start Password Field */}
           {props.emailValue &&
             <div className="flex items-center justify-between gap-5 w-full">
               <Form.Item<FieldType>
@@ -239,16 +234,11 @@ const OTPPopup = (props: any) => {
                   <Input.Password placeholder={t("confirm_password")} className="!rounded-[2px]    !py-3 placeholder:!text-[#646464]" />
                 </div>
               </Form.Item>
-            </div>}
-          {/* <div className=" col-span-2">
-            <button
-              type="submit" className="rounded-full w-28 py-2 flex items-center justify-center text-base lg:text-xl text-white bg-[#006496] transition-all hover:bg-white hover:text-[#006496] hover:translate-y-1"
-            >
-              {t("send")}
-            </button>
-          </div> */}
+            </div>
+          }
+          {/*End Password Field */}
+          
           <button
-            // onClick={handleConfirm}
             type="submit"
             className="w-full bg-[#006496] text-white font-bold text-xl lg:text-2xl  rounded-xl flex items-center justify-center pb-2 pt-2 hover:text-[#006496] hover:bg-white border-2 border-[#006496] transition-all duration-150"> {t("confirm")}</button>
         </div>
