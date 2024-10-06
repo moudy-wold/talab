@@ -32,7 +32,6 @@ function Sidebar({ locale }: Props) {
     localStorage.setItem("categoryId", category._id);
   };
   useEffect(() => {
-    // setIsLoading(true);
 
     let arr: any = {
       label: t("categories"),
@@ -97,6 +96,7 @@ function Sidebar({ locale }: Props) {
         },
       ]
     },
+    
     {
       label: t("orders"),
       key: "4",

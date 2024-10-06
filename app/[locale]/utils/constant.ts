@@ -90,3 +90,8 @@ export const Languages = [
   { id: 2, title: "EN", value: "en" },
   { id: 3, title: "TR", value: "tr" },
 ];
+
+export const Currencies = [
+  { id: 1, label: "₺ Türk Lirası", value: "tr" },
+  { id: 2, label: "$ Dollar", value: "dolar" }
+];

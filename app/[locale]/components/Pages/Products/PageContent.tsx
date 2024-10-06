@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import Loader from "@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader";
-import { Space, Table, Modal, Button, notification } from "antd";
+import { Space, Table, Modal, Button, notification, Switch } from "antd";
 import { ColumnsType } from "antd/es/table";
 import moment from "moment";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -17,6 +17,7 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import { useTranslation } from "@/app/i18n/client";
 import ImagesSlider from "../../Global/ImagesSlider/ImagesSlider";
 import SearchProducts from "../../Global/Search/SearchProducts/SearchProducts";
+import { DeleteProduct, GetAllProduct } from "@/app/[locale]/api/products";
 type Props = {
   locale: string,
 }
@@ -32,57 +33,47 @@ function ProductsList({ locale }: Props) {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
-  const [data, setData] = useState([
-    {
-      id: "asd",
-      product_name: "product_name",
-      images: ["/assets/1009571293.webp"],
-      createdDate:"2024/05/19",
-      main_category: "main1",
-      sub_category: "sub1",
-      description:"asdasd",
-      quantity: 5,
-      in_offer: true
-    }, {
-      id: "asd",
-      product_name: "product_name",
-      images: ["/assets/1009571293.webp"],
-      createdDate:"2024/05/19",
-      main_category: "main1",
-      sub_category: "sub1",
-      description:"asdasd",
-      quantity: 5,
-      in_offer: true
-    }, {
-      id: "asd",
-      product_name: "product_name",
-      images: ["/assets/1009571293.webp"],
-      createdDate:"2024/05/19",
-      main_category: "main1",
-      sub_category: "sub1",
-      description:"asdasd",
-      quantity: 5,
-      in_offer: true
-    },
-  ]);
+  const [data, setData] = useState([]);
+  const [id, setId] = useState("");
 
+  const getData = async () => {
+    try {
+      const res = await GetAllProduct(1);
+      setCurrentPage(res.data.pagination.current_page);
+      setTotalItems(res.data.pagination.total);
+      setPageSize(res.data.pagination.per_page);
+      console.log(res.data.data);
+      setData(res.data.data)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+// First Fetch
+  useEffect(() => {
+    getData()
+  }, [])
 
   const handlePageChange = async (page: any) => {
-    // setPage(page + 1);
-    // setIsLoading(true);
-    // try {
-    //   const res = await GetProductsByCategory(categoryId, page + 10);
-    //   setData(res.data.data);
-    //   setCurrentPage(page);
-    //   setIsLoading(true);
-    // } catch (err: any) {
-    //   notification.error({
-    //     message: err.response.data.error.message,
-    //   });
-    //   setIsLoading(true);
-    // }
+    setPage(page + 1);
+    setIsLoading(true);
+    try {
+      console.log(page)
+      const res = await GetAllProduct(page);
+      console.log(res.data.data)
+      setData(res.data.customers);
+      setCurrentPage(res.data.pagination.current_page);
+      setData(res.data.data)
+      setIsLoading(false);
+
+    } catch (err: any) {
+      setIsLoading(false);
+console.log(err)
+      notification.error({
+        message: err.response.data.message,
+      });
+    }
   };
-  
+
   const columns: ColumnsType<any> = [
     {
       title: t("product_name"),
@@ -91,8 +82,7 @@ function ProductsList({ locale }: Props) {
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
     },
     {
-      title: t("product_image"),
-      width: 250,
+      title: t("product_images"),
       dataIndex: "images",
       key: "images",
       render: (_, record) => (
@@ -118,42 +108,52 @@ function ProductsList({ locale }: Props) {
     {
       title: t("category"),
       dataIndex: "category",
-      key: "category",      
+      key: "category",
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
       render: (text) => <a>{text}</a>,
     },
     {
       title: t("quantity"),
       dataIndex: "quantity",
-      key: "quantity",      
+      key: "quantity",
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
       render: (text) => <a>{text}</a>,
     },
     {
       title: t("description"),
       dataIndex: "description",
-      key: "description",      
+      key: "description",
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
       render: (text) => <a>{text}</a>,
     },
     {
+      title: t("is_in_offer"),
+      dataIndex: "is_in_offer",
+      key: "is_in_offer",
+      sorter: (a: any, b: any) => a.name.localeCompare(b.name),
+      render: (_, record) => (
+        <Space size="middle">
+          <Switch defaultValue={record.is_in_offer == "1" ? true : false} disabled />
+        </Space>
+      )
+    },
+    {
       title: t("date_added"),
-      width: 250,
       dataIndex: "createdDate",
       key: "createdDate",
     },
     {
       title: t("actions"),
-      width: 250,
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-          <a href={`/admin/products/edit/${record.id}`}>
+          <a href={`/dashboard/products/edit/${record.id}`}>
             <CiEdit />
           </a>
           <a>
             <RiDeleteBinLine
               onClick={() => {
+                setId(record.id)
                 setOpenDelete(true);
               }}
             />
@@ -166,12 +166,38 @@ function ProductsList({ locale }: Props) {
   const tableData = data?.map((item: any) => ({
     id: item._id,
     images: item.images,
-    name: item.product_name,
-    category:`${item.main_category}/${item.sub_category}`,
-    quantity:item.quantity,
+    name: item.name,
+    category: `${item.category_main.name} / ${item.category_sub.name}`,
+    quantity: item.quantity,
     description: item.description,
+    is_in_offer: item.is_on_offer,
     createdDate: moment(item.createdAt).locale("en").format("DD/MM/YYYY"),
   }));
+
+  const hideModalAndDeleteItem = () => {
+    setIsLoading(true);
+    setOpenDelete(false);
+    DeleteProduct(id)
+      .then((res) => {
+        if (res.status) {
+          notification.success({
+            message: t("product_has_been_successfully_deleted"),
+          });
+        }
+        setOpenDelete(false);
+        setIsLoading(false);
+        router.refresh();
+      })
+      .catch((err) => {
+        console.log(err)
+        setIsLoading(false);
+        notification.error({
+          message: err.response.data.message,
+        });
+      });
+  };
+
+
   return (
     <div>
       {isLoading && <Loader />}
@@ -192,13 +218,23 @@ function ProductsList({ locale }: Props) {
         </div>
       </div>
 
-      <Table columns={columns} dataSource={tableData} scroll={{ x: 1400 }} />
+      <Table
+        columns={columns}
+        dataSource={tableData}
+        scroll={{ x: 1400 }} 
+        pagination={{
+          current: currentPage,
+          pageSize: pageSize,
+          total: totalItems,
+          onChange: handlePageChange,
+        }}
+        />
 
       <div>
         <Modal
           title={t("delete_product!!!")}
           open={openDelete}
-          // onOk={hideModalAndDeleteItem}
+          onOk={hideModalAndDeleteItem}
           onCancel={() => setOpenDelete(false)}
           okText={t("confirm")}
           cancelText={t("close")}

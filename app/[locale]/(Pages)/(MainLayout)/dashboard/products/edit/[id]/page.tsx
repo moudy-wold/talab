@@ -1,5 +1,6 @@
 import React from "react";
-// import PageContent from '@/app/[locale]/components/Pages/Categories/PageContent';
+import EditProduct from '@/app/[locale]/components/Pages/Products/Edit/EditProduct';
+import { GetProductById } from "@/app/[locale]/api/products";
 
 type Params = {
   params: {
@@ -7,8 +8,13 @@ type Params = {
     id: string;
   };
 };
-function Page({ params: { locale, id } }: Params) {
-  return <div>{/* <PageContent locale={locale}/> */}</div>;
+async function Page({ params: { locale, id } }: Params) {
+  // const data = await GetProductById(id)
+  return (
+    <div>
+
+      <EditProduct locale={locale} id={id} />
+    </div>)
 }
 
 export default Page;

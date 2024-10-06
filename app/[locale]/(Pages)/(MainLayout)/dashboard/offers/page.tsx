@@ -5,10 +5,10 @@ type Params = {
     params: {
         locale: string;
       };}
-function Page({ params: { locale } }:Params) {
+async function Page({ params: { locale } }:Params) {
   return (
     <div>
-      <OffersPage locale={locale}/>
+      <OffersPage locale={locale} />
     </div>
   )
 }

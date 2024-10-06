@@ -17,14 +17,16 @@ import { useForm } from "antd/es/form/Form";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { MdDelete } from "react-icons/md";
-import { CategoriesList } from "@/app/[locale]/utils/constant";
+import { CategoriesList, Currencies } from "@/app/[locale]/utils/constant";
 import { GetMainCategories, GetSubCategories } from "@/app/[locale]/api/categories";
+import { AddProduct } from "@/app/[locale]/api/products";
+import LargeLoader from "../../../Global/Loader/LargeLoader/LargeLoader";
+
 
 type FieldType = {
   product_name: string;
   category: string;
   quality: string;
-  compatible_models: string;
   images: any;
   brand: any;
   currency: string;
@@ -35,6 +37,7 @@ type FieldType = {
   discount_price: string;
   description: string;
   is_on_offer: boolean;
+  compatible_models: any;
   details: {};
   offer_expiry_date: string;
 };
@@ -50,6 +53,7 @@ function CreateProduct({ locale }: any) {
   const [subCategory_id, setSubCategory_id] = useState("");
   const [is_offer, setIs_offer] = useState(false);
   const [loading_cate, setLoading_cate] = useState(false)
+  const [offer_expiry, setFffer_expiry] = useState<any>();
 
   const Get_main_categories = async () => {
     try {
@@ -76,7 +80,8 @@ function CreateProduct({ locale }: any) {
   }
 
   const onChange_datePicker: DatePickerProps['onChange'] = (date, dateString) => {
-    console.log(dateString);
+    setFffer_expiry(dateString);
+
   };
 
   const onFinish = ({
@@ -87,93 +92,73 @@ function CreateProduct({ locale }: any) {
     price,
     quality,
     brand,
-    description,    
+    description,
     discount_price,
     is_on_offer,
     offer_expiry_date,
     currency,
   }: FieldType) => {
-    // setIsLoading(true);
+    setIsLoading(true);
 
     const formData: any = new FormData();
-    // For Delete Empty item From Details
-    let filteredModles = compatible_models.filter((item:any) => item !== '');
-    let filteredDetails = details.filter((item:any) => item.title !== '');
-console.log( 
-  "product_name",product_name,  
-  "sub_categories,",sub_categories,
-  "images,",images,
-  "quantity,",quantity,
-  "price,",price,
-  "quality,",quality,
-  "brand,",brand,
-  "description,",description,
-  "compatible_models,",filteredModles,
-  "details,",filteredDetails,
-  "is_on_offer,",is_on_offer,
-  "discount_price,",discount_price,
-  "offer_expiry_date,",offer_expiry_date,
-  "currency,",currency,
-)
-
-    // formData.append("name", product_name);
-    // formData.append("categoryId", category);
-    // formData.append("quantity", quantity);
-    // formData.append("price", price);
-    // formData.append("details", JSON.stringify(filteredDetails));
-    // formData.append("brand", brand)
-    // formData.append("description", description)
-    // formData.append("quality", quality);
-    // formData.append("compatible_models", compatible_models);
-    // for (let i = 0; i < images.length; i++) {
-    //   formData.append("images[]", images[i].originFileObj!);
-    // }
-
+    let filteredModles = compatible_models.filter((item: any) => item !== '');
+    let filteredDetails = details.filter((item: any) => item.title !== '');
+    formData.append("name", product_name);
+    formData.append("categoryId", sub_categories);
+    formData.append("quantity", quantity);
+    formData.append("price", price);
+    formData.append("details", JSON.stringify(filteredDetails));
+    formData.append("brand", brand)
+    formData.append("description", description)
+    formData.append("quality", quality);
+    for (let i = 0; i < images.length; i++) {
+      formData.append("images[]", images[i].originFileObj!);
+    }
+    formData.append('is_on_offer', is_on_offer ? "1" : "0");
+    if (is_on_offer) {
+      formData.append("discount_price", discount_price);
+      formData.append('offer_expiry_date', offer_expiry);
+    }
+    formData.append("compatible_models", JSON.stringify(filteredModles));
     // formData.append("currency", currency);
-    // formData.append("discount", discount);
-    // for (var pair of formData.entries()) {
-    //   console.log(pair[0] + ', ' + pair[1]);
-    // }
 
-    // formData.append('is_on_offer', is_on_offer);
+    AddProduct(formData)
+      .then((res) => {
+        if (res.status) {
+          form.resetFields();
+          notification.success({
+            message: t("add_successfully")
+          });
+          router.back();
 
-    // AddService(formData)
-    //   .then((res) => {
-    //     if (res.status) {
-    //       form.resetFields();
-    //       setOpenPrint(true)
-    //       notification.success({
-    //         message: t("add_successfully")
-    //       });
-    //       // router.back();
-
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     notification.error({
-    //       message: err.response.data.message
-    //     });
-    //   })
-    //   .finally(() => {
-    //     setIsLoading(false);
-    //   });
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+        notification.error({
+          message: err.response.data.message
+        });
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   // Start Details
   const addDetailField = () => {
     setDetails([...details, { title: "", content: "" }]);
-    
+
   };
-  
+
   const handleDetailChange = (index: number, field: string, value: string) => {
-    const newDetails:any = [...details];
+    const newDetails: any = [...details];
     newDetails[index][field] = value;
     setDetails(newDetails);
   };
-  
- 
-  const handleDeleteItemFromDetails = (detail:any)=>{
-    let newArr  = details.filter((item:any) => item.title !== detail.title);
+
+
+  const handleDeleteItemFromDetails = (detail: any) => {
+    let newArr = details.filter((item: any) => item.title !== detail.title);
     setDetails(newArr)
   }
 
@@ -186,9 +171,9 @@ console.log(
 
   const handleModelChange = (index: number, value: string) => {
     // setCompatible_models((prev: any) => [...prev, value]); 
-    const newDetails:any = [...details];
-    newDetails[index] = value;
-    setCompatible_models(newDetails);
+    const newModel: any = [...compatible_models];
+    newModel[index] = value;
+    setCompatible_models(newModel);
   };
 
   const handleDeleteItemFromModel = (detail: any) => {
@@ -199,9 +184,11 @@ console.log(
 
   useEffect(() => {
     Get_main_categories()
-  }, [])
+  }, []);
+
   return (
     <div className="">
+      {isLoading && <LargeLoader />}
       <Form
         form={form}
         name="blog-create"
@@ -302,7 +289,7 @@ console.log(
         >
           <Input className="!rounded-[8px] !py-3" />
         </Form.Item>
-        {/* End quality */}        
+        {/* End quality */}
 
         {/* Start price */}
         <Form.Item<FieldType>
@@ -328,10 +315,15 @@ console.log(
         <Form.Item<FieldType>
           name="currency"
           label={<span className="text-sm  md:text-base">{t("currency")}</span>}
-          rules={[{ required: true, message: t("please_enter_currency") }]}
-
+          rules={[{ required: true, message: t("please_select_currency") }]}
         >
-          <Input className="!rounded-[8px] !py-3" />
+          <Select
+            placeholder={t("select_currency")}
+            optionFilterProp="label"
+            // onChange={(value, option: any) => { setSubCategory_id(option?.value) }}
+            options={Currencies}
+            className="!h-12"
+          />
         </Form.Item>
         {/* End currency */}
 
@@ -379,8 +371,8 @@ console.log(
             {/* Start Date For Offer */}
             <Form.Item<FieldType>
               name="offer_expiry_date"
-              label={<span className="text-sm  md:text-base">{t("offer_start_date")}</span>}
-              rules={[{ required: false, message: t("please_enter_start_date") }]}
+              label={<span className="text-sm  md:text-base">{t("offer_end_date")}</span>}
+              rules={[{ required: false, message: t("please_enter_end_date")}]}
               className={` w-1/2`}
             >
               <DatePicker onChange={onChange_datePicker} className={`w-full`} />
@@ -391,98 +383,102 @@ console.log(
         }
         {/* End Offer Details */}
 
-  
+
 
         {/* Start compatible_models */}
-        <p className="mt-8 col-span-2">{t("suitable_devices_for_this_product")} </p>
-        <div className="col-span-2 grid grid-cols-4 gap-5">
-          {compatible_models.map((model, index) => {
-            return (
-              <div
-                key={index}
-                className="p-2 pb-0 border-2 border-gray-300 rounded-lg  "
-              >
-                <Form.Item
-                  rules={[{ required: true, message: t("please_enter_content") }]}
-                  className=""
+        <div className="col-span-2">
+          <p className="mt-8 mb-3 col-span-2">{t("suitable_devices_for_this_product")} </p>
+          <div className="col-span-2 grid grid-cols-4 gap-5">
+            {compatible_models.map((model, index) => {
+              return (
+                <div
+                  key={index}
+                  className="p-2 pb-0 border-2 border-gray-300 rounded-lg  "
                 >
-                  <div className="px-1 flex items-center justify-between">
-                    <p>{`${t("device")} ${index + 1}`}</p>
-                    <MdDelete
-                      onClick={() => {
-                        handleDeleteItemFromModel(model);
-                      }}
-                      className="text-xl hover:text-red-400 hover:scale-110 cursor-pointer transition-all duration-150"
+                  <Form.Item
+                    rules={[{ required: true, message: t("please_enter_content") }]}
+                    className=""
+                  >
+                    <div className="px-1 flex items-center justify-between">
+                      <p>{`${t("device")} ${index + 1}`}</p>
+                      <MdDelete
+                        onClick={() => {
+                          handleDeleteItemFromModel(model);
+                        }}
+                        className="text-xl hover:text-red-400 hover:scale-110 cursor-pointer transition-all duration-150"
+                      />
+                    </div>
+
+                    <Input
+                      value={model}
+                      onChange={(e) =>
+                        handleModelChange(index, e.target.value)
+                      }
+                      placeholder={t(`compatible_with_any_device`)}
+                      className="!rounded-[8px] !py-3 mt-1"
                     />
-                  </div>
+                  </Form.Item>
+                </div>
+              );
+            })}
 
-                  <Input
-                    value={model}
-                    onChange={(e) =>
-                      handleModelChange(index, e.target.value)
-                    }
-                    placeholder={t(`compatible_with_any_device`)}
-                    className="!rounded-[8px] !py-3 mt-1"
-                  />
-                </Form.Item>
-              </div>
-            );
-          })}
+            <div className="w-full flex items-center ">
+              <Button className="w-full h-12" onClick={addModelField}>
+                {t("add_new_device")}
+              </Button>
 
-          <div className="w-full flex items-center ">
-            <Button className="w-full h-12" onClick={addModelField}>
-              {t("add_new_device")}
-            </Button>
-
+            </div>
           </div>
         </div>
         {/* End compatible_models */}
 
 
-      {/* Start Details */}
-      <p className="mt-8 ">{t("product_details")} </p>
-        <div className="col-span-2 grid grid-cols-4 gap-5">
-        {
-          details.map((detail, index) => {
-            return (
-              <div key={index} className="border-2 border-gray-300 rounded-xl p-2 my-3">
-                <Form.Item
-                  label={`${t("feature_title")} ${index + 1}`}
-                  rules={[{ required: false, message: t("please_enter_title") }]}
-                >
-                  <Input
-                    value={detail.title}
-                    onChange={(e) => handleDetailChange(index, "title", e.target.value)}
-                    className="!rounded-[8px] !py-3"
-                  />
-                </Form.Item>
-                <Form.Item
-                  label={`${t("feature_content")} ${index + 1}`}
-                  rules={[{ required: false, message: t("please_enter_content") }]}
-                >
-                  <Input
-                    value={detail.content}
-                    onChange={(e) => handleDetailChange(index, "content", e.target.value)}
-                    className="!rounded-[8px] !py-3"
-                  />
-                </Form.Item>
-                <div className="px-1 my-3">
-                  
-                  <MdDelete 
-                  onClick={()=>{handleDeleteItemFromDetails(detail)}}
-                  className="text-xl hover:text-red-400 hover:scale-110 cursor-pointer transition-all duration-150" />
-                
-                </div>
-              </div>
-            );
-          })
-          }
+        {/* Start Details */}
+        <div className="col-span-2">
+          <p className="mt-8 ">{t("product_details")} </p>
+          <div className="col-span-2 grid grid-cols-4 gap-5">
+            {
+              details.map((detail, index) => {
+                return (
+                  <div key={index} className="border-2 border-gray-300 rounded-xl p-2 my-3">
+                    <Form.Item
+                      label={`${t("feature_title")} ${index + 1}`}
+                      rules={[{ required: false, message: t("please_enter_title") }]}
+                    >
+                      <Input
+                        value={detail.title}
+                        onChange={(e) => handleDetailChange(index, "title", e.target.value)}
+                        className="!rounded-[8px] !py-3"
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label={`${t("feature_content")} ${index + 1}`}
+                      rules={[{ required: false, message: t("please_enter_content") }]}
+                    >
+                      <Input
+                        value={detail.content}
+                        onChange={(e) => handleDetailChange(index, "content", e.target.value)}
+                        className="!rounded-[8px] !py-3"
+                      />
+                    </Form.Item>
+                    <div className="px-1 my-3">
 
-          <div className="w-full flex items-center ">
-            <Button className="w-full h-12" onClick={addDetailField}>
-              {t("add_new_feature")}
-            </Button>
+                      <MdDelete
+                        onClick={() => { handleDeleteItemFromDetails(detail) }}
+                        className="text-xl hover:text-red-400 hover:scale-110 cursor-pointer transition-all duration-150" />
 
+                    </div>
+                  </div>
+                );
+              })
+            }
+
+            <div className="w-full flex items-center ">
+              <Button className="w-full h-12" onClick={addDetailField}>
+                {t("add_new_feature")}
+              </Button>
+
+            </div>
           </div>
         </div>
         {/* End Details */}
