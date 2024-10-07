@@ -14,6 +14,7 @@ import {
   DatePicker
 } from "antd";
 import { useForm } from "antd/es/form/Form";
+import dayjs from 'dayjs';
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { MdDelete } from "react-icons/md";
@@ -53,8 +54,11 @@ function CreateProduct({ locale }: any) {
   const [subCategory_id, setSubCategory_id] = useState("");
   const [is_offer, setIs_offer] = useState(false);
   const [loading_cate, setLoading_cate] = useState(false)
-  const [offer_expiry, setFffer_expiry] = useState<any>();
+  const [dates, setDates] = useState<any>({ offer_start_date: "", offer_expiry_date: "" })
 
+  const disabledDate = (current: any) => {
+    return current && current < dayjs().startOf('day');
+  };
   const Get_main_categories = async () => {
     try {
       const res = await GetMainCategories();
@@ -78,11 +82,6 @@ function CreateProduct({ locale }: any) {
       setLoading_cate(false)
     }
   }
-
-  const onChange_datePicker: DatePickerProps['onChange'] = (date, dateString) => {
-    setFffer_expiry(dateString);
-
-  };
 
   const onFinish = ({
     product_name,
@@ -117,10 +116,11 @@ function CreateProduct({ locale }: any) {
     formData.append('is_on_offer', is_on_offer ? "1" : "0");
     if (is_on_offer) {
       formData.append("discount_price", discount_price);
-      formData.append('offer_expiry_date', offer_expiry);
+      formData.append('offer_start_date', dates.offer_start_date);
+      formData.append('offer_expiry_date', dates.offer_expiry_date);
     }
     formData.append("compatible_models", JSON.stringify(filteredModles));
-    // formData.append("currency", currency);
+    formData.append("currency", currency);
 
     AddProduct(formData)
       .then((res) => {
@@ -191,7 +191,7 @@ function CreateProduct({ locale }: any) {
       {isLoading && <LargeLoader />}
       <Form
         form={form}
-        name="blog-create"
+        name="create-product"
         initialValues={{ remember: true }}
         autoComplete="off"
         layout="vertical"
@@ -362,20 +362,34 @@ function CreateProduct({ locale }: any) {
             <Form.Item<FieldType>
               name="discount_price"
               label={<span className="text-sm  md:text-base">{t("discount_price")}</span>}
+              rules={[{ required: is_offer, message: t("please_enter_discount_price") }]}
               className="w-1/2"
             >
               <Input className="!rounded-[8px] !py-3" />
             </Form.Item>
             {/* End discount */}
 
+            {/* Start Start Date */}
+            <div className="w-1/2 ">
+              <Form.Item<FieldType>
+                name="offer_start_date"
+                label={<span className="text-sm  md:text-base">{t("offer_start_date")}</span>}
+                rules={[{ required: is_offer, message: t("please_enter_start_date") }]}
+              >
+                <DatePicker disabledDate={disabledDate} onChange={(value, option) => { setDates((prev: any) => ({ ...prev, offer_start_date: option })) }} className={`w-full !h-12`} />
+              </Form.Item>
+            </div>
+            {/* End Start Date */}
+
+
             {/* Start Date For Offer */}
             <Form.Item<FieldType>
               name="offer_expiry_date"
               label={<span className="text-sm  md:text-base">{t("offer_end_date")}</span>}
-              rules={[{ required: false, message: t("please_enter_end_date")}]}
+              rules={[{ required: is_offer, message: t("please_enter_end_date") }]}
               className={` w-1/2`}
             >
-              <DatePicker onChange={onChange_datePicker} className={`w-full`} />
+              <DatePicker disabledDate={disabledDate} onChange={(value, option) => { setDates((prev: any) => ({ ...prev, offer_start_date: option })) }} className={`w-full !h-12`} />
             </Form.Item>
 
             {/* End Date For Offer */}

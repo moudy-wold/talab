@@ -1,6 +1,4 @@
 import React from "react";
-import Image from "next/image";
-
 import Loader from '@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader'
 
 

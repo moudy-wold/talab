@@ -4,10 +4,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import Loader from "@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader";
-import { Space, Table, Modal, Button, notification, Switch } from "antd";
+import { Space, Table, Modal, Button, notification, Switch, DatePicker, DatePickerProps } from "antd";
 import { ColumnsType } from "antd/es/table";
 import moment from "moment";
- 
+
 import { CiCirclePlus, CiEdit } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { useTranslation } from "@/app/i18n/client";
@@ -21,9 +21,9 @@ function OffersPage({ locale }: Props) {
   const { t } = useTranslation(locale, "common");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const [openDelete, setOpenDelete] = useState(false);
-  const [openImages, setOpenImages] = useState(false);
-  const [images, setImages] = useState([]);
+  const [openDeleteOffer, setOpenDeleteOffer] = useState(false);
+  const [openDates, setOpenDates] = useState(false);
+  const [dates, setDates] = useState<any>({ offer_start_date: "", offer_expiry_date: "" })
 
   const [page, setPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -44,7 +44,7 @@ function OffersPage({ locale }: Props) {
       console.log(err)
     }
   }
-// First Fetch
+  // First Fetch
   useEffect(() => {
     getData()
   }, [])
@@ -63,7 +63,7 @@ function OffersPage({ locale }: Props) {
 
     } catch (err: any) {
       setIsLoading(false);
-console.log(err)
+      console.log(err)
       notification.error({
         message: err.response.data.message,
       });
@@ -84,12 +84,7 @@ console.log(err)
       render: (_, record) => (
         <Space size="middle">
           <span
-            className="border-2 border-gray-400 rounded-xl p-1 hover:bg-gray-100 block text-xs lg:text-xl text-center !w-[150px] !h-[150px]"
-            onClick={() => {
-              setImages(record.images);
-              setOpenImages(true);
-            }}
-          >
+            className="border-2 border-gray-400 rounded-xl p-1 hover:bg-gray-100 block text-xs lg:text-xl text-center !w-[150px] !h-[150px]">
             <Image
               src={record?.images[0]}
               height={150}
@@ -102,77 +97,48 @@ console.log(err)
       ),
     },
     {
-      title: t("category"),
-      dataIndex: "category",
-      key: "category",
-      sorter: (a: any, b: any) => a.name.localeCompare(b.name),
-      render: (text) => <a>{text}</a>,
-    },
-    {
-      title: t("quantity"),
-      dataIndex: "quantity",
-      key: "quantity",
-      sorter: (a: any, b: any) => a.name.localeCompare(b.name),
-      render: (text) => <a>{text}</a>,
-    },
-    {
-      title: t("description"),
-      dataIndex: "description",
-      key: "description",
-      sorter: (a: any, b: any) => a.name.localeCompare(b.name),
-      render: (text) => <a>{text}</a>,
-    },
-    {
       title: t("is_in_offer"),
       dataIndex: "is_in_offer",
       key: "is_in_offer",
-      sorter: (a: any, b: any) => a.name.localeCompare(b.name),
       render: (_, record) => (
         <Space size="middle">
-          <Switch defaultValue={record.is_in_offer == "1" ? true : false} disabled />
+          <Switch defaultValue={record.is_in_offer == "1" ? true : false} onChange={() => { record.is_in_offer == "1" ? setOpenDeleteOffer(true) : setOpenDates(true) }} />
         </Space>
       )
     },
     {
-      title: t("date_added"),
-      dataIndex: "createdDate",
-      key: "createdDate",
+      title: t("offer_start_date"),
+      dataIndex: "offer_start_date",
+      key: "offer_start_date",
     },
     {
-      title: t("actions"),
-      key: "action",
-      render: (_, record) => (
-        <Space size="middle">
-          <a href={`/dashboard/products/edit/${record.id}`}>
-            <CiEdit />
-          </a>
-          <a>
-            <RiDeleteBinLine
-              onClick={() => {
-                setId(record.id)
-                setOpenDelete(true);
-              }}
-            />
-          </a>
-        </Space>
-      ),
+      title: t("offer_expiry_date"),
+      dataIndex: "offer_expiry_date",
+      key: "offer_expiry_date",
     },
+    {
+      title: t("category"),
+      dataIndex: "category",
+      key: "category",
+      sorter: (a: any, b: any) => a.name.localeCompare(b.name),
+    },
+
   ];
 
   const tableData = data?.map((item: any) => ({
     id: item._id,
     images: item.images,
     name: item.name,
-    category: `${item.category_main.name} / ${item.category_sub.name}`,
-    quantity: item.quantity,
-    description: item.description,
     is_in_offer: item.is_on_offer,
+    offer_start_date: moment(item.offer_start_date,).locale("en").format("DD/MM/YYYY"),
+    offer_expiry_date: moment(item.offer_expiry_date,).locale("en").format("DD/MM/YYYY"),
+    category: `${item.category_main.name} / ${item.category_sub.name}`,
     createdDate: moment(item.createdAt).locale("en").format("DD/MM/YYYY"),
   }));
 
   const hideModalAndDeleteItem = () => {
     setIsLoading(true);
-    setOpenDelete(false);
+    setOpenDeleteOffer(false);
     DeleteProduct(id)
       .then((res) => {
         if (res.status) {
@@ -180,7 +146,7 @@ console.log(err)
             message: t("product_has_been_successfully_deleted"),
           });
         }
-        setOpenDelete(false);
+        setOpenDeleteOffer(false);
         setIsLoading(false);
         router.refresh();
       })
@@ -192,41 +158,68 @@ console.log(err)
         });
       });
   };
+  const hideModalAndSetOffer = async () => {
+    console.log("as")
+  }
 
-
+  const onChange_datePicker: DatePickerProps['onChange'] = (date, dateString) => {
+    setDates(dateString);
+  };
   return (
     <div>
       {isLoading && <Loader />}
 
-      <div className="grid grid-cols-[50%_50%] mb-2">
-        <div className="flex items-center">
-          <Button className="">
-            <Link
-              href={`/dashboard/products/create`}
-              className="flex items-center justify-beetwen"
-            >
-              {t("add_product")} <CiCirclePlus className="mr-1" />
-            </Link>
-          </Button>
-        </div>
-        <div className="p-4">
-          <SearchProducts locale={locale} />
-        </div>
-      </div>
-
-      <Table
-        columns={columns}
-        dataSource={tableData}
-        scroll={{ x: 1400 }} 
-        pagination={{
-          current: currentPage,
-          pageSize: pageSize,
-          total: totalItems,
-          onChange: handlePageChange,
-        }}
+      <div className="mt-10">
+        <Table
+          columns={columns}
+          dataSource={tableData}
+          scroll={{ x: 1400 }}
+          pagination={{
+            current: currentPage,
+            pageSize: pageSize,
+            total: totalItems,
+            onChange: handlePageChange,
+          }}
         />
+      </div>
+      <div>
+        <Modal
+          title={t("delete_offer!!!")}
+          open={openDeleteOffer}
+          onOk={hideModalAndDeleteItem}
+          onCancel={() => setOpenDeleteOffer(false)}
+          okText={t("confirm")}
+          cancelText={t("close")}
+          okButtonProps={{ style: { backgroundColor: "#4096ff" } }}
+        >
+          <p>{t("you_sure_want_delete_product_from_offer")}</p>
+        </Modal>
+        <Modal
+          title={t("delete_offer!!!")}
+          open={openDates}
+          onOk={hideModalAndSetOffer}
+          onCancel={() => setOpenDates(false)}
+          okText={t("confirm")}
+          cancelText={t("close")}
+          okButtonProps={{ style: { backgroundColor: "#4096ff" } }}
+        >
+          <div className="flex items-center gap-5 ">
+            {/* Start Start Date */}
+            <div>
+              <p className="">{t("offer_start_date")}</p>
+              <DatePicker onChange={(value, option) => { setDates((prev: any) => ({ ...prev, offer_start_date: option })) }} className={``} />
+            </div>
+            {/* End Start Date */}
 
-      
+            {/* Start End Date */}
+            <div>
+              <p className="">{t("offer_expiry_date")}</p>
+              <DatePicker onChange={(value, option) => { setDates((prev: any) => ({ ...prev, offer_expiry_date: option })) }} className={``} />
+            </div>
+            {/* End End Date */}
+          </div>
+        </Modal>
+      </div>
     </div>
   )
 }

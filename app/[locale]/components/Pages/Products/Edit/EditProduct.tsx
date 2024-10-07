@@ -24,6 +24,7 @@ import LargeLoader from "../../../Global/Loader/LargeLoader/LargeLoader";
 import FetchImageAsFile from "../../../Global/FetchImageAsFile/FetchImageAsFile";
 import useSwr from 'swr';
 import moment from "moment";
+import dayjs from 'dayjs';
 
 
 type FieldType = {
@@ -48,26 +49,29 @@ type FieldType = {
 type Props = {
   locale: string;
   id: string;
-  
+
 }
 function EditProduct({ locale, id }: Props) {
   const { t, i18n } = useTranslation(locale, "common");
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [form] = useForm();
-  const [details, setDetails] = useState([{ }]);
+  const [details, setDetails] = useState([{}]);
   const [compatible_models, setCompatible_models] = useState<any>([]);
   const [mainCategories, setMainCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const [subCategory_id, setSubCategory_id] = useState("");
   const [is_offer, setIs_offer] = useState(false);
   const [loading_cate, setLoading_cate] = useState(false)
-  const [offer_expiry, setFffer_expiry] = useState<any>();
+  const [dates, setDates] = useState<any>({ offer_start_date: "", offer_expiry_date: "" })
   const [getData, setGetData] = useState(true);
   const { data: ProductData, isLoading: EditLoading } = useSwr(
     `/talab/products/${id}`,
     () => GetProductById(id)
   );
+  const disabledDate = (current: any) => {
+    return current && current < dayjs().startOf('day');
+  };
   useEffect(() => {
     const data = ProductData?.data;
 
@@ -79,7 +83,7 @@ function EditProduct({ locale, id }: Props) {
           setDetails(prevDetails => [...prevDetails, { title: item.title, content: item.content }]);
         });
         details.shift();
-          
+
         // Object.entries(data?.data?.details).map(([key, value]) => {
         //   return form.setFieldValue(key, value);
         // });
@@ -105,14 +109,15 @@ function EditProduct({ locale, id }: Props) {
         form.setFieldValue('brand', data?.data?.brand);
         form.setFieldValue('description', data?.data?.description);
         form.setFieldValue('is_on_offer', data?.data?.is_on_offer == 1 ? true : false);
+        form.setFieldValue('offer_start_date', moment(data?.data?.offer_start_date, 'YYYY-MM-DD HH:mm:ss'));
         form.setFieldValue('offer_expiry_date', moment(data?.data?.offer_expiry_date, 'YYYY-MM-DD HH:mm:ss'));
         form.setFieldValue('discount_price', +data?.data?.discount_price);
-        
-    
+
+
 
         let sub = data?.data?.category_main?.children.map((item: any) => ({ label: item.name, value: item.id }))
         setSubCategories(sub)
-        
+
         setSubCategory_id(data?.data?.category_sub?.id);
 
         setIs_offer(data?.data?.is_on_offer == 1 ? true : false)
@@ -145,11 +150,9 @@ function EditProduct({ locale, id }: Props) {
     }
   }
 
-  const onChange_datePicker: DatePickerProps['onChange'] = (date, dateString) => {
-    setFffer_expiry(dateString);
-  };
+ 
 
-  const onFinish = async({
+  const onFinish = async ({
     product_name,
     images,
     quantity,
@@ -159,7 +162,6 @@ function EditProduct({ locale, id }: Props) {
     description,
     discount_price,
     is_on_offer,
-    offer_expiry_date,
     currency,
   }: FieldType) => {
     setIsLoading(true);
@@ -173,36 +175,37 @@ function EditProduct({ locale, id }: Props) {
     formData.append("categoryId", subCategory_id);
     formData.append("quantity", quantity);
     formData.append("price", price);
-    formData.append("details", JSON.stringify(filteredDetails));
     formData.append("brand", brand)
     formData.append("description", description)
     formData.append("quality", quality);
-    
- //  start image fixed  ****************************
+
+    //  start image fixed  ****************************
     const imageFiles = await Promise.all(
       images.map(async (file: any) => {
         if (file.url) {
           return await FetchImageAsFile(file.url, file.url.split('/').pop() || 'image.jpg');
         }
-        return file.originFileObj; 
+        return file.originFileObj;
       })
     );
 
     imageFiles.forEach((file: any) => {
       formData.append('images[]', file);
     });
-    
+
     formData.append("_method", "put");
     // End Fixed Code *************
 
     formData.append('is_on_offer', is_on_offer ? "1" : "0");
     if (is_on_offer) {
       formData.append("discount_price", discount_price);
-      formData.append('offer_expiry_date', offer_expiry);
+      formData.append('offer_start_date', dates.offer_start_date);
+      formData.append('offer_expiry_date', dates.offer_expiry_date);
     }
+    formData.append("currency", currency);
     formData.append("compatible_models", JSON.stringify(filteredModles));
+    formData.append("details", JSON.stringify(filteredDetails));
 
-    // formData.append("currency", currency);
 
     EditProductById(id, formData)
       .then((res) => {
@@ -448,7 +451,17 @@ function EditProduct({ locale, id }: Props) {
               <Input className="!rounded-[8px] !py-3" />
             </Form.Item>
             {/* End discount */}
-
+            {/* Start Start Date */}
+            <div className="w-1/2 ">
+              <Form.Item<FieldType>
+                name="offer_start_date"
+                label={<span className="text-sm  md:text-base">{t("offer_start_date")}</span>}
+                rules={[{ required: is_offer, message: t("please_enter_start_date") }]}
+              >
+                <DatePicker disabledDate={disabledDate} onChange={(value, option) => { setDates((prev: any) => ({ ...prev, offer_start_date: option })) }} className={`w-full !h-12`} />
+              </Form.Item>
+            </div>
+            {/* End Start Date */}
             {/* Start Date For Offer */}
             <Form.Item<FieldType>
               name="offer_expiry_date"
@@ -456,7 +469,7 @@ function EditProduct({ locale, id }: Props) {
               rules={[{ required: false, message: t("please_enter_start_date") }]}
               className={` w-1/2`}
             >
-              <DatePicker onChange={onChange_datePicker} className={`w-full`} />
+              <DatePicker disabledDate={disabledDate} onChange={(value, option) => { setDates((prev: any) => ({ ...prev, offer_start_date: option })) }} className={`w-full !h-12`} />
             </Form.Item>
 
             {/* End Date For Offer */}
@@ -470,7 +483,7 @@ function EditProduct({ locale, id }: Props) {
         <div className="col-span-2">
           <p className="mt-8 mb-3 col-span-2">{t("suitable_devices_for_this_product")} </p>
           <div className="col-span-2 grid grid-cols-4 gap-5">
-            {compatible_models.map((model:string, index:number) => {
+            {compatible_models.map((model: string, index: number) => {
               return (
                 <div
                   key={index}
@@ -519,7 +532,7 @@ function EditProduct({ locale, id }: Props) {
           <p className="mt-8 ">{t("product_details")} </p>
           <div className="col-span-2 grid grid-cols-4 gap-5">
             {
-              details.map((detail:any, index:number) => {
+              details.map((detail: any, index: number) => {
                 return (
                   <div key={index} className="border-2 border-gray-300 rounded-xl p-2 my-3">
                     <Form.Item

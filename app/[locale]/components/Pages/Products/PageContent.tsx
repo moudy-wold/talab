@@ -4,8 +4,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import Loader from "@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader";
-import { Space, Table, Modal, Button, notification, Switch } from "antd";
+import { Form, Space, Table, Modal, Button, notification, Switch, DatePicker, Input } from "antd";
+import { useForm } from "antd/es/form/Form";
 import { ColumnsType } from "antd/es/table";
+import dayjs from 'dayjs';
 import moment from "moment";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
@@ -14,27 +16,49 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { CiCirclePlus, CiEdit } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { useTranslation } from "@/app/i18n/client";
 import ImagesSlider from "../../Global/ImagesSlider/ImagesSlider";
 import SearchProducts from "../../Global/Search/SearchProducts/SearchProducts";
-import { DeleteProduct, GetAllProduct } from "@/app/[locale]/api/products";
+import { DeleteProduct, GetAllProduct, UpdateOfferProduct } from "@/app/[locale]/api/products";
+import { useTranslation } from "@/app/i18n/client";
+
+import dynamic from 'next/dynamic'
+ 
+
+const EditOffer = dynamic(() => import('./EditOffer/EditOffer'), { ssr: false })
+
+type FieldType = {
+  discount_price: string;
+  is_on_offer: boolean;
+  offer_start_date: string;
+  offer_expiry_date: string;
+};
+
 type Props = {
   locale: string,
 }
+
 function ProductsList({ locale }: Props) {
   const { t } = useTranslation(locale, "common");
+  const [form] = useForm();
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const [openDelete, setOpenDelete] = useState(false);
   const [openImages, setOpenImages] = useState(false);
   const [images, setImages] = useState([]);
-
+  const [openDeleteOffer, setOpenDeleteOffer] = useState(false);
+  const [openDates, setOpenDates] = useState(false);
+  const [dates, setDates] = useState<any>({ discount_price: 0, offer_start_date: "", offer_expiry_date: "" })
+  const [product_id, setProducyId] = useState("")
   const [page, setPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
   const [data, setData] = useState([]);
-  const [id, setId] = useState("");
+  const [openEditOffer ,setOpenEditOffer] = useState(false);
+  const [ itemForOffer , setItemForOffer] = useState<any>()
+  const disabledDate = (current: any) => {
+    return current && current < dayjs().startOf('day');
+  };
 
   const getData = async () => {
     try {
@@ -42,13 +66,14 @@ function ProductsList({ locale }: Props) {
       setCurrentPage(res.data.pagination.current_page);
       setTotalItems(res.data.pagination.total);
       setPageSize(res.data.pagination.per_page);
-      console.log(res.data.data);
       setData(res.data.data)
+      console.log(res.data.data)
     } catch (err) {
       console.log(err)
     }
   }
-// First Fetch
+
+  // First Fetch
   useEffect(() => {
     getData()
   }, [])
@@ -67,7 +92,7 @@ function ProductsList({ locale }: Props) {
 
     } catch (err: any) {
       setIsLoading(false);
-console.log(err)
+      console.log(err)
       notification.error({
         message: err.response.data.message,
       });
@@ -120,9 +145,9 @@ console.log(err)
       render: (text) => <a>{text}</a>,
     },
     {
-      title: t("description"),
-      dataIndex: "description",
-      key: "description",
+      title: t("price"),
+      dataIndex: "price",
+      key: "price",
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
       render: (text) => <a>{text}</a>,
     },
@@ -133,7 +158,10 @@ console.log(err)
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
       render: (_, record) => (
         <Space size="middle">
-          <Switch defaultValue={record.is_in_offer == "1" ? true : false} disabled />
+          <Switch defaultValue={record.is_in_offer == "1" ? true : false} onChange={() => { record.is_in_offer == "1" ? setOpenDeleteOffer(true) : setOpenDates(true); console.log(record.id); setProducyId(record.id) }} />
+            <div className="p-1 border-2 border-gray-300 cursor-pointer rounded-lg ">
+          <CiEdit className="hover:scale-125 transtion-all duration-150 text-xl" onClick={()=>{setItemForOffer(record); setOpenEditOffer(true); console.log(record)}}/>
+            </div>
         </Space>
       )
     },
@@ -153,7 +181,7 @@ console.log(err)
           <a>
             <RiDeleteBinLine
               onClick={() => {
-                setId(record.id)
+                setProducyId(record.id)
                 setOpenDelete(true);
               }}
             />
@@ -169,15 +197,18 @@ console.log(err)
     name: item.name,
     category: `${item.category_main.name} / ${item.category_sub.name}`,
     quantity: item.quantity,
-    description: item.description,
+    price: item.price,
     is_in_offer: item.is_on_offer,
     createdDate: moment(item.createdAt).locale("en").format("DD/MM/YYYY"),
+    offer_start_date: moment(item.offer_start_date).locale("en").format("DD/MM/YYYY"),
+    offer_expiry_date: moment(item.offer_expiry_date).locale("en").format("DD/MM/YYYY"),
+    discount_price: +item.discount_price
   }));
 
   const hideModalAndDeleteItem = () => {
     setIsLoading(true);
     setOpenDelete(false);
-    DeleteProduct(id)
+    DeleteProduct(product_id)
       .then((res) => {
         if (res.status) {
           notification.success({
@@ -197,6 +228,50 @@ console.log(err)
       });
   };
 
+  const DeleteProductfromOffer = async () => {
+    console.log(product_id)
+    setIsLoading(true);
+    setOpenDeleteOffer(false);
+    UpdateOfferProduct(product_id, "0", dates.discount_price, dates.offer_start_date, dates.offer_expiry_date)
+      .then((res) => {
+        if (res.status) {
+          notification.success({
+            message: t("delete_product_from_offer"),
+          });
+        }
+        setIsLoading(false);
+        router.refresh();
+      })
+      .catch((err) => {
+        console.log(err)
+        setIsLoading(false);
+        notification.error({
+          message: err.response.data.message
+        });
+      });
+  }
+
+  const onFinish = async () => {
+    setIsLoading(true);
+    setOpenDates(false);
+    UpdateOfferProduct(product_id, "1", dates.discount_price, dates.offer_start_date, dates.offer_expiry_date)
+      .then((res) => {
+        if (res.status) {
+          notification.success({
+            message: t("added_product_to_offer_successfully"),
+          });
+        }
+        setIsLoading(false);
+        router.refresh();
+      })
+      .catch((err) => {
+        console.log(err)
+        setIsLoading(false);
+        notification.error({
+          message: err.response.data.message
+        });
+      });
+  }
 
   return (
     <div>
@@ -221,14 +296,14 @@ console.log(err)
       <Table
         columns={columns}
         dataSource={tableData}
-        scroll={{ x: 1400 }} 
+        scroll={{ x: 1400 }}
         pagination={{
           current: currentPage,
           pageSize: pageSize,
           total: totalItems,
           onChange: handlePageChange,
         }}
-        />
+      />
 
       <div>
         <Modal
@@ -262,6 +337,107 @@ console.log(err)
           </Swiper>
         </Modal>
       </div>
+
+      <div>
+        {/* Start Delete Item From Offer */}
+        <Modal
+          title={t("delete_offer!!!")}
+          open={openDeleteOffer}
+          onOk={DeleteProductfromOffer}
+          onCancel={() => setOpenDeleteOffer(false)}
+          okText={t("confirm")}
+          cancelText={t("close")}
+          okButtonProps={{ style: { backgroundColor: "#4096ff" } }}
+        >
+          <p>{t("you_sure_want_delete_product_from_offer")}</p>
+        </Modal>
+        {/* ENd Delete Item From Offer */}
+
+        {/* Start Add Prodcr To Offer */}
+        <Modal
+          title={t("active_offer!!!")}
+          open={openDates}
+          onCancel={() => setOpenDates(false)}
+          cancelText={t("close")}
+          okButtonProps={{ style: { display: "none" } }}
+        >
+          <Form
+            form={form}
+            name="discount-price"
+            initialValues={{ remember: true }}
+            autoComplete="off"
+            layout="vertical"
+            onFinish={onFinish}
+          >
+            <div className="flex items-center gap-5 mt-5 mb-1 ">
+              {/* Start Discount Price */}
+              <div>
+                <Form.Item<FieldType>
+                  name="discount_price"
+                  label={<span className="text-sm  md:text-base">{t("discount_price")}</span>}
+                  rules={[{ required: openDates, message: t("please_enter_discount_price") }]}
+
+                >
+                  <Input placeholder={t("discount_price")} className="!rounded-[8px] !py-[6px]" onChange={(e) => { setDates((prev: any) => ({ ...prev, discount_price: +e.target.value })) }} />
+                </Form.Item>
+              </div>
+              {/* End Discount Price */}
+
+              {/* Start Start Date */}
+              <div className="w-1/2 ">
+                <Form.Item<FieldType>
+                  name="offer_start_date"
+                  label={<span className="text-sm  md:text-base">{t("offer_start_date")}</span>}
+                  rules={[{ required: openDates, message: t("please_enter_start_date") }]}
+
+                >
+                  <DatePicker disabledDate={disabledDate} onChange={(value, option) => { setDates((prev: any) => ({ ...prev, offer_start_date: option })) }} className={`w-full`} />
+                </Form.Item>
+              </div>
+              {/* End Start Date */}
+
+              {/* Start End Date */}
+              <div className="w-1/2">
+                <Form.Item<FieldType>
+                  name="offer_expiry_date"
+                  label={<span className="text-sm  md:text-base">{t("offer_expiry_date")}</span>}
+                  rules={[{ required: openDates, message: t("please_enter_end_date") }]}
+
+                >
+                  <DatePicker disabledDate={disabledDate} onChange={(value, option) => { setDates((prev: any) => ({ ...prev, offer_expiry_date: option })) }} className={`w-full`} />
+                </Form.Item>
+              </div>
+              {/* End End Date */}
+
+
+            </div>
+            <div className="flex items-center justify-end mt-4">
+              <button
+                type="submit"
+                className=" border-[1px] border-[#006496] rounded-lg text-base w-16  py-1 flex items-center justify-center  text-[#006496] bg-white transition-all hover:bg-[#006496] hover:text-white"
+              >
+                {t("confirm")}
+              </button>
+            </div>
+          </Form>
+
+        </Modal>
+        {/* End Add Prodcr To Offer */}
+
+        {/* Start Edit OFfer */}
+
+        <Modal
+          title={t("active_offer!!!")}
+          open={openEditOffer}
+          onCancel={() => setOpenEditOffer(false)}
+          cancelText={t("close")}
+          okButtonProps={{ style: { display: "none" } }}
+        >
+          <EditOffer locale={locale} data={itemForOffer} openEditOffer={openEditOffer} setOpenEditOffer={setOpenEditOffer} product_id={product_id} />
+        </Modal>
+        {/* End Edit OFfer */}
+      </div>
+
     </div>
   )
 }
