@@ -37,9 +37,9 @@ function EditOffer(props: any) {
                 form.setFieldValue('offer_expiry_date', moment(props?.data?.offer_expiry_date, 'DD-MM-YYYY'));
                 form.setFieldValue('discount_price', +props?.data?.discount_price);
                 
-                setDates((prev)=>({...prev, discount_price: +props?.data?.discount_price}))
-                setDates((prev)=>({...prev, offer_start_date: props?.data?.offer_start_date }))
-                setDates((prev)=>({...prev, offer_expiry_date: props?.data?.offer_expiry_date }))
+                setDates((prev:any)=>({...prev, discount_price: +props?.data?.discount_price}))
+                setDates((prev:any)=>({...prev, offer_start_date: props?.data?.offer_start_date }))
+                setDates((prev:any)=>({...prev, offer_expiry_date: props?.data?.offer_expiry_date }))
         }
     }, [props]);
 
