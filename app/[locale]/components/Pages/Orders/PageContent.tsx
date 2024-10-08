@@ -6,6 +6,7 @@ import { useTranslation } from "@/app/i18n/client";
 import Loader from "@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader"
 import { OrderStatus } from "@/app/[locale]/utils/constant";
 import { MdOutlineDoneOutline } from "react-icons/md";
+import { GetAllOrder, UpdateQuantity } from "@/app/[locale]/api/order";
 
 function OrdersList({ locale }: any) {
   const { t, i18n } = useTranslation(locale, "common");
@@ -18,39 +19,51 @@ function OrdersList({ locale }: any) {
 
   // First Fetch
   useEffect(() => {
-    // let userIdValue: any = localStorage.getItem("userId")
-    // setUserId(JSON.parse(userIdValue))
-    // const getData = async () => {      
-    //   const res = await GetAllCustomer(1);
-    //   setCurrentPage(res.data.pagination.current_page);
-    //   setTotalItems(res.data.pagination.total)
-    //   setPageSize(res.data.pagination.per_page)
-    //   console.log(res.data)
-    //   setData(res.data.customers)
-    // }
-    // getData()
+    const getData = async () => {
+      const res = await GetAllOrder(1);
+      // setCurrentPage(res.data.pagination.current_page);
+      // setTotalItems(res.data.pagination.total)
+      // setPageSize(res.data.pagination.per_page)
+      console.log(res.data)
+      setData(res.data.data)
+    }
+    getData()
   }, [])
 
   const handlePageChange = async (page: any) => {
-    // setIsLoading(true)
-    // console.log(page)
-    // try {
-    //   const res = await GetAllCustomer(page  );
-    //   setData(res.data.customers)
-    //   setCurrentPage(res.data.pagination.current_page);
-    //    console.log(res.data)
-    //   setIsLoading(false)
-
-    // }
-    // catch (err: any) {
-    //   notification.error({
-    //     message: err.response.data.message
-    //   })
-    //   setIsLoading(false)
-    // }
+    setIsLoading(true)
+    console.log(page)
+    try {
+      const res = await GetAllOrder(page);
+      setData(res.data.customers)
+      setCurrentPage(res.data.pagination.current_page);
+      setIsLoading(false)
+      console.log(res.data)
+    }
+    catch (err: any) {
+      console.log(err)
+      notification.error({
+        message: err.response.data.message
+      })
+      setIsLoading(false)
+    }
   };
 
-
+  const UpdateServiceStatus = async (order_id: string, status: string) => {
+    setIsLoading(true);
+    try {
+      const res = await UpdateQuantity(order_id, status);
+      notification.success({
+        message: t("edited_successfulle")
+      })
+    }
+    catch (err: any) {
+      console.log(err)
+      notification.error({
+        message: err.response.data.message
+      })
+    }
+  }
 
   //  Customers Table
   const columns: ColumnsType<any> = [
@@ -61,7 +74,6 @@ function OrdersList({ locale }: any) {
       sorter: (a, b) => a.userName.localeCompare(b.userName),
       render: (_, record) => (<a href={`/user-profile/${record._id}`}>{record.userName}</a>),
     },
-
     {
       title: t("phoneNuber"),
       dataIndex: "phoneNuber",
@@ -73,12 +85,12 @@ function OrdersList({ locale }: any) {
       key: "address",
     },
     {
-      title: t("price"),
+      title: t("total_price_of_product"),
       dataIndex: "price",
       key: "price",
     },
     {
-      title: t("quantity"),
+      title: t("total_count_of_product"),
       dataIndex: "quantity",
       key: "quantity",
     },
@@ -90,7 +102,7 @@ function OrdersList({ locale }: any) {
       render: (_, record) => (
         <Space size="middle">
           <select
-            // onChange={(e) => { onFinishServiceStatus(record._id, e.target.value); setStatus(e.target.value); }}
+            onChange={(e) => { UpdateServiceStatus(record._id, e.target.value); }}
             style={{ width: "100%" }}
             className="w-full border-2 border-gray-200 rounded-lg h-12"
           >
@@ -110,7 +122,6 @@ function OrdersList({ locale }: any) {
         </Space>
       ),
     },
-
     {
       title: t("products"),
       key: "action",
@@ -131,7 +142,6 @@ function OrdersList({ locale }: any) {
     quantity: item.quantity,
     order_status: item.order_status,
   }));
-
 
   return (
     <div>

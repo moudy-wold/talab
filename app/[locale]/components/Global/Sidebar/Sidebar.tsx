@@ -95,8 +95,13 @@ function Sidebar({ locale }: Props) {
           icon: <TbCategoryFilled />
         },
       ]
+    },       
+    {
+      label: t("offers"),
+      key: "5",
+      url: "/dashboard/offers",
+      icon: <TbCategoryFilled />
     },
-    
     {
       label: t("orders"),
       key: "4",
@@ -116,18 +121,7 @@ function Sidebar({ locale }: Props) {
         }
       ]
     },
-    {
-      label: t("offers"),
-      key: "5",
-      url: "/dashboard/offers",
-      icon: <TbCategoryFilled />
-    },
-    {
-      label: t("profile"),
-      key: "5",
-      url: "/",
-      icon: <TbCategoryFilled />
-    },
+   
     {
       label: t("accounting"),
       key: "6",
@@ -140,17 +134,11 @@ function Sidebar({ locale }: Props) {
       icon: <TbCategoryFilled />,
       children: [
         {
-        label: t("add_head_code"),
-        key: "7.1",
-        url: "/",
-        icon: <TbCategoryFilled />,
-      },
-      {
-        label: t("add_body_code"),
-        key: "7.2",
-        url: "/",
-        icon: <TbCategoryFilled />,
-      },
+          label: t("profile"),
+          key: "5",
+          url: "/",
+          icon: <TbCategoryFilled />
+        },
       ]
     }
   ];

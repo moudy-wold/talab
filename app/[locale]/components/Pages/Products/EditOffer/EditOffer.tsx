@@ -33,8 +33,8 @@ function EditOffer(props: any) {
     useEffect(() => {
         console.log(props.data)
         if (props.data) {
-                form.setFieldValue('offer_start_date', moment(props?.data?.offer_start_date, 'DD-MM-YYYY'));
-                form.setFieldValue('offer_expiry_date', moment(props?.data?.offer_expiry_date, 'DD-MM-YYYY'));
+                form.setFieldValue('offer_start_date', moment(props?.data?.offer_start_date, 'YYYY-MM-DD'));
+                form.setFieldValue('offer_expiry_date', moment(props?.data?.offer_expiry_date, 'YYYY-MM-DD'));
                 form.setFieldValue('discount_price', +props?.data?.discount_price);
                 
                 setDates((prev:any)=>({...prev, discount_price: +props?.data?.discount_price}))
@@ -47,16 +47,16 @@ function EditOffer(props: any) {
 
     const onFinish = async () => {
         setIsLoading(true);
-        props.setOpenEditOffer(false);
         console.log( dates)
         UpdateOfferProduct(props.data.id, "1", dates.discount_price, dates.offer_start_date, dates.offer_expiry_date)
-            .then((res) => {
-                if (res.status) {
-                    notification.success({
-                        message: t("edited_product_to_offer_successfully"),
-                    });
-                }
-                setIsLoading(false);
+        .then((res) => {
+            if (res.status) {
+                notification.success({
+                    message: t("edited_product_to_offer_successfully"),
+                });
+            }
+            setIsLoading(false);
+            props.setOpenEditOffer(false);
                 router.refresh();
             })
             .catch((err) => {

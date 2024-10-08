@@ -22,7 +22,7 @@ import { DeleteProduct, GetAllProduct, UpdateOfferProduct } from "@/app/[locale]
 import { useTranslation } from "@/app/i18n/client";
 
 import dynamic from 'next/dynamic'
- 
+
 
 const EditOffer = dynamic(() => import('./EditOffer/EditOffer'), { ssr: false })
 
@@ -54,8 +54,8 @@ function ProductsList({ locale }: Props) {
   const [pageSize, setPageSize] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
   const [data, setData] = useState([]);
-  const [openEditOffer ,setOpenEditOffer] = useState(false);
-  const [ itemForOffer , setItemForOffer] = useState<any>()
+  const [openEditOffer, setOpenEditOffer] = useState(false);
+  const [itemForOffer, setItemForOffer] = useState<any>()
   const disabledDate = (current: any) => {
     return current && current < dayjs().startOf('day');
   };
@@ -110,6 +110,7 @@ function ProductsList({ locale }: Props) {
       title: t("product_images"),
       dataIndex: "images",
       key: "images",
+      align:"center",
       render: (_, record) => (
         <Space size="middle">
           <span
@@ -134,6 +135,7 @@ function ProductsList({ locale }: Props) {
       title: t("category"),
       dataIndex: "category",
       key: "category",
+      align:"center",
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
       render: (text) => <a>{text}</a>,
     },
@@ -141,6 +143,7 @@ function ProductsList({ locale }: Props) {
       title: t("quantity"),
       dataIndex: "quantity",
       key: "quantity",
+      align:"center",
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
       render: (text) => <a>{text}</a>,
     },
@@ -148,6 +151,7 @@ function ProductsList({ locale }: Props) {
       title: t("price"),
       dataIndex: "price",
       key: "price",
+      align:"center",
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
       render: (text) => <a>{text}</a>,
     },
@@ -158,10 +162,10 @@ function ProductsList({ locale }: Props) {
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
       render: (_, record) => (
         <Space size="middle">
-          <Switch defaultValue={record.is_in_offer == "1" ? true : false} onChange={() => { record.is_in_offer == "1" ? setOpenDeleteOffer(true) : setOpenDates(true); console.log(record.id); setProducyId(record.id) }} />
-            <div className="p-1 border-2 border-gray-300 cursor-pointer rounded-lg ">
-          <CiEdit className="hover:scale-125 transtion-all duration-150 text-xl" onClick={()=>{setItemForOffer(record); setOpenEditOffer(true); console.log(record)}}/>
-            </div>
+          <Switch defaultValue={record.is_in_offer == "1" ? true : false} onChange={() => { record.is_in_offer == "1" ? setOpenDeleteOffer(true) : setOpenDates(true); setProducyId(record.id) }} />
+          <div className="p-1 border-2 border-gray-300 cursor-pointer rounded-lg ">
+            <CiEdit className="hover:scale-125 transtion-all duration-150 text-xl" onClick={() => { setItemForOffer(record); setOpenEditOffer(true); console.log(record) }} />
+          </div>
         </Space>
       )
     },
@@ -169,6 +173,7 @@ function ProductsList({ locale }: Props) {
       title: t("date_added"),
       dataIndex: "createdDate",
       key: "createdDate",
+      align:"center",
     },
     {
       title: t("actions"),
@@ -199,9 +204,9 @@ function ProductsList({ locale }: Props) {
     quantity: item.quantity,
     price: item.price,
     is_in_offer: item.is_on_offer,
-    createdDate: moment(item.createdAt).locale("en").format("DD/MM/YYYY"),
-    offer_start_date: moment(item.offer_start_date).locale("en").format("DD/MM/YYYY"),
-    offer_expiry_date: moment(item.offer_expiry_date).locale("en").format("DD/MM/YYYY"),
+    createdDate: moment(item.createdAt).locale("en").format("YYYY-MM-DD"),
+    offer_start_date: moment(item.offer_start_date).locale("en").format("YYYY-MM-DD"),
+    offer_expiry_date: moment(item.offer_expiry_date).locale("en").format("YYYY-MM-DD"),
     discount_price: +item.discount_price
   }));
 
@@ -229,7 +234,6 @@ function ProductsList({ locale }: Props) {
   };
 
   const DeleteProductfromOffer = async () => {
-    console.log(product_id)
     setIsLoading(true);
     setOpenDeleteOffer(false);
     UpdateOfferProduct(product_id, "0", dates.discount_price, dates.offer_start_date, dates.offer_expiry_date)
@@ -425,7 +429,6 @@ function ProductsList({ locale }: Props) {
         {/* End Add Prodcr To Offer */}
 
         {/* Start Edit OFfer */}
-
         <Modal
           title={t("active_offer!!!")}
           open={openEditOffer}
