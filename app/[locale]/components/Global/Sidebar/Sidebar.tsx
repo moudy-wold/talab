@@ -113,12 +113,12 @@ function Sidebar({ locale }: Props) {
           url: "/dashboard/orders",
           icon: <RiAddCircleLine />
         },
-        {
-          label: t("return_order"),
-          key: "4.2",
-          url: "/dashboard/orders/return-orders",
-          icon: <RiAddCircleLine />
-        }
+        // {
+        //   label: t("return_order"),
+        //   key: "4.2",
+        //   url: "/dashboard/orders/return-orders",
+        //   icon: <RiAddCircleLine />
+        // }
       ]
     },
    
@@ -136,7 +136,7 @@ function Sidebar({ locale }: Props) {
         {
           label: t("profile"),
           key: "5",
-          url: "/",
+          url: "/dashboard/profile",
           icon: <TbCategoryFilled />
         },
       ]
@@ -144,7 +144,7 @@ function Sidebar({ locale }: Props) {
   ];
 
   const handleClick = (item: any) => {
-    console.log(item);
+    // console.log(item);
   };
   return (
     <>

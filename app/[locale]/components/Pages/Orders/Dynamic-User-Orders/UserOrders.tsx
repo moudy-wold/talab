@@ -1,44 +1,35 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import type { ColumnsType } from "antd/es/table";
-import { Space, Table, Modal, notification, } from "antd";
 import { useTranslation } from "@/app/i18n/client";
-import Loader from "@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader"
 import { OrderStatus, ReturnStatus } from "@/app/[locale]/utils/constant";
-import { MdOutlineDoneOutline } from "react-icons/md";
-import { GetAllOrder, UpdateStatus } from "@/app/[locale]/api/order";
-import OrderDataCards from "./OrderDataCards/OrderDataCards";
-import UserOrders from "./Dynamic-User-Orders/UserOrders";
+import type { ColumnsType } from "antd/es/table";
 
-function OrdersList({ locale }: any) {
-  const { t, i18n } = useTranslation(locale, "common");
+import { Space, Table, Modal, notification, Switch } from "antd";
+import { MdOutlineDoneOutline } from "react-icons/md";
+import { GetOrderByUserId, UpdateStatus } from "@/app/[locale]/api/order";
+import Loader from "../../../Global/Loader/Loader";
+import OrderDataCards from "../OrderDataCards/OrderDataCards";
+type Props = {
+  locale: string;
+  user_Id: any;
+  setOpenUserOrders: any;
+
+};
+
+function UserOrders(props: Props) {
+  const { t, i18n } = useTranslation(props.locale, "common");
   const [isLoading, setIsLoading] = useState(false);
-  const [openOrderDetails, setOpenOrderDetails] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
   const [data, setData] = useState([])
+  const [openOrderDetails, setOpenOrderDetails] = useState(false);
   const [index, setIndex] = useState(0);
-  const [openUserOrders,setOpenUserOrders]= useState(false)
-  const [user_Id, setUser_Id] = useState("")
-  // First Fetch
-  useEffect(() => {
-    const getData = async () => {
-      const res = await GetAllOrder(1);
-      setCurrentPage(res.data.pagination.current_page);
-      setTotalItems(res.data.pagination.total)
-      setPageSize(res.data.pagination.per_page)
-      console.log(res.data.data)
-      setData(res.data.data)
-    }
-    getData()
-  }, [])
 
   const handlePageChange = async (page: any) => {
     setIsLoading(true)
-    console.log(page)
     try {
-      const res = await GetAllOrder(page);
+      const res = await GetOrderByUserId(page);
       setData(res.data.customers)
       setCurrentPage(res.data.pagination.current_page);
       setIsLoading(false)
@@ -52,6 +43,24 @@ function OrdersList({ locale }: any) {
       setIsLoading(false)
     }
   };
+  // First Fetch
+  useEffect(() => {
+    console.log(props.user_Id)
+    const getData = async () => {
+      try {
+        const res = await GetOrderByUserId(props.user_Id);
+        setCurrentPage(res.data.pagination.current_page);
+        setTotalItems(res.data.pagination.total)
+        setPageSize(res.data.pagination.per_page)
+        console.log(res.data.data)
+        setData(res.data.data)
+      }
+      catch (err: any) {
+        console.log(err)
+      }
+    }
+    getData();
+  }, [props.user_Id])
 
   const UpdateServiceStatus = async (order_id: string, status: string) => {
     setIsLoading(true);
@@ -72,6 +81,30 @@ function OrdersList({ locale }: any) {
     }
   }
 
+  // Edit Order Status
+  const onFinish = async (orderId: string, status: string) => {
+    setIsLoading(true);
+
+    // EditeStatusServiceById(serviceId, customerId, status)
+    //   .then((res) => {
+    //     if (res.status) {
+    //       notification.success({
+    //         message: "تم التعديل بنجاح"
+    //       });
+    //       setOpenActiveService(true);
+    //     }
+    //     router.refresh();
+    //   })
+    //   .catch((err) => {
+    //     notification.error({
+    //       message: err.response.data.message
+    //     });
+    //   })
+    //   .finally(() => {
+    //     setIsLoading(false);
+    //   });
+  };
+
   //  Customers Table
   const columns: ColumnsType<any> = [
     {
@@ -79,7 +112,7 @@ function OrdersList({ locale }: any) {
       dataIndex: "userName",
       key: "userName",
       sorter: (a, b) => a.userName.localeCompare(b.userName),
-      render: (_, record) => (<span onClick={()=>{setUser_Id(record.admin_id);setOpenUserOrders(true) }}  className="flex items-center gap-1 cursor-pointer hover:text-[#006496] ">{record.order_status == "pending_cancellation" && <div className="bg-red-600 w-3 h-3 rounded-full p-1 border-2 border-red-600"></div>} {record.userName}</span>),
+      render: (_, record) => (<span className="flex items-center gap-1 cursor-pointer hover:text-[#006496] ">{record.order_status == "pending_cancellation" && <div className="bg-red-600 w-3 h-3 rounded-full p-1 border-2 border-red-600"></div>} {record.userName}</span>),
     },
     {
       title: t("phoneNumber"),
@@ -157,7 +190,7 @@ function OrdersList({ locale }: any) {
     },
   ];
 
-  const customerDataToShow = data?.map((item: any, index: number) => ({
+  const dataToShow = data?.map((item: any, index: number) => ({
     index: index,
     id: item.id,
     userName: item.user_name,
@@ -168,14 +201,13 @@ function OrdersList({ locale }: any) {
     order_status: item.status,
     admin_id: item.user_admin_id
   }));
-
   return (
-    <div>
+    <div className="">
       {isLoading && <Loader />}
-      <div >
+      <div className="mt-3">
         <Table
           columns={columns}
-          dataSource={customerDataToShow}
+          dataSource={dataToShow}
           pagination={{
             current: currentPage,
             pageSize: pageSize,
@@ -184,31 +216,19 @@ function OrdersList({ locale }: any) {
           }}
         />
       </div>
-      <div>
-        <Modal
-          title={t("order_details")}
-          centered
-          open={openOrderDetails}
-          onCancel={() => { setOpenOrderDetails(false) }}
-          okButtonProps={{ style: { display: "none" } }}
-          width={1000}
-        >
-          <OrderDataCards data={data[index]} locale={locale} />
-        </Modal>
+      <Modal
+        title={t("order_details")}
+        centered
+        open={openOrderDetails}
+        onCancel={() => { setOpenOrderDetails(false) }}
+        okButtonProps={{ style: { display: "none" } }}
+        width={1000}
+      >
+        <OrderDataCards data={data[index]} locale={props.locale} />
+      </Modal>
 
-        <Modal
-          title={t("user_orders")}
-          centered
-          open={openUserOrders}
-          onCancel={() => { setOpenUserOrders(false) }}
-          okButtonProps={{ style: { display: "none" } }}
-          width={1000}
-        >
-          <UserOrders locale={locale} user_Id={user_Id} setOpenUserOrders={setOpenUserOrders} />
-        </Modal>
-      </div>
     </div>
-  )
+  );
 }
 
-export default OrdersList
+export default UserOrders;

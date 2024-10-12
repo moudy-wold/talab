@@ -1,6 +1,6 @@
 export const ReturnStatus = [
   {
-    value: "pending",
+    value: "pending_cancellation",
     id: "1",
     label: "قيد الانتظار",
   },
@@ -52,46 +52,14 @@ export const OrderStatus = [
     id: "6",
     label: "تم التسليم",
   },
-];
-// {
-//   value: "pending_cancellation",
-//   id: "4",
-//   label: "تم التسليم"
-// },
-export const CategoriesList = [
   {
-    id: 1,
-    value: "الشاشات",
-  },
-  {
-    id: 2,
-    value: "سوكة الشحن",
-  },
-  {
-    id: 3,
-    value: "آيسيات",
-  },
-  {
-    id: 4,
-    value: "إكسسوارات",
-  },
-  {
-    id: 5,
-    value: "بطاريات",
-  },
-  {
-    id: 6,
-    value: "لزقات حماية",
-  },
-  {
-    id: 7,
-    value: "لمس",
-  },
-  {
-    id: 8,
-    value: "سماعات",
+    value: "pending_cancellation",
+    id: "7",
+    label: "مراجعة الإلغاء",
   },
 ];
+
+ 
 
 export const Languages = [
   { id: 1, title: "AR", value: "ar" },

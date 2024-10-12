@@ -1,4 +1,4 @@
-import PageContent from '@/app/[locale]/components/Pages/Categories/PageContent';
+import PageContent from '@/app/[locale]/components/Pages/Profile/PageContent';
 import React from 'react'
 type Params = {
     params: {

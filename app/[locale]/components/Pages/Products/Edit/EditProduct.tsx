@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { MdDelete } from "react-icons/md";
 import { CategoriesList, Currencies } from "@/app/[locale]/utils/constant";
-import { GetMainCategories, GetSubCategories } from "@/app/[locale]/api/categories";
+import { GetMainCategories, GetSubCategoriesByMainId } from "@/app/[locale]/api/categories";
 import { GetProductById, EditProductById } from "@/app/[locale]/api/products";
 import LargeLoader from "../../../Global/Loader/LargeLoader/LargeLoader";
 import FetchImageAsFile from "../../../Global/FetchImageAsFile/FetchImageAsFile";
@@ -139,7 +139,7 @@ function EditProduct({ locale, id }: Props) {
   const onChange_main_categories = async (value: string, option: any) => {
     setLoading_cate(true)
     try {
-      const res = await GetSubCategories(option.value)
+      const res = await GetSubCategoriesByMainId(option.value)
       let cate = res.data.data.map((item: any) => ({ label: item.name, value: item.id }))
       setLoading_cate(false)
       setSubCategories(cate)

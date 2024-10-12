@@ -286,7 +286,7 @@ function ProductsList({ locale }: Props) {
           <Button className="">
             <Link
               href={`/dashboard/products/create`}
-              className="flex items-center justify-beetwen"
+              className="flex items-center justify-beetwen gap-1"
             >
               {t("add_product")} <CiCirclePlus className="mr-1" />
             </Link>

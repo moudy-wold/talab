@@ -66,3 +66,11 @@ export async function SendEmail(email: string): Promise<AxiosResponse<any>> {
 export async function ResendOTP(email: string): Promise<AxiosResponse<any>> {
   return await axios.post(`/talab/auth/email/resend?email=${email}`);
 }
+
+export async function GetProfileInfo(): Promise<AxiosResponse<any>> {
+  return await axios.get(`/talab`);
+}
+
+export async function EditProfileInfo(data:FormData): Promise<AxiosResponse<any>> {
+  return await axios.post(`/talab`,data);
+}
