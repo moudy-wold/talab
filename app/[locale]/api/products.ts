@@ -38,7 +38,7 @@ export async function UpdateOfferProduct(
   offer_start_date?:string,
   offer_expiry_date?:string,
 ): Promise<AxiosResponse<any>> {
-  return await axios.post(`talab/products/update-offer/${id}?_method=patch&discount_price=${discount_price}&is_on_offer=${is_on_offer}&offer_start_date=${offer_start_date}&offer_expiry_date=${offer_expiry_date}`);
+  return await axios.post(`/talab/products/update-offer/${id}?_method=patch&discount_price=${discount_price}&is_on_offer=${is_on_offer}&offer_start_date=${offer_start_date}&offer_expiry_date=${offer_expiry_date}`);
 }
 
 
@@ -46,5 +46,13 @@ export async function DeleteProduct(id: string): Promise<AxiosResponse<any>> {
   return await axios.delete(`/talab/products/${id}`);
 }
 
-
-// /
+// Ask Answer
+export async function AddAnswer(
+  question_id: string,
+  answer: string
+): Promise<AxiosResponse<any>> {
+  return await axios.post(
+    `/talab/products/answer-store?answer_id=${question_id}&answer=${answer}`
+  );
+}
+ 
