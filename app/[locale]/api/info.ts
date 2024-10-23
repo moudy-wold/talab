@@ -8,5 +8,5 @@ export async function GetInfo(): Promise<AxiosResponse<any>> {
 
 
   export async function EditInfo(data:any): Promise<AxiosResponse<any>> {
-    return await axios.post(`/talab`,data);
+    return await axios.post(`/talab/edit`,data);
   }

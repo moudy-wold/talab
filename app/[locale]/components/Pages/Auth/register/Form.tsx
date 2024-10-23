@@ -217,7 +217,7 @@ const w = [
     flat_no,
     accept,
   }: FieldType) => {
-    //  setIsLoading(true);
+     setIsLoading(true);
     let areas_covered: any = [{ country: "turkey", city: { "": [] } }]
     if (isAllDistrictsSelected && isAllCitiesSelected) {
       areas_covered = [{ country: "turkey", city: { all: ["all"] } }]

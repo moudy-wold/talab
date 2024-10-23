@@ -58,7 +58,7 @@ function UserIcons({ locale, isLogend }: Props) {
   const getNotificationData = async () => {
     try {
       const res = await GetAllNotifications(1);
-      console.log(res.data)
+      // console.log(res.data)
       setTotalItems(res.data.pagination.total);
       setPageSize(res.data.pagination.per_page);
       setNotificatioItems(res?.data?.data)
@@ -94,11 +94,8 @@ function UserIcons({ locale, isLogend }: Props) {
     const isLogend: any = localStorage.getItem("isLogend");
 
     if (isLogend == "true") {
-      console.log(isLogend)
       getNotificationData();
-    } else {
-      console.log(isLogend, "is false")
-    }
+    }  
   }, []);
 
   const handleMouseEnterOnNotificationsIcon = () => {
@@ -227,7 +224,7 @@ function UserIcons({ locale, isLogend }: Props) {
 
         {/* Start Notificatiom Icon */}
         <div
-          className={`flex !flex-col justify-center items-center  relative !z-[99999999] hover:scale-110 transition-all duration-200`}
+          className={`${isLogend ? "flex" : "hidden" } !flex-col justify-center items-center  relative !z-[99999999] hover:scale-110 transition-all duration-200`}
           onMouseEnter={handleMouseEnterOnNotificationsIcon}
           onMouseLeave={handleMouseLeaveOnNotificationsIcon}
         >

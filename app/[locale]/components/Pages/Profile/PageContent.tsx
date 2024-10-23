@@ -1,24 +1,25 @@
 "use client";
 import { useEffect, useState } from "react";
 import Loader from "@/app/[locale]/components/Global/Loader/Loader";
-import { Form, Input, notification, Button, Upload, Select } from "antd";
-import type { SelectProps } from 'antd';
-import { EditProfileInfo, GetProfileInfo } from "@/app/[locale]/api/auth";
-import { useRouter } from "next/navigation";
-import { useTranslation } from "@/app/i18n/client";
+import { Button, Form, Input, notification, Select, Upload } from "antd";
 import axios from "axios";
-import { GetMainCategories } from "@/app/[locale]/api/categories";
 import useSwr from 'swr';
 import { useForm } from "antd/es/form/Form";
-import Image from "next/image";
 import { EditInfo, GetInfo } from "@/app/[locale]/api/info";
+import { useTranslation } from "@/app/i18n/client";
+import { useRouter } from "next/navigation";
 import FetchImageAsFile from "../../Global/FetchImageAsFile/FetchImageAsFile";
+import Image from "next/image";
+import { GetMainCategories } from "@/app/[locale]/api/categories";
+
 type Props = {
   locale: string;
-}
+};
+
 
 type FieldType = {
   userName: string;
+  phoneNumber: string;
   avatar: any;
   address: any;
   city: string;
@@ -34,19 +35,19 @@ type FieldType = {
   areas_covered: any;
 };
 
+
 const PageContent = ({ locale }: Props) => {
   const { t } = useTranslation(locale, "common")
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const [getData, setGetData] = useState(false);
-  const [selectedCategories, setSlectedCategories] = useState<any>([])
+  const [selectedCategories, setSelectedCategories] = useState<any>([])
   const AllOption = 'all';
   const [form] = useForm();
 
   const [istDistrict, setIstDistrict] = useState<any>([]);
   const [selectedDistricts, setSelectedDistricts] = useState<string[]>([]);
   const [isAllDistrictsSelected, setIsAllDistrictsSelected] = useState(false);
-
   const [cities, setCities] = useState<any>([]);
   const [selectedCities, setSelectedCities] = useState<string[]>([])
   const [isAllCitiesSelected, setIsAllCitiesSelected] = useState(false);
@@ -58,38 +59,7 @@ const PageContent = ({ locale }: Props) => {
     `/talab`,
     () => GetInfo()
   );
-  useEffect(() => {
-    const data = infoData?.data;
-
-    if (data) {
-      if (getData) {
-        console.log(data.data)
-
-
-
-        form.setFieldValue('userName', data?.data?.userName);
-        form.setFieldValue('avatar', [{
-          uid: '-1',  // معرّف فريد للصورة
-          name: 'avatar',  // اسم الصورة
-          status: 'done',  // حالة الصورة (done يعني تم رفعها)
-          url: data?.data?.avatar,  // الرابط للصورة القادمة من الباك اند
-        }]);
-        // // let Address = { city: city, district: district, neighborhoods: neighborhoods, sokak_no: sokak_no, building_no: building_no, dukkan_no: dukkan_no, flat_no: flat_no }
-        // form.setFieldValue('address', data?.data?.category_main.name);
-        // form.setFieldValue('categories', data?.data?.category_sub.name);
-        // form.setFieldValue('areas_covered', data?.data?.areas_covered);
-
-        setGetData(false);
-      }
-    }
-  }, [infoData]);
-
-
-  const handleChangeCategories = (value: string[]) => {
-    setSlectedCategories(value)
-  };
-
-
+  // Handle select change
   const handleChangeIstanbulDistrict = (value: string[]) => {
     if (value.includes(AllOption)) {
       setSelectedDistricts([AllOption]);
@@ -99,69 +69,137 @@ const PageContent = ({ locale }: Props) => {
       setIsAllDistrictsSelected(false);
     }
   };
-
-  const handleChangeCities = (value: string[]) => {
-    if (value.includes(AllOption)) {
-      setSelectedCities([AllOption]);
-      setIsAllCitiesSelected(true);
-
-    } else {
-      setSelectedCities(value);
-      setIsAllCitiesSelected(false);
+  // Fetch Categories 
+  const getCategories = async () => {
+    try {
+      const res = await GetMainCategories();
+      const newCategories = res.data.data.map((item: any) => {
+        return ({
+          label: item.name,
+          value: item.id,
+        })
+      });
+      setCategories(newCategories);
+    } catch (err) {
+      console.log(err);
     }
   };
 
+  // Fetch Cities
+  const getCities = async () => {
+    const url = "https://turkiyeapi.dev/api/v1/provinces?fields=name";
+    try {
+      const res = await axios.get(url);
+      const updatedCities = res?.data?.data?.map((item: any) => {
+        return {
+          label: item.name,
+          value: item.name,
+        }
+      });
+      setCities(updatedCities);
+    }
+
+    catch (err: any) {
+      console.log(err);
+    };
+
+  }
+
+  // Fetch  districts
+  const GetDistricts = async () => {
+    const url = "https://turkiyeapi.dev/api/v1/provinces?name=istanbul";
+
+    try {
+      const res = await axios.get(url);
+      const districts = res?.data?.data[0]?.districts.map((item: any) => ({
+        label: item.name,
+        value: item.name,
+      }));
+      setIstDistrict(districts);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    const data = infoData?.data;
+    const getCitiesAndDistricts = async () => {
+      await getCategories()
+      await getCities()
+      await GetDistricts(); // احصل على البيانات
+    }
+
+    if (!isLoading && data) {
+
+      if (!getData) {
+        // تحميل المناطق
+        getCategories()
+        GetDistricts();
+        getCities()
+      };
+      setGetData(true)
+
+      // إعداد البيانات بعد تحميل الخيارات
+      // console.log(data?.data)
+      form.setFieldValue('userName', data?.data?.userName);
+      form.setFieldValue('phoneNumber', data?.data?.phoneNumber);
+      form.setFieldValue('avatar', [{
+        uid: '-1',
+        name: 'avatar',
+        status: 'done',
+        url: data?.data?.avatar,
+      }]);
+      let Address = JSON.parse(data?.data?.address)
+      form.setFieldValue('city', Address.city);
+      form.setFieldValue('district', Address.district);
+      form.setFieldValue('neighborhoods', Address.neighborhoods);
+      form.setFieldValue('sokak_no', Address.sokak_no);
+      form.setFieldValue('building_no', Address.building_no);
+      form.setFieldValue('dukkan_no', Address.dukkan_no);
+      form.setFieldValue('flat_no', Address.flat_no);
+
+      if (data?.data?.areas_covered[0]?.city[0]?.city === "all" && data?.data?.areas_covered[0]?.city[0]?.districts[0] === "all") {
+        setSelectedDistricts([AllOption]); // في حالة تحديد جميع المناطق
+        setIsAllDistrictsSelected(true);
+        setSelectedCities([AllOption])
+        setIsAllCitiesSelected(true)
+      } else {
+        const districts = data.data.areas_covered[0].city[0].districts;
+        const filteredCities = data.data.areas_covered[0].city.filter((city: any) => city.city !== "istanbul");
+        const updatedCities = filteredCities?.map((item: any) => {
+          return {
+            label: item.city,
+            value: item.city,
+          }
+        });
+        console.log(filteredCities)
+        setSelectedCities(updatedCities)
+        setSelectedDistricts(districts); // إعداد المناطق المحددة
+      }
+
+      const newCategories = data?.data?.categories.map((item: any) => ({
+        label: item.name,
+        value: item.id,
+      }));
+
+      setSelectedCategories(newCategories)
+
+      form.setFieldsValue({ categories: selectedCategories });
+      form.setFieldsValue({ district_istanbul: selectedDistricts });
+      form.setFieldsValue({ cities: selectedCities });
+
+    }
+  }, [infoData, getData]);
+
   const districtsWithAll = [
     { label: 'Select All', value: AllOption },
-    ...istDistrict.map((item: any) => ({ ...item, disabled: isAllDistrictsSelected })),
+    ...istDistrict.map((item: any) => ({ ...item, disabled: isAllDistrictsSelected, })),
   ];
-
-  const w = [
-    { label: 'Select All', value: AllOption },
-    ...cities.map((item: any) => ({
-      ...item,
-      disabled: false
-    })),
-  ];
-
 
   const citiesWithAll = [
     { label: 'Select All', value: AllOption },
     ...cities.map((item: any) => ({ ...item, disabled: item.value == 'İstanbul' ? true : isAllCitiesSelected })),
   ];
-
-  const GetCiteisAndDistricts = async () => {
-    const url = "https://turkiyeapi.dev/api/v1/";
-
-    axios.get(`${url}provinces?fields=name`)
-      .then((res) => {
-        const updatedCities = res?.data?.data?.map((item: any) => {
-          return {
-            label: item.name,
-            value: item.name,
-          }
-        });
-        setCities(updatedCities);
-      })
-      .catch((err: any) => {
-        console.log(err);
-      });
-
-    axios.get(`${url}provinces?name=istanbul`)
-      .then((res) => {
-        res?.data?.data[0].districts.forEach((item: any) => {
-          let obj = { label: item.name, value: item.name }
-          setIstDistrict((prev: any) => [...prev, obj])
-        })
-
-      })
-      .catch((err: any) => {
-        console.log(err)
-      })
-
-
-  }
-
   const onChangeCity = async (value: any) => {
     let distrObj: any = []
     const url = `https://turkiyeapi.dev/api/v1/provinces?name=${value}`
@@ -177,6 +215,18 @@ const PageContent = ({ locale }: Props) => {
         console.log(err)
       })
   };
+
+  const handleChangeCities = (value: string[]) => {
+    if (value.includes(AllOption)) {
+      setSelectedCities([AllOption]);
+      setIsAllCitiesSelected(true);
+
+    } else {
+      setSelectedCities(value);
+      setIsAllCitiesSelected(false);
+    }
+  };
+
 
   const onChangeDistrict = async (value: any, option: any) => {
     let neighborhoodsObj: any = []
@@ -196,6 +246,11 @@ const PageContent = ({ locale }: Props) => {
       })
   };
 
+
+  const handleChangeCategories = (value: string[]) => {
+    setSelectedCategories(value)
+  };
+
   const onFinish = async ({
     userName,
     avatar,
@@ -207,7 +262,7 @@ const PageContent = ({ locale }: Props) => {
     dukkan_no,
     flat_no,
   }: FieldType) => {
-    //  setIsLoading(true);
+    setIsLoading(true);
     let areas_covered: any = [{ country: "turkey", city: { "": [] } }]
     if (isAllDistrictsSelected && isAllCitiesSelected) {
       areas_covered = [{ country: "turkey", city: { all: ["all"] } }]
@@ -248,9 +303,10 @@ const PageContent = ({ locale }: Props) => {
 
     let Address = { city: city, district: district, neighborhoods: neighborhoods, sokak_no: sokak_no, building_no: building_no, dukkan_no: dukkan_no, flat_no: flat_no }
     const formdata: any = new FormData();
-    console.log(areas_covered)
+    // console.log(areas_covered)
     formdata.append("userName", userName);
     formdata.append("address", JSON.stringify(Address));
+
     //  start image fixed  ****************************
     const imageFiles = await Promise.all(
       avatar.map(async (file: any) => {
@@ -260,17 +316,19 @@ const PageContent = ({ locale }: Props) => {
         return file.originFileObj;
       })
     );
-
     imageFiles.forEach((file: any) => {
       formdata.append('avatar', file);
     });
 
-    formdata.append("_method", "put");
+    formdata.append("_method", "patch");
     // End Fixed Code *************
 
     formdata.append("categories", JSON.stringify(selectedCategories));
     formdata.append("areas_covered", JSON.stringify(areas_covered));
 
+    for (var pair of formdata.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
+    }
     EditInfo(formdata)
       .then((res) => {
         if (res?.data?.message == "the user exists already") {
@@ -279,7 +337,7 @@ const PageContent = ({ locale }: Props) => {
           });
         } else {
           notification.success({
-            message: t("register_success"),
+            message: t("edited_success"),
           });
           router.refresh()
         }
@@ -294,36 +352,6 @@ const PageContent = ({ locale }: Props) => {
         setIsLoading(false);
       });
   };
-
-  useEffect(() => {
-    const getCategories = async () => {
-      try {
-        const res = await GetMainCategories();
-
-        const newCategories = res.data.data.map((item: any) => ({
-          label: item.name,
-          value: item.id,
-        }));
-        setCategories(newCategories);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    const getCitiesAndDistricts = async () => {
-      try {
-        await GetCiteisAndDistricts();
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    if (!getData) {
-      getCategories();
-      getCitiesAndDistricts();
-      setGetData(true);
-    }
-  }, [getData]);
 
   return (
     <div>
@@ -349,6 +377,23 @@ const PageContent = ({ locale }: Props) => {
           />
         </Form.Item>
         {/* End name */}
+
+        {/* Start phoneNumber */}
+        <Form.Item<FieldType>
+          name="phoneNumber"
+          label={<span className="block text-sm md:text-base">{t("phoneNumber")}</span>}
+          rules={[{ required: false, message: t("please_enter_phoneNumber") }]}
+          labelCol={{ span: 24 }}
+
+        >
+          <Input
+            disabled
+            placeholder={t("phoneNumber")}
+            className="!rounded-[2px] !py-3 "
+          />
+        </Form.Item>
+        {/* End phoneNumber */}
+
         {/* Start Image */}
         <Form.Item<FieldType>
           name="avatar"
@@ -379,7 +424,6 @@ const PageContent = ({ locale }: Props) => {
             >
               <p> {t("attach_photo_size")}  200px * 200px </p>
               <Image src="/assets/ImgUpdateIcon.svg" alt="sasd" width={24} height={24} className="" />
-
             </Button>
           </Upload>
         </Form.Item>
@@ -506,6 +550,7 @@ const PageContent = ({ locale }: Props) => {
             style={{ width: '100%' }}
             placeholder={t("select_categories")}
             onChange={handleChangeCategories}
+            value={selectedCategories}
             options={categories}
           />
         </Form.Item>
@@ -571,5 +616,6 @@ const PageContent = ({ locale }: Props) => {
     </div>
   );
 };
+
 
 export default PageContent;
