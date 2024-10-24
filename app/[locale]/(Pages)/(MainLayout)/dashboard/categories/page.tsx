@@ -1,5 +1,5 @@
 import React from 'react'
-import CategoriesList from '@/app/[locale]/components/Pages/Categories/PageContent';
+// import CategoriesList from '@/app/[locale]/components/Pages/Categories/PageContent';
 type Params = {
     params: {
         locale: string;
@@ -7,7 +7,7 @@ type Params = {
 function Page({ params: { locale } }:Params) {
   return (
     <div>
-      <CategoriesList locale={locale}/>
+      {/* <CategoriesList locale={locale}/> */}
     </div>
   )
 }

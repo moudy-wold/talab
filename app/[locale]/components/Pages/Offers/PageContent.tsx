@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import Image from "next/image";
 import Loader from "@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader";
 import { Space, Table, Modal,  notification, Switch, DatePicker, DatePickerProps } from "antd";
@@ -56,7 +55,6 @@ function OffersPage({ locale }: Props) {
       console.log(page)
       const res = await GetAllOffresProducts(page);
       console.log(res.data.data)
-      setData(res.data.customers);
       setCurrentPage(res.data.pagination.current_page);
       setData(res.data.data)
       setIsLoading(false);
