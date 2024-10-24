@@ -62,7 +62,7 @@ const FormComponent = ({ locale }: Props) => {
   const [dynamicDistrict, setDynamicDistrict] = useState<any>();
   const [neighborhoodss, setNeighborhoods] = useState()
 
-  const handleChangeCategories = (value: string[]) => {    
+  const handleChangeCategories = (value: string[]) => {
     setSlectedCategories(value)
   };
 
@@ -110,48 +110,46 @@ const FormComponent = ({ locale }: Props) => {
     ...istDistrict.map((item: any) => ({ ...item, disabled: isAllDistrictsSelected })),
   ];
 
-// إضافة خيار "اختيار الكل" إلى القائمة
-const w = [
-  { label: 'Select All', value: AllOption },
-  ...cities.map((item: any) => ({
-    ...item, 
-    disabled: false // تعطيل الخيارات يعتمد على handleChangeCities
-  })),
-];
-
+  // const w = [
+  //   { label: 'Select All', value: AllOption },
+  //   ...cities.map((item: any) => ({
+  //     ...item, 
+  //     disabled: false // تعطيل الخيارات يعتمد على handleChangeCities
+  //   })),
+  // ];
 
   const citiesWithAll = [
     { label: 'Select All', value: AllOption },
-    ...cities.map((item: any) => ({ ...item, disabled: item.value == 'İstanbul'? true : isAllCitiesSelected })),
+    ...cities.map((item: any) => ({ ...item, disabled: item.value == 'İstanbul' ? true : isAllCitiesSelected })),
   ];
 
   const GetCiteisAndDistricts = async () => {
     const url = "https://turkiyeapi.dev/api/v1/";
-    
-      // const updatedCities = res?.data?.data?.filter((item: any) => item.name !== `İstanbul`)
-      //   .map((item: any) => {
-      //     return { 
-      //       label: item.name, 
-      //       value: item.name,
-      //     };
-      //   });
-      // setCities(updatedCities);
 
-    
+    // const updatedCities = res?.data?.data?.filter((item: any) => item.name !== `İstanbul`)
+    //   .map((item: any) => {
+    //     return { 
+    //       label: item.name, 
+    //       value: item.name,
+    //     };
+    //   });
+    // setCities(updatedCities);
+
+
 
     axios.get(`${url}provinces?fields=name`)
-    .then((res) => {
-      const updatedCities = res?.data?.data?.map((item: any) => {
-        return { 
-          label: item.name, 
-          value: item.name,          
-        }
+      .then((res) => {
+        const updatedCities = res?.data?.data?.map((item: any) => {
+          return {
+            label: item.name,
+            value: item.name,
+          }
+        });
+        setCities(updatedCities);
+      })
+      .catch((err: any) => {
+        console.log(err);
       });
-      setCities(updatedCities);
-    })
-    .catch((err: any) => {
-      console.log(err);
-    });
 
     axios.get(`${url}provinces?name=istanbul`)
       .then((res) => {
@@ -206,7 +204,7 @@ const w = [
     password,
     email,
     userName,
-    phoneNumber,    
+    phoneNumber,
     avatar,
     city,
     district,
@@ -217,7 +215,7 @@ const w = [
     flat_no,
     accept,
   }: FieldType) => {
-     setIsLoading(true);
+    setIsLoading(true);
     let areas_covered: any = [{ country: "turkey", city: { "": [] } }]
     if (isAllDistrictsSelected && isAllCitiesSelected) {
       areas_covered = [{ country: "turkey", city: { all: ["all"] } }]
