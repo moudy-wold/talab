@@ -55,7 +55,7 @@ function ProductQuestion({ locale, product_id, questions, store }: Props) {
             {isLoading && <Loader />}
             {/* Start Title */}
             <div>
-                <h1 className="w-fit border-b-[1px] border-black text ">{t("ask_question")}</h1>
+                <h1 className="w-fit border-b-[1px] border-black text ">{t("questions")}</h1>
             </div>
             {/* End Title */}
 

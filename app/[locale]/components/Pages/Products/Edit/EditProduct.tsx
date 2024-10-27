@@ -17,7 +17,7 @@ import { useForm } from "antd/es/form/Form";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { MdDelete } from "react-icons/md";
-import { CategoriesList, Currencies } from "@/app/[locale]/utils/constant";
+import { Currencies } from "@/app/[locale]/utils/constant";
 import { GetMainCategories, GetSubCategoriesByMainId } from "@/app/[locale]/api/categories";
 import { GetProductById, EditProductById } from "@/app/[locale]/api/products";
 import LargeLoader from "../../../Global/Loader/LargeLoader/LargeLoader";
@@ -25,7 +25,7 @@ import FetchImageAsFile from "../../../Global/FetchImageAsFile/FetchImageAsFile"
 import useSwr from 'swr';
 import moment from "moment";
 import dayjs from 'dayjs';
-
+import Questions from "@/app/[locale]/components/Pages/Products/Questions/Questions"
 
 type FieldType = {
   product_name: string;
@@ -57,6 +57,7 @@ function EditProduct({ locale, id }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [form] = useForm();
   const [details, setDetails] = useState([{}]);
+  const [questions ,setQuestions] = useState([])
   const [compatible_models, setCompatible_models] = useState<any>([]);
   const [mainCategories, setMainCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
@@ -74,11 +75,12 @@ function EditProduct({ locale, id }: Props) {
   };
   useEffect(() => {
     const data = ProductData?.data;
-
+    console.log(id)
+console.log(data)
     if (data) {
       if (getData) {
         console.log(data.data)
-
+        setQuestions(data?.data?.questions)
         data?.data?.details.map((item: any) => {
           setDetails(prevDetails => [...prevDetails, { title: item.title, content: item.content }]);
         });
@@ -97,7 +99,7 @@ function EditProduct({ locale, id }: Props) {
         form.setFieldValue('sub_categories', data?.data?.category_sub.name);
         form.setFieldValue(
           'images',
-          data.data.images.map((image: any) => ({
+          data?.data?.images.map((image: any) => ({
             uid: String(image),
             name: image,
             status: 'done',
@@ -150,7 +152,7 @@ function EditProduct({ locale, id }: Props) {
     }
   }
 
- 
+
 
   const onFinish = async ({
     product_name,
@@ -576,6 +578,14 @@ function EditProduct({ locale, id }: Props) {
           </div>
         </div>
         {/* End Details */}
+
+
+        {/* Start Questions */}
+        <Questions locale={locale} product_id={id} questions={questions} store={false} />
+        {/* End Questions */}
+
+
+
         <div className=" col-span-2">
           <button
             type="submit"

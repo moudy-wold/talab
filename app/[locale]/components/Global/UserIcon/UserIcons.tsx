@@ -15,7 +15,6 @@ import { IoIosNotificationsOff } from "react-icons/io";
 import { MdDeleteForever, MdOutlineDone } from "react-icons/md";
 import { SlOptions } from "react-icons/sl";
 import { IoNotificationsOutline } from "react-icons/io5";
-
 type Props = {
   locale: string;
   isLogend: boolean;
@@ -38,7 +37,7 @@ function UserIcons({ locale, isLogend }: Props) {
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoadingOnNotificationAsRead, setIsLoadingOnNotificationAsRead] = useState(false)
   const [isLoadingOnAllNotificationAsRead, setIsLoadingOnAllNotificationAsRead] = useState(false)
-
+  const [showProductModal, setShowProductModal] = useState(false);
   const { logined, setLogined } = useContext(MyContext);
 
 
@@ -58,7 +57,7 @@ function UserIcons({ locale, isLogend }: Props) {
   const getNotificationData = async () => {
     try {
       const res = await GetAllNotifications(1);
-      // console.log(res.data)
+      console.log(res.data.data)
       setTotalItems(res.data.pagination.total);
       setPageSize(res.data.pagination.per_page);
       setNotificatioItems(res?.data?.data)
@@ -92,11 +91,11 @@ function UserIcons({ locale, isLogend }: Props) {
 
   useEffect(() => {
     const isLogend: any = localStorage.getItem("isLogend");
-
     if (isLogend == "true") {
       getNotificationData();
-    }  
-  }, []);
+      console.log(isLogend)
+    }
+  }, [isLogend]);
 
   const handleMouseEnterOnNotificationsIcon = () => {
     setIssHoveredOnNotificationIcon(true);
@@ -224,7 +223,7 @@ function UserIcons({ locale, isLogend }: Props) {
 
         {/* Start Notificatiom Icon */}
         <div
-          className={`${isLogend ? "flex" : "hidden" } !flex-col justify-center items-center  relative !z-[99999999] hover:scale-110 transition-all duration-200`}
+          className={`${isLogend ? "flex" : "hidden"} !flex-col justify-center items-center  relative !z-[99999999] hover:scale-110 transition-all duration-200`}
           onMouseEnter={handleMouseEnterOnNotificationsIcon}
           onMouseLeave={handleMouseLeaveOnNotificationsIcon}
         >
@@ -258,12 +257,11 @@ function UserIcons({ locale, isLogend }: Props) {
               </li>
               {notificatioItems.length ? (notificatioItems?.map((item: any, index: number) => (
                 <li key={item.id} className="bg-white rounded-md my-3 py-1 px-3">
-
                   <Link
-                    onClick={() => { SetNotificationAsReadOnClic(item.id) }}
-                    href={item.data.title === "new_question" ? `/${item.data.data.id}`
-                      : item.data.title === "new_order" ? "/dashboard/orders" : "#"}
-                    className="relative">
+                    className="relative"
+                    onClick={() => {SetNotificationAsReadOnClic(item.id)}}
+                    href={item.data.title === "new_order" ? "/dashboard/orders" : item.data.title === "new_question" ? `/dashboard/products/edit/${item?.data?.data?.id}` : "#"}
+                  >
                     <span className={`${item.read_at != "" ? "hidden" : "block"} w-2 h-2 bg-red-600 rounded-full absolute top-1 right-1 `}></span>
                     <p className="mr-2 text-sm  transition-all duration-200 hover:scale-105">
                       {item.data.message}  {item.data.title == "product" || item.data.title == "order" && `${t("from"), item.data.data.customer_name}`}
@@ -374,6 +372,7 @@ function UserIcons({ locale, isLogend }: Props) {
         </div>
         {/* End Login &&& */}
 
+        {/* Start LogOut Model */}
         <Modal
           title={t("logout")}
           centered
@@ -385,6 +384,9 @@ function UserIcons({ locale, isLogend }: Props) {
         >
           <p>{t("are_you_sure_log_out")} </p>
         </Modal>
+        {/* End LogOut Model */}
+
+      
       </div>
     </main>
   );

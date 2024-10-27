@@ -9,10 +9,8 @@ type Params = {
   };
 };
 async function Page({ params: { locale, id } }: Params) {
-  // const data = await GetProductById(id)
   return (
     <div>
-
       <EditProduct locale={locale} id={id} />
     </div>)
 }
