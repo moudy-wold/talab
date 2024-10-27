@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import OtpInput from "react-otp-input";
-import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { Form, Input, notification } from "antd";
 import { ConfirmOTP, ResendOTP, ResetPass } from "@/app/[locale]/api/auth";

@@ -7,19 +7,14 @@ import Loader from "@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoa
 type Props = {
     locale: any,
     reviews: any,
-    product_id: string,
+    product_id?: string,
     store?: boolean,
 }
-function Rating({ locale, product_id, reviews, store }: Props) {
+function Rating({ locale, reviews }: Props) {
     const { t } = useTranslation(locale, "common");
      
     const [isLoading, setIsLoading] = useState(false);
-    const [ratingMarge, setRatingMarge] = useState([false, false, false, false, false])
- 
-
-    
-   
-    
+    const [ratingMarge, setRatingMarge] = useState([false, false, false, false, false])    
     return (
         <div className="py-7 px-5 border-t-2 border-gray-300 ">
             {isLoading && <Loader />}
@@ -33,11 +28,11 @@ function Rating({ locale, product_id, reviews, store }: Props) {
             {/* Start Show Reviews */}
             {reviews?.length == 0 && <p className="mt-2">{t("no_reviews_yet")}</p>}
             <div className="flex flex-col gap-3 mt-3 p-3">
-                {reviews?.map((re: any) => {
+                {reviews?.map((re: any,index:any) => {
                     // Rating
                     let updatedMarge = ratingMarge.map((_, index) => index < re.rating);
                     return (
-                        <div className="min-w-[220px] !max-w-[350px] my-3">
+                        <div key={index} className="min-w-[220px] !max-w-[350px] my-3">
                             <div className=" bg-[#f0f2f5] p-2 px-3 rounded-lg">
                                 <div className="flex items-center justify-between">
                                     {/* Start Name */}

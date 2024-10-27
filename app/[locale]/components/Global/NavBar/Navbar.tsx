@@ -43,7 +43,7 @@ function Navbar({ locale }: Props) {
 
   const handleLogOut = () => {
     LogOut()
-      .then((res) => {
+      .then(() => {
         notification.success({ message: t("succeffly_logout") });
         localStorage.clear()
         Cookies.remove('token');
@@ -62,7 +62,7 @@ function Navbar({ locale }: Props) {
   };
 
   useEffect(() => {
-    let logend = localStorage.getItem("isLogend");
+    const logend = localStorage.getItem("isLogend");
     if (logend != undefined && logend == "true") {
       setIsLogend(true)
     } else {

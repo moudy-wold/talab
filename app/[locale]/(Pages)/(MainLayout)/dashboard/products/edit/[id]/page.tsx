@@ -1,6 +1,5 @@
 import React from "react";
 import EditProduct from '@/app/[locale]/components/Pages/Products/Edit/EditProduct';
-import { GetProductById } from "@/app/[locale]/api/products";
 
 type Params = {
   params: {

@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { languages } from "@/app/i18n/settings";
+// import { languages } from "@/app/i18n/settings";
 import { dir } from "i18next";
 import dynamic from "next/dynamic";
 import { MyProvider } from './context/myContext';

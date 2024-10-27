@@ -10,9 +10,9 @@ function GlobalRating({average_rating}:any) {
     return (
         <div>
             <ul className="flex gap-1 ">
-                {ratingMarge?.map((item: any) => (
+                {ratingMarge?.map((item: any,index) => (
 
-                    <li className="">
+                    <li className="" key={index}>
 
                         {item ?
                             <Image alt="star" src="/assets/svg/fullStar.svg" width={17} height={17} className="" />

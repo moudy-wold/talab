@@ -5,12 +5,10 @@ import {
   Button,
   Form,
   Input,
-  Modal,
   Select,
   Switch,
   Upload,
   notification,
-  DatePickerProps,
   DatePicker
 } from "antd";
 import { useForm } from "antd/es/form/Form";
@@ -52,12 +50,12 @@ type Props = {
 
 }
 function EditProduct({ locale, id }: Props) {
-  const { t, i18n } = useTranslation(locale, "common");
+  const { t} = useTranslation(locale, "common");
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [form] = useForm();
   const [details, setDetails] = useState([{}]);
-  const [questions ,setQuestions] = useState([])
+  const [questions, setQuestions] = useState([])
   const [compatible_models, setCompatible_models] = useState<any>([]);
   const [mainCategories, setMainCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
@@ -66,7 +64,7 @@ function EditProduct({ locale, id }: Props) {
   const [loading_cate, setLoading_cate] = useState(false)
   const [dates, setDates] = useState<any>({ offer_start_date: "", offer_expiry_date: "" })
   const [getData, setGetData] = useState(true);
-  const { data: ProductData, isLoading: EditLoading } = useSwr(
+  const { data: ProductData,  } = useSwr(
     `/talab/products/${id}`,
     () => GetProductById(id)
   );
@@ -76,7 +74,7 @@ function EditProduct({ locale, id }: Props) {
   useEffect(() => {
     const data = ProductData?.data;
     console.log(id)
-console.log(data)
+    console.log(data)
     if (data) {
       if (getData) {
         console.log(data.data)
@@ -581,7 +579,7 @@ console.log(data)
 
 
         {/* Start Questions */}
-        <Questions locale={locale} product_id={id} questions={questions} store={false} />
+        <Questions locale={locale} product_id={id} questions={questions} />
         {/* End Questions */}
 
 

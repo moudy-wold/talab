@@ -11,7 +11,7 @@ import OrderDataCards from "./OrderDataCards/OrderDataCards";
 import UserOrders from "./Dynamic-User-Orders/UserOrders";
 
 function OrdersList({ locale }: any) {
-  const { t, i18n } = useTranslation(locale, "common");
+  const { t } = useTranslation(locale, "common");
   const [isLoading, setIsLoading] = useState(false);
   const [openOrderDetails, setOpenOrderDetails] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);

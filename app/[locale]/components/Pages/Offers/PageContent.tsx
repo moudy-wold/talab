@@ -3,13 +3,13 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Loader from "@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader";
-import { Space, Table, Modal,  notification, Switch, DatePicker, DatePickerProps } from "antd";
+import { Space, Table, Modal, notification, Switch, } from "antd";
 import { ColumnsType } from "antd/es/table";
 import moment from "moment";
 
-import {  CiEdit } from "react-icons/ci";
+import { CiEdit } from "react-icons/ci";
 import { useTranslation } from "@/app/i18n/client";
-import { DeleteProduct, GetAllOffresProducts, UpdateOfferProduct } from "@/app/[locale]/api/products";
+import { GetAllOffresProducts, UpdateOfferProduct } from "@/app/[locale]/api/products";
 import EditOffer from "../Products/EditOffer/EditOffer";
 type Props = {
   locale: string,
@@ -19,10 +19,7 @@ function OffersPage({ locale }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const [openDeleteOffer, setOpenDeleteOffer] = useState(false);
-  const [openDates, setOpenDates] = useState(false);
-  const [dates, setDates] = useState<any>({ discount_price: 0, offer_start_date: "", offer_expiry_date: "" })
 
-  const [page, setPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
@@ -49,7 +46,6 @@ function OffersPage({ locale }: Props) {
   }, [])
 
   const handlePageChange = async (page: any) => {
-    setPage(page + 1);
     setIsLoading(true);
     try {
       console.log(page)
@@ -77,7 +73,7 @@ function OffersPage({ locale }: Props) {
     },
     {
       title: t("product_images"),
-      align:"center",
+      align: "center",
       dataIndex: "images",
       key: "images",
       render: (_, record) => (
@@ -101,7 +97,7 @@ function OffersPage({ locale }: Props) {
       key: "is_in_offer",
       render: (_, record) => (
         <Space size="middle">
-          <Switch defaultValue={record.is_in_offer == "1" ? true : false} onChange={() => { record.is_in_offer == "1" ? setOpenDeleteOffer(true) : setOpenDates(true);setProducyId(record.id) }} />
+          <Switch defaultValue={record.is_in_offer == "1" ? true : false} onChange={() => { record.is_in_offer == "1" && setOpenDeleteOffer(true); setProducyId(record.id) }} />
           <div className="p-1 border-2 border-gray-300 cursor-pointer rounded-lg ">
             <CiEdit className="hover:scale-125 transtion-all duration-150 text-xl" onClick={() => { setItemForOffer(record); setOpenEditOffer(true); console.log(record) }} />
           </div>
@@ -112,29 +108,29 @@ function OffersPage({ locale }: Props) {
       title: t("offer_start_date"),
       dataIndex: "offer_start_date",
       key: "offer_start_date",
-      align:"center",
+      align: "center",
     },
     {
       title: t("offer_expiry_date"),
       dataIndex: "offer_expiry_date",
       key: "offer_expiry_date",
-      align:"center",
+      align: "center",
     },
     {
       title: t("price"),
       dataIndex: "price",
       key: "price",
-      align:"center",
+      align: "center",
     },
     {
-      title: t("discount_price"),      
+      title: t("discount_price"),
       dataIndex: "discount_price",
       key: "discount_price",
-      align:"center",
+      align: "center",
     },
     {
       title: t("category"),
-      align:"center",
+      align: "center",
       dataIndex: "category",
       key: "category",
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
@@ -154,12 +150,12 @@ function OffersPage({ locale }: Props) {
     category: `${item.category_main.name} / ${item.category_sub.name}`,
   }));
 
-  
+
   const DeleteProductfromOffer = async () => {
     console.log(product_id)
     setIsLoading(true);
     setOpenDeleteOffer(false);
-    UpdateOfferProduct(product_id, "0", dates.discount_price, dates.offer_start_date, dates.offer_expiry_date)
+    UpdateOfferProduct(product_id, "0", "","", "")
       .then((res) => {
         if (res.status) {
           notification.success({
@@ -177,7 +173,7 @@ function OffersPage({ locale }: Props) {
         });
       });
   }
- 
+
   return (
     <div>
       {isLoading && <Loader />}
@@ -208,7 +204,7 @@ function OffersPage({ locale }: Props) {
         >
           <p>{t("you_sure_want_delete_product_from_offer")}</p>
         </Modal>
- {/* End ADd Product To Offer */}
+        {/* End ADd Product To Offer */}
 
         {/* Start Edit OFfer */}
         <Modal

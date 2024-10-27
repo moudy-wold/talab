@@ -52,9 +52,9 @@ function ProductsList({ locale }: Props) {
   const [product_Visits, setProduct_Visits] = useState("")
   
   const [openDates, setOpenDates] = useState(false);
-  const [dates, setDates] = useState<any>({ discount_price: 0, offer_start_date: "", offer_expiry_date: "" })
+  // const [dates, setDates] = useState<any>({ discount_price: 0, offer_start_date: "", offer_expiry_date: "" })
   const [product_id, setProduct_id] = useState("")
-  const [page, setPage] = useState(0);
+  // const [page, setPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
@@ -82,7 +82,7 @@ function ProductsList({ locale }: Props) {
   }, [])
 
   const handlePageChange = async (page: any) => {
-    setPage(page + 1);
+    // setPage(page + 1);
     setIsLoading(true);
     try {
       console.log(page)
@@ -260,7 +260,7 @@ function ProductsList({ locale }: Props) {
   const DeleteProductfromOffer = async () => {
     setIsLoading(true);
     setOpenDeleteOffer(false);
-    UpdateOfferProduct(product_id, "0", dates.discount_price, dates.offer_start_date, dates.offer_expiry_date)
+    UpdateOfferProduct(product_id, "0", "", "", "")
       .then((res) => {
         if (res.status) {
           notification.success({
@@ -419,7 +419,7 @@ function ProductsList({ locale }: Props) {
 
           {/* Start questions */}
           <div className="max-h-[70wh] overflow-y-auto">
-            <Questions locale={locale} product_id={product_id} questions={product_questions} store={false} />
+            <Questions locale={locale} product_id={product_id} questions={product_questions} />
           </div>
           {/* End questions */}
         </Modal>

@@ -1,8 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { DatePicker, Form, Input, Modal, notification } from "antd";
+import { DatePicker, Form, Input, notification } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { useTranslation } from "@/app/i18n/client";
 import dayjs from 'dayjs';
@@ -17,16 +16,15 @@ type FieldType = {
     offer_expiry_date: string;
 };
 
-type Props = {
-    locale: string;
-}
+// type Props = {
+//     locale: string;
+// }
 function EditOffer(props: any) {
     const { t } = useTranslation(props.locale, "common");
     const [form] = useForm();
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const [dates, setDates] = useState<any>({ discount_price: 0, offer_start_date: "", offer_expiry_date: "" })
-    const [getData, setGetData] = useState(true);
     const disabledDate = (current: any) => {
         return current && current < dayjs().startOf('day');
     };

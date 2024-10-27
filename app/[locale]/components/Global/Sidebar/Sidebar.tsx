@@ -1,13 +1,10 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import Loader from "@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader";
+import React, { useState } from "react";
 import { useTranslation } from "@/app/i18n/client";
 import { RiAddCircleLine } from "react-icons/ri";
-import { AiOutlineProduct } from "react-icons/ai";
-import { TbCategoryFilled, TbJumpRope } from "react-icons/tb";
+import { TbCategoryFilled } from "react-icons/tb";
 import { IoSettingsOutline } from "react-icons/io5";
 import Link from "next/link";
-import { RxSection } from "react-icons/rx";
 
 type Item = {
   label: string;
@@ -21,62 +18,14 @@ type Props = {
 };
 
 function Sidebar({ locale }: Props) {
-  const { t, i18n } = useTranslation(locale, "common");
+  const { t } = useTranslation(locale, "common");
 
   const [activeLink, setActiveLink] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [current, setCurrent] = useState("");
-  const [categories, setCategories] = useState([]);
 
-  const handleClickCategory = (category: any) => {
-    localStorage.setItem("categoryId", category._id);
-  };
-  useEffect(() => {
+ 
 
-    let arr: any = {
-      label: t("categories"),
-      key: "1",
-      url: "/categories",
-      icon: <AiOutlineProduct />,
-      children: [
-        {
-          label: t("all_category"),
-          key: "1.2",
-          url: "/",
-          icon: <RiAddCircleLine />
-        }
-      ]
-    };
-    const getCategories = async () => {
-      try {
-        // const res = await GetAllCategories();
-        let res: any;
-        res.data.data.forEach((category: any) => {
-          arr.children.push({
-            label: (
-              <Link
-                href={`/categories/${category.name}`}
-                onClick={() => {
-                  handleClickCategory(category);
-                }}
-              >
-                {category.name}
-              </Link>
-            ),
-            key: category._id,
-            icon: <TbJumpRope />,
-            url: `/admin/category/${category.name}`
-          });
-        });
-      } catch (err: any) {
-        console.log(err);
-      }
-    };
-
-    //  getCategories()
-  }, []);
-
-  const items: Item[] = [    
+  const items: Item[] = [
     {
       label: t("products"),
       key: "2",
@@ -95,7 +44,7 @@ function Sidebar({ locale }: Props) {
           icon: <TbCategoryFilled />
         },
       ]
-    },       
+    },
     {
       label: t("offers"),
       key: "5",
@@ -121,7 +70,7 @@ function Sidebar({ locale }: Props) {
         // }
       ]
     },
-   
+
     {
       label: t("accounting"),
       key: "6",
@@ -139,24 +88,27 @@ function Sidebar({ locale }: Props) {
           url: "/dashboard/profile",
           icon: <TbCategoryFilled />
         },
+        {
+          label: t("staticits"),
+          key: "55",
+          url: "/dashboard/staticits",
+          icon: <TbCategoryFilled />
+        },
       ]
     }
   ];
 
-  const handleClick = (item: any) => {
-    // console.log(item);
-  };
+ 
   return (
     <>
-      {isLoading && <Loader />}
       <div className={`${locale == "ar" ? "right-0" : "left-0"}  fixed z-10 top-0 w-[320px] h-[100vh]`}>
         <div className="px-6 py-1 mt-28">
-          {items.map((item: any,index:number) => (
+          {items.map((item: any, index: number) => (
             <div
-            key={index}
+              key={index}
               className=""
               onClick={() => {
-                handleClick(item);
+                // handleClick(item);
               }}
             >
               {item.children ? (
@@ -202,12 +154,12 @@ function Sidebar({ locale }: Props) {
                       role="region"
                       aria-labelledby="faqs-title-01"
                       className={`grid overflow-hidden transition-all duration-300 ease-in-out -mt-1 ${activeLink == item.key
-                          ? " grid-rows-[1fr] opacity-100"
-                          : " grid-rows-[0fr] opacity-0"
+                        ? " grid-rows-[1fr] opacity-100"
+                        : " grid-rows-[0fr] opacity-0"
                         }`}
                     >
                       <div className="overflow-hidden">
-                        {item?.children?.map((child: any,ind:number) => (
+                        {item?.children?.map((child: any, ind: number) => (
                           <Link href={child.url} key={ind} className="flex p-2 px-4 my-2 items-center gap-2 hover:text-black hover:no-underline hover:bg-gray-100 rounded-lg">
                             <span>{item.icon}</span>
                             <span className="text-lg  text-black font-semibold ">

@@ -1,29 +1,23 @@
-import { AddAnswer} from "@/app/[locale]/api/products";
+import React, { useState } from "react";
+import { AddAnswer } from "@/app/[locale]/api/products";
 import { useTranslation } from "@/app/i18n/client";
-import { Button, Form, Input, notification, Space } from "antd";
-import { useForm } from "antd/es/form/Form";
-import React, { useEffect, useState } from "react";
+import { Button, Input, notification, Space } from "antd";
 import Loader from "@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader";
 import moment from "moment";
-import { useRouter } from "next/navigation";
 type Props = {
     locale: any,
-    product_id: string,
+    product_id?: string,
     questions: any
-    store?: any,
 }
 
 
-function ProductQuestion({ locale, product_id, questions, store }: Props) {
+function ProductQuestion({ locale, questions }: Props) {
     const { t } = useTranslation(locale, "common");
-    const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
-    const [question, setQuestion] = useState("");
     const [answer, setAnswer] = useState("");
     const [openAnswer, setOpenAnswer] = useState(false);
-    const [userRole, setUserRole] = useState("");
     const [question_id, setQuestion_id] = useState("")
-    
+
 
     const onFinishAnswer = async () => {
         setIsLoading(true)
@@ -44,11 +38,6 @@ function ProductQuestion({ locale, product_id, questions, store }: Props) {
         }
     }
 
-    useEffect(() => {
-        const userRole: any = localStorage.getItem("userRole");
-        const pareUserRole = JSON.parse(userRole);
-        setUserRole(pareUserRole)
-    }, [])
 
     return (
         <div className="py-7 px-5 border-t-2 border-gray-300 ">
@@ -75,13 +64,13 @@ function ProductQuestion({ locale, product_id, questions, store }: Props) {
                         </div>
 
                         <div className="flex items-center gap-4 p-[2px]">
-                            {!store && ques.answer == "" && userRole != "customer" &&
-                                <button onClick={() => { setOpenAnswer(true); setQuestion_id(ques.id) }} className="text-sm text-[#006496] cursor-pointer hover:scale-105 hover:text-black"  >{t("answer")}</button>
-                            }
+
+                            <button onClick={() => { setOpenAnswer(true); setQuestion_id(ques.id) }} className="text-sm text-[#006496] cursor-pointer hover:scale-105 hover:text-black"  >{t("answer")}</button>
+
                             <span className="text-[13px]">{moment(ques.created_at).locale("en").format("DD/MM/YYYY HH:mm")}</span>
                         </div>
                         {/* Start Answer */}
-                        {ques.answer != "" && 
+                        {ques.answer != "" &&
                             <div className={`bg-[#f0f2f5] p-1 px-3 rounded-lg mx-3 mt-2`}>
                                 <p className=" text-[#006496] text-sm ">{t("seller_answer")}</p>
                                 <p className="mt-1">{ques.answer}</p>
@@ -90,7 +79,7 @@ function ProductQuestion({ locale, product_id, questions, store }: Props) {
                         {/* End Answer */}
 
 
-                        {openAnswer &&question_id == ques.id &&
+                        {openAnswer && question_id == ques.id &&
                             <Space.Compact style={{ width: '100%' }}>
                                 <Input
                                     value={answer}
@@ -110,7 +99,7 @@ function ProductQuestion({ locale, product_id, questions, store }: Props) {
                 ))}
             </div>
             {/* End Show Qewstion */}
- 
+
         </div>
     )
 }

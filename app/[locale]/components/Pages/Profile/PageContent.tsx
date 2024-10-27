@@ -55,7 +55,7 @@ const PageContent = ({ locale }: Props) => {
   const [categories, setCategories] = useState<any>([])
   const [dynamicDistrict, setDynamicDistrict] = useState<any>();
   const [neighborhoodss, setNeighborhoods] = useState()
-  const { data: infoData, isLoading: EditLoading } = useSwr(
+  const { data: infoData } = useSwr(
     `/talab`,
     () => GetInfo()
   );
@@ -123,11 +123,11 @@ const PageContent = ({ locale }: Props) => {
 
   useEffect(() => {
     const data = infoData?.data;
-    const getCitiesAndDistricts = async () => {
-      await getCategories()
-      await getCities()
-      await GetDistricts(); // احصل على البيانات
-    }
+    // const getCitiesAndDistricts = async () => {
+    //   await getCategories()
+    //   await getCities()
+    //   await GetDistricts(); 
+    // }
 
     if (!isLoading && data) {
 

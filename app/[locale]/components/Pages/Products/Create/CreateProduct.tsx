@@ -5,12 +5,10 @@ import {
   Button,
   Form,
   Input,
-  Modal,
   Select,
   Switch,
   Upload,
   notification,
-  DatePickerProps,
   DatePicker
 } from "antd";
 import { useForm } from "antd/es/form/Form";
@@ -18,7 +16,7 @@ import dayjs from 'dayjs';
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { MdDelete } from "react-icons/md";
-import { CategoriesList, Currencies } from "@/app/[locale]/utils/constant";
+import {  Currencies } from "@/app/[locale]/utils/constant";
 import { GetMainCategories, GetSubCategoriesByMainId } from "@/app/[locale]/api/categories";
 import { AddProduct } from "@/app/[locale]/api/products";
 import LargeLoader from "../../../Global/Loader/LargeLoader/LargeLoader";
@@ -43,7 +41,7 @@ type FieldType = {
   offer_expiry_date: string;
 };
 function CreateProduct({ locale }: any) {
-  const { t, i18n } = useTranslation(locale, "common");
+  const { t } = useTranslation(locale, "common");
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [form] = useForm();
@@ -51,7 +49,7 @@ function CreateProduct({ locale }: any) {
   const [compatible_models, setCompatible_models] = useState([""]);
   const [mainCategories, setMainCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
-  const [subCategory_id, setSubCategory_id] = useState("");
+  // const [subCategory_id, setSubCategory_id] = useState("");
   const [is_offer, setIs_offer] = useState(false);
   const [loading_cate, setLoading_cate] = useState(false)
   const [dates, setDates] = useState<any>({ offer_start_date: "", offer_expiry_date: "" })
@@ -273,7 +271,7 @@ function CreateProduct({ locale }: any) {
             showSearch
             placeholder={t("select_sub_category")}
             optionFilterProp="label"
-            onChange={(value, option: any) => { setSubCategory_id(option?.value) }}
+            // onChange={(value, option: any) => { setSubCategory_id(option?.value) }}
             options={subCategories}
             loading={loading_cate}
             className="!h-12"

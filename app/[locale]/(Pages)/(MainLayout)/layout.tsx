@@ -1,5 +1,5 @@
 "use client"
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useEffect } from "react";
 import Sidebar from "@/app/[locale]/components/Global/Sidebar/Sidebar";
 import { useRouter } from "next/navigation";
 
@@ -14,7 +14,7 @@ interface RootLayoutProps {
 function MainLayout({ params: { locale }, children }: RootLayoutProps) {
   const router = useRouter();
   useEffect(() => {
-    let logend = localStorage.getItem("isLogend");
+    const logend = localStorage.getItem("isLogend");
     if (logend == undefined || logend !== "true") {
       router.push("/auth/login")
     }
