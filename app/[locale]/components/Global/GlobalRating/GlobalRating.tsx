@@ -6,7 +6,7 @@ function GlobalRating({average_rating}:any) {
     useEffect(() => {
         const updatedMarge = ratingMarge.map((_, index) => index < average_rating);
         setRatingMarge(updatedMarge);
-    }, [])
+    }, [ratingMarge])
     return (
         <div>
             <ul className="flex gap-1 ">

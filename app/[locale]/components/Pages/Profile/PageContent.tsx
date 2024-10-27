@@ -149,7 +149,7 @@ const PageContent = ({ locale }: Props) => {
         status: 'done',
         url: data?.data?.avatar,
       }]);
-      let Address = JSON.parse(data?.data?.address)
+      const Address = JSON.parse(data?.data?.address)
       form.setFieldValue('city', Address.city);
       form.setFieldValue('district', Address.district);
       form.setFieldValue('neighborhoods', Address.neighborhoods);
@@ -201,12 +201,12 @@ const PageContent = ({ locale }: Props) => {
     ...cities.map((item: any) => ({ ...item, disabled: item.value == 'İstanbul' ? true : isAllCitiesSelected })),
   ];
   const onChangeCity = async (value: any) => {
-    let distrObj: any = []
+    const distrObj: any = []
     const url = `https://turkiyeapi.dev/api/v1/provinces?name=${value}`
     axios.get(url)
       .then((res: any) => {
         res?.data?.data[0]?.districts.map((item: any) => {
-          let obj = { label: item.name, value: item.name, id: item.id }
+          const obj = { label: item.name, value: item.name, id: item.id }
           distrObj.push(obj)
         })
         setDynamicDistrict(distrObj)
@@ -229,14 +229,14 @@ const PageContent = ({ locale }: Props) => {
 
 
   const onChangeDistrict = async (value: any, option: any) => {
-    let neighborhoodsObj: any = []
+    const neighborhoodsObj: any = []
 
     const url = `https://turkiyeapi.dev/api/v1/districts/${option?.id}`
 
     axios.get(url)
       .then((res: any) => {
         res?.data?.data?.neighborhoods?.map((item: any) => {
-          let obj = { label: item.name, value: item.name, id: item.id }
+          const obj = { label: item.name, value: item.name, id: item.id }
           neighborhoodsObj.push(obj)
         })
         setNeighborhoods(neighborhoodsObj)
@@ -301,7 +301,7 @@ const PageContent = ({ locale }: Props) => {
       });
     }
 
-    let Address = { city: city, district: district, neighborhoods: neighborhoods, sokak_no: sokak_no, building_no: building_no, dukkan_no: dukkan_no, flat_no: flat_no }
+    const Address = { city: city, district: district, neighborhoods: neighborhoods, sokak_no: sokak_no, building_no: building_no, dukkan_no: dukkan_no, flat_no: flat_no }
     const formdata: any = new FormData();
     // console.log(areas_covered)
     formdata.append("userName", userName);
@@ -324,11 +324,7 @@ const PageContent = ({ locale }: Props) => {
     // End Fixed Code *************
 
     formdata.append("categories", JSON.stringify(selectedCategories));
-    formdata.append("areas_covered", JSON.stringify(areas_covered));
-
-    for (var pair of formdata.entries()) {
-      console.log(pair[0] + ', ' + pair[1]);
-    }
+    formdata.append("areas_covered", JSON.stringify(areas_covered));     
     EditInfo(formdata)
       .then((res) => {
         if (res?.data?.message == "the user exists already") {

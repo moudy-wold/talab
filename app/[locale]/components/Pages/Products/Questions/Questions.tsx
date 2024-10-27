@@ -22,7 +22,7 @@ function ProductQuestion({ locale, questions }: Props) {
     const onFinishAnswer = async () => {
         setIsLoading(true)
         try {
-            const res = await AddAnswer(question_id, answer)
+             await AddAnswer(question_id, answer)
             notification.success({
                 message: t("sent_question_successfully")
             })
@@ -51,8 +51,8 @@ function ProductQuestion({ locale, questions }: Props) {
             {/* Start Show Qewstion */}
             {questions?.length == 0 && <p className="mt-2">{t("no_questions_yet")}</p>}
             <div className="flex flex-col gap-3 my-3 p-3 min-h-16">
-                {questions?.map((ques: any) => (
-                    <div className="min-w-[220px] !max-w-[350px] my-3">
+                {questions?.map((ques: any,index:number) => (
+                    <div key={index} className="min-w-[220px] !max-w-[350px] my-3">
                         <div className=" bg-[#f0f2f5] p-2 px-3 rounded-lg">
                             {/* Start Name */}
                             <p className="">{ques.user_name}</p>

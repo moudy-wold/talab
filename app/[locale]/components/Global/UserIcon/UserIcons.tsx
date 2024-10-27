@@ -23,22 +23,19 @@ function UserIcons({ locale, isLogend }: Props) {
   const { t, i18n } = useTranslation(locale, "common");
   const [isLoading, setIsLoading] = useState(false);
   const [openLogOut, setOpenLogOut] = useState(false);
-  const [currentLocale, setCurrentLocale] = useState(locale);
+  // const [currentLocale, setCurrentLocale] = useState(locale);
   const router = useRouter();
   const currentPathname = usePathname();
   const [notificationsLength, setNotificationsLength] = useState<any>(0);
   const [notificatioItems, setNotificatioItems] = useState([]);
   const [pageSize, setPageSize] = useState(10);
   const [totalItems, setTotalItems] = useState<any>(0);
-  const [id, setId] = useState("")
-  const [isHoveredOnProfileIcon, setIssHoveredOnProfileIcon] = useState(false);
   const [isHoveredOnNotificationIcon, setIssHoveredOnNotificationIcon] = useState(false);
   const [isLoadingForPagination, setIsLoadingForPagination] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoadingOnNotificationAsRead, setIsLoadingOnNotificationAsRead] = useState(false)
   const [isLoadingOnAllNotificationAsRead, setIsLoadingOnAllNotificationAsRead] = useState(false)
-  const [showProductModal, setShowProductModal] = useState(false);
-  const { logined, setLogined } = useContext(MyContext);
+  const {  setLogined } = useContext(MyContext);
 
 
   // Handle Change Language
@@ -49,7 +46,7 @@ function UserIcons({ locale, isLogend }: Props) {
     document.dir = newLocale === "ar" ? "rtl" : "ltr";
     i18n.changeLanguage(newLocale);
     router.push(`/${newLocale}${pathWithoutLocale}`);
-    setCurrentLocale(newLocale); // Update the local state
+    // setCurrentLocale(newLocale); // Update the local state
   };
 
 
@@ -71,7 +68,7 @@ function UserIcons({ locale, isLogend }: Props) {
     setOpenLogOut(false)
     setIsLoading(true)
     LogOut()
-      .then((res) => {
+      .then(() => {
         notification.success({ message: t("succeffly_logout") });
         localStorage.clear();
         Cookies.remove('token');
@@ -147,7 +144,7 @@ function UserIcons({ locale, isLogend }: Props) {
 
   const SetNotificationAsReadOnClic = async (id: string) => {
     try {
-      const res = await SetNotoficationAsReadById(id);
+       await SetNotoficationAsReadById(id);
       setNotificationsLength(notificationsLength - 1)
       router.refresh();
 
@@ -256,7 +253,7 @@ function UserIcons({ locale, isLogend }: Props) {
                 </div>
               </li>
               {notificatioItems.length ? (notificatioItems?.map((item: any, index: number) => (
-                <li key={item.id} className="bg-white rounded-md my-3 py-1 px-3">
+                <li key={index} className="bg-white rounded-md my-3 py-1 px-3">
                   <Link
                     className="relative"
                     onClick={() => {SetNotificationAsReadOnClic(item.id)}}

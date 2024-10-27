@@ -1,7 +1,7 @@
 "use client"
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { useTranslation } from "@/app/i18n/client";
-import { Space, Table, Modal, notification, Switch, DatePicker, DatePickerProps } from "antd";
+import { Table, notification } from "antd";
 import { ColumnsType } from "antd/es/table";
 import moment from "moment";
 import { GetAllOffresProducts } from "@/app/[locale]/api/products";
@@ -9,7 +9,7 @@ import Loader from "../../Global/Loader/Loader";
 
 
 function PageContent({ locale }: any) {
-  const { t, i18n } = useTranslation(locale, "common");
+  const { t } = useTranslation(locale, "common");
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(56);

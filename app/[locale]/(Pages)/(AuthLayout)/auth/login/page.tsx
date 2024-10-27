@@ -1,4 +1,4 @@
-import Login from '@/app/[locale]/components/Pages/Auth/login/page';
+import Login from '@/app/[locale]/components/Pages/Auth/login/LoginPage';
 type Props = {
   params: {
     locale: string

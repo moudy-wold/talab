@@ -1,9 +1,8 @@
-import React, {  useState } from "react";
+import React from "react";
 import Image from "next/image";
 import { useTranslation } from "@/app/i18n/client";
 
 import moment from "moment";
-import Loader from "@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader";
 type Props = {
     locale: any,
     reviews: any,
@@ -13,11 +12,9 @@ type Props = {
 function Rating({ locale, reviews }: Props) {
     const { t } = useTranslation(locale, "common");
      
-    const [isLoading, setIsLoading] = useState(false);
-    const [ratingMarge, setRatingMarge] = useState([false, false, false, false, false])    
+    const ratingMarge =[false, false, false, false, false]
     return (
         <div className="py-7 px-5 border-t-2 border-gray-300 ">
-            {isLoading && <Loader />}
             {/* Start Title */}
             <div>
                 <h1 className="w-fit border-b-[1px] border-black text ">{t("reviews")}</h1>
@@ -30,7 +27,7 @@ function Rating({ locale, reviews }: Props) {
             <div className="flex flex-col gap-3 mt-3 p-3">
                 {reviews?.map((re: any,index:any) => {
                     // Rating
-                    let updatedMarge = ratingMarge.map((_, index) => index < re.rating);
+                    const updatedMarge = ratingMarge.map((_, index) => index < re.rating);
                     return (
                         <div key={index} className="min-w-[220px] !max-w-[350px] my-3">
                             <div className=" bg-[#f0f2f5] p-2 px-3 rounded-lg">
@@ -41,8 +38,8 @@ function Rating({ locale, reviews }: Props) {
 
                                     {/* Start User Rating */}
                                     <ul className="flex gap-1 ">
-                                        {updatedMarge?.map((item: any) => (
-                                            <li className="">
+                                        {updatedMarge?.map((item: any,index:number) => (
+                                            <li className="" key={index}>
                                                 {item ?
                                                     <Image alt="star" src="/assets/svg/fullStar.svg" width={17} height={17} className="" />
                                                     :

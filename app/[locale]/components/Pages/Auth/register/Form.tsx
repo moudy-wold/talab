@@ -1,8 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Loader from "@/app/[locale]/components/Global/Loader/Loader";
-import { Checkbox, Form, Input, notification, Modal, Button, Upload, Select, Space } from "antd";
-import type { SelectProps } from 'antd';
+import { Checkbox, Form, Input, notification, Modal, Button, Upload, Select } from "antd";
 import Link from "next/link";
 import { Register } from "@/app/[locale]/api/auth";
 import { useRouter } from "next/navigation";
@@ -44,7 +43,7 @@ const FormComponent = ({ locale }: Props) => {
   const { t } = useTranslation(locale, "common")
   const [isLoading, setIsLoading] = useState(false);
   const [openVerifyPopup, setOpenVerifyPopup] = useState<boolean>(false);
-  const [capched, setCapched] = useState<string | null>();
+  // const [capched, setCapched] = useState<string | null>();
   const { push } = useRouter();
   const [getData, setGetData] = useState(false);
   const [selectedCategories, setSlectedCategories] = useState<any>([])
@@ -154,7 +153,7 @@ const FormComponent = ({ locale }: Props) => {
     axios.get(`${url}provinces?name=istanbul`)
       .then((res) => {
         res?.data?.data[0].districts.forEach((item: any) => {
-          let obj = { label: item.name, value: item.name }
+          const obj = { label: item.name, value: item.name }
           setIstDistrict((prev: any) => [...prev, obj])
         })
 
@@ -167,12 +166,12 @@ const FormComponent = ({ locale }: Props) => {
   }
 
   const onChangeCity = async (value: any) => {
-    let distrObj: any = []
+    const distrObj: any = []
     const url = `https://turkiyeapi.dev/api/v1/provinces?name=${value}`
     axios.get(url)
       .then((res: any) => {
         res?.data?.data[0]?.districts.map((item: any) => {
-          let obj = { label: item.name, value: item.name, id: item.id }
+          const obj = { label: item.name, value: item.name, id: item.id }
           distrObj.push(obj)
         })
         setDynamicDistrict(distrObj)
@@ -183,14 +182,14 @@ const FormComponent = ({ locale }: Props) => {
   };
 
   const onChangeDistrict = async (value: any, option: any) => {
-    let neighborhoodsObj: any = []
+    const neighborhoodsObj: any = []
 
     const url = `https://turkiyeapi.dev/api/v1/districts/${option?.id}`
 
     axios.get(url)
       .then((res: any) => {
         res?.data?.data?.neighborhoods?.map((item: any) => {
-          let obj = { label: item.name, value: item.name, id: item.id }
+          const obj = { label: item.name, value: item.name, id: item.id }
           neighborhoodsObj.push(obj)
         })
         setNeighborhoods(neighborhoodsObj)
@@ -213,7 +212,6 @@ const FormComponent = ({ locale }: Props) => {
     building_no,
     dukkan_no,
     flat_no,
-    accept,
   }: FieldType) => {
     setIsLoading(true);
     let areas_covered: any = [{ country: "turkey", city: { "": [] } }]
@@ -254,7 +252,7 @@ const FormComponent = ({ locale }: Props) => {
       });
     }
 
-    let Address = { city: city, district: district, neighborhoods: neighborhoods, sokak_no: sokak_no, building_no: building_no, dukkan_no: dukkan_no, flat_no: flat_no }
+    const Address = { city: city, district: district, neighborhoods: neighborhoods, sokak_no: sokak_no, building_no: building_no, dukkan_no: dukkan_no, flat_no: flat_no }
     const formdata: any = new FormData();
     console.log(areas_covered)
     formdata.append("userName", userName);
@@ -638,9 +636,10 @@ const FormComponent = ({ locale }: Props) => {
         {/* Start recaptcha*/}
         <Form.Item<FieldType>
           name="recaptcha"
-          rules={[{ required: false, message: t("please_confirm_that_you_are_not_robot") },]}
+          rules={[{ required: true, message: t("please_confirm_that_you_are_not_robot") },]}
         >
-          <ReCAPTCHA sitekey={process.env.SITE_KEY!} onChange={setCapched} />
+          {/* <ReCAPTCHA sitekey={process.env.SITE_KEY!} onChange={setCapched} /> */}
+          <ReCAPTCHA sitekey={process.env.SITE_KEY!}/>
         </Form.Item>
         {/*End  recaptcha*/}
 

@@ -37,7 +37,7 @@ type FieldType = {
   description: string;
   is_on_offer: boolean;
   compatible_models: any;
-  details: {};
+  details: unknown;
   offer_expiry_date: string;
 };
 function CreateProduct({ locale }: any) {
@@ -60,7 +60,7 @@ function CreateProduct({ locale }: any) {
   const Get_main_categories = async () => {
     try {
       const res = await GetMainCategories();
-      let sub = res.data.data.map((item: any) => ({ label: item.name, value: item.id }))
+      const sub = res.data.data.map((item: any) => ({ label: item.name, value: item.id }))
       setMainCategories(sub)
     } catch (err: any) {
       console.log(err)
@@ -71,7 +71,7 @@ function CreateProduct({ locale }: any) {
     setLoading_cate(true)
     try {
       const res = await GetSubCategoriesByMainId(option.value)
-      let cate = res.data.data.map((item: any) => ({ label: item.name, value: item.id }))
+      const cate = res.data.data.map((item: any) => ({ label: item.name, value: item.id }))
       setLoading_cate(false)
       setSubCategories(cate)
     }
@@ -92,14 +92,13 @@ function CreateProduct({ locale }: any) {
     description,
     discount_price,
     is_on_offer,
-    offer_expiry_date,
     currency,
   }: FieldType) => {
     setIsLoading(true);
 
     const formData: any = new FormData();
-    let filteredModles = compatible_models.filter((item: any) => item !== '');
-    let filteredDetails = details.filter((item: any) => item.title !== '');
+    const filteredModles = compatible_models.filter((item: any) => item !== '');
+    const filteredDetails = details.filter((item: any) => item.title !== '');
     formData.append("name", product_name);
     formData.append("categoryId", sub_categories);
     formData.append("quantity", quantity);
@@ -156,7 +155,7 @@ function CreateProduct({ locale }: any) {
 
 
   const handleDeleteItemFromDetails = (detail: any) => {
-    let newArr = details.filter((item: any) => item.title !== detail.title);
+    const newArr = details.filter((item: any) => item.title !== detail.title);
     setDetails(newArr)
   }
 
@@ -175,7 +174,7 @@ function CreateProduct({ locale }: any) {
   };
 
   const handleDeleteItemFromModel = (detail: any) => {
-    let newArr = compatible_models.filter((item: any) => item !== detail);
+    const newArr = compatible_models.filter((item: any) => item !== detail);
     setCompatible_models(newArr);
   };
   // End compatible_models

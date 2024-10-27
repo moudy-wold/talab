@@ -40,7 +40,7 @@ type FieldType = {
   description: string;
   is_on_offer: boolean;
   compatible_models: any;
-  details: {};
+  details: unknown;
   offer_expiry_date: string;
 };
 
@@ -115,7 +115,7 @@ function EditProduct({ locale, id }: Props) {
 
 
 
-        let sub = data?.data?.category_main?.children.map((item: any) => ({ label: item.name, value: item.id }))
+        const sub = data?.data?.category_main?.children.map((item: any) => ({ label: item.name, value: item.id }))
         setSubCategories(sub)
 
         setSubCategory_id(data?.data?.category_sub?.id);
@@ -129,7 +129,7 @@ function EditProduct({ locale, id }: Props) {
   const Get_main_categories = async () => {
     try {
       const res = await GetMainCategories();
-      let sub = res.data.data.map((item: any) => ({ label: item.name, value: item.id }))
+      const sub = res.data.data.map((item: any) => ({ label: item.name, value: item.id }))
       setMainCategories(sub)
     } catch (err: any) {
       console.log(err)
@@ -140,7 +140,7 @@ function EditProduct({ locale, id }: Props) {
     setLoading_cate(true)
     try {
       const res = await GetSubCategoriesByMainId(option.value)
-      let cate = res.data.data.map((item: any) => ({ label: item.name, value: item.id }))
+      const cate = res.data.data.map((item: any) => ({ label: item.name, value: item.id }))
       setLoading_cate(false)
       setSubCategories(cate)
     }
@@ -167,8 +167,8 @@ function EditProduct({ locale, id }: Props) {
     setIsLoading(true);
 
     const formData: any = new FormData();
-    let filteredDetails = details.filter((item: any) => item.title !== '');
-    let filteredModles = compatible_models.filter((item: any) => item !== '');
+    const filteredDetails = details.filter((item: any) => item.title !== '');
+    const filteredModles = compatible_models.filter((item: any) => item !== '');
 
 
     formData.append("name", product_name);
@@ -242,7 +242,7 @@ function EditProduct({ locale, id }: Props) {
 
 
   const handleDeleteItemFromDetails = (detail: any) => {
-    let newArr = details.filter((item: any) => item.title !== detail.title);
+    const newArr = details.filter((item: any) => item.title !== detail.title);
     setDetails(newArr)
   }
 
@@ -261,7 +261,7 @@ function EditProduct({ locale, id }: Props) {
   };
 
   const handleDeleteItemFromModel = (detail: any) => {
-    let newArr = compatible_models.filter((item: any) => item !== detail);
+    const newArr = compatible_models.filter((item: any) => item !== detail);
     setCompatible_models(newArr);
   };
   // End compatible_models

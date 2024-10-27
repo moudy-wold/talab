@@ -12,11 +12,12 @@ interface RootLayoutProps {
 }
 
 function MainLayout({ params: { locale }, children }: RootLayoutProps) {
-  const router = useRouter();
+  const {push} = useRouter();
+  
   useEffect(() => {
     const logend = localStorage.getItem("isLogend");
     if (logend == undefined || logend !== "true") {
-      router.push("/auth/login")
+      push("/auth/login")
     }
   }, [])
   return (

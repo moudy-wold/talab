@@ -24,7 +24,7 @@ function Navbar({ locale }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
   const [isLogend, setIsLogend] = useState(false);
-  const [currentLocale, setCurrentLocale] = useState(locale);
+  // const [currentLocale, setCurrentLocale] = useState(locale);
   const currentPathname = usePathname();
   const router = useRouter();
   const path = usePathname();
@@ -38,7 +38,7 @@ function Navbar({ locale }: Props) {
     document.dir = newLocale === "ar" ? "rtl" : "ltr";
     i18n.changeLanguage(newLocale);
     router.push(`/${newLocale}${pathWithoutLocale}`);
-    setCurrentLocale(newLocale); // Update the local state
+    // setCurrentLocale(newLocale); // Update the local state
   };
 
   const handleLogOut = () => {

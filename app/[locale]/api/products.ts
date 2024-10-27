@@ -11,7 +11,6 @@ export async function GetAllOffresProducts(page?:number): Promise<AxiosResponse<
 
 export async function GetAllProductByCategoryId(
   id: string,
-  page?:number,
 ): Promise<AxiosResponse<any>> {
   return await axios.get(`/talab/products/cat/${id}`);
 }

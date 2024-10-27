@@ -4,10 +4,9 @@ import Form from './Form';
 type Props = {
   locale :string
 }
- function Login({locale}:Props) {
-  
-  return (
 
+function Login({locale}:Props) {  
+  return (
     <main className="py-5 md:px-9">
       <div className=" bg-no-repeat bg-contain bg-bottom max-lg:pb-44  ">
         <div className="container relative py-5">

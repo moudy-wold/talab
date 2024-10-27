@@ -2,7 +2,7 @@ import React from "react";
 import Loader from '@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader'
 
 
-function ImagesSlider( {image,locale} : any) {
+function ImagesSlider( {image} : any) {
   
     return (
         <div>

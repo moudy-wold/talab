@@ -15,7 +15,6 @@ function SearchProducts({locale }: Props) {
   const [inputvalue, setInputValue] = useState("");
   const [data, setData] = useState([]);
   const [openSearch, setOpenSearch] = useState(false);
-  const [openSearchAdmin, setOpenSearchAdmin] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const handleOnChange = () => {

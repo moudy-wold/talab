@@ -1,7 +1,7 @@
 'use client';
 import { ForgetPass } from "@/app/[locale]/api/auth";
 import LargeLoader from '@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader';
-import { Alert, Form, Input, Modal, notification } from 'antd';
+import {   Form, Input, Modal, notification } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -17,7 +17,6 @@ function FormComponent(props: any) {
   const { t } = useTranslation(props.locale, "common")
   const [form] = useForm();
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState('');
   const [openVerifyPopup, setOpenVerifyPopup] = useState(false)
   const [emailValue, setEmailValue] = useState("")
   const router = useRouter();
@@ -48,12 +47,7 @@ function FormComponent(props: any) {
   return (
     <div className="m-auto p-4">
       {isLoading && <LargeLoader />}
-      {errors.length !== 0 && (
-        <div className="my-4">
-          <Alert message="خطأ" description={errors} type="error" showIcon />
-        </div>
-      )}
-
+     
       <h1 className="text-primary-foreground text-xl md:text-xl xl:text-3xl text-center mb-7 font-semibold">
         {t("send_password_change_request")}
       </h1>

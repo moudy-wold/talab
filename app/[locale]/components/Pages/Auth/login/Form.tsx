@@ -22,7 +22,7 @@ type FieldType = {
 function FormComponent({ locale }: Props) {
   const { t } = useTranslation(locale, "common")
   const [isLoading, setIsLoading] = useState(false);
-  const { logined, setLogined } = useContext(MyContext);
+  const {  setLogined } = useContext(MyContext);
   const [obj, setObj] = useState({
     email: "",
     password: ""

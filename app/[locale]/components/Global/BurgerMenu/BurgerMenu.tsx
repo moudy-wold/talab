@@ -1,11 +1,12 @@
 "use client"
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link"
 import { LogOut } from "@/app/[locale]/api/auth";
 import { CiMenuFries, CiLogin } from "react-icons/ci";
 import { IoMdClose } from "react-icons/io";
 import LargeLoades from "../Loader/LargeLoader/LargeLoader";
 import { t } from "i18next";
+import { notification } from "antd";
 
 function BurgerMenu() {
 
@@ -17,22 +18,28 @@ function BurgerMenu() {
 
 
   const handleLogOut = () => {
-    // LogOut()
-    //   .then((res) => {
-    //     notification.success( {message : t("succeffly_logout")});
-    //     localStorage.clear()
-    //     setTimeout(() => {
-    //       window.location.reload();
-    //     }, 100);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err)
-    //     notification.error({message: t(err.response.data.message)});
-    //   })
-    //   .finally(() => {
-    //     setIsLoading(false);
-    //   });
+    LogOut()
+      .then(() => {
+        notification.success( {message : t("succeffly_logout")});
+        localStorage.clear()
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+      })
+      .catch((err) => {
+        console.log(err)
+        notification.error({message: t(err.response.data.message)});
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }
+  useEffect(() => {
+    const logend = localStorage.getItem("isLogend");
+    if (logend == undefined || logend !== "true") {
+      setIsLogend(true);
+    }
+  }, []);
 
 
 

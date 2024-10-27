@@ -4,7 +4,7 @@ import { useTranslation } from "@/app/i18n/client";
 import { OrderStatus, ReturnStatus } from "@/app/[locale]/utils/constant";
 import type { ColumnsType } from "antd/es/table";
 
-import { Space, Table, Modal, notification, Switch } from "antd";
+import { Space, Table, Modal, notification   } from "antd";
 import { MdOutlineDoneOutline } from "react-icons/md";
 import { GetOrderByUserId, UpdateStatus } from "@/app/[locale]/api/order";
 import Loader from "../../../Global/Loader/Loader";
@@ -17,7 +17,7 @@ type Props = {
 };
 
 function UserOrders(props: Props) {
-  const { t, i18n } = useTranslation(props.locale, "common");
+  const { t} = useTranslation(props.locale, "common");
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -65,7 +65,7 @@ function UserOrders(props: Props) {
   const UpdateServiceStatus = async (order_id: string, status: string) => {
     setIsLoading(true);
     try {
-      const res = await UpdateStatus(order_id, status);
+       await UpdateStatus(order_id, status);
       notification.success({
         message: t("edited_successfulle")
       })
@@ -82,28 +82,28 @@ function UserOrders(props: Props) {
   }
 
   // Edit Order Status
-  const onFinish = async (orderId: string, status: string) => {
-    setIsLoading(true);
+  // const onFinish = async (orderId: string, status: string) => {
+  //   setIsLoading(true);
 
-    // EditeStatusServiceById(serviceId, customerId, status)
-    //   .then((res) => {
-    //     if (res.status) {
-    //       notification.success({
-    //         message: "تم التعديل بنجاح"
-    //       });
-    //       setOpenActiveService(true);
-    //     }
-    //     router.refresh();
-    //   })
-    //   .catch((err) => {
-    //     notification.error({
-    //       message: err.response.data.message
-    //     });
-    //   })
-    //   .finally(() => {
-    //     setIsLoading(false);
-    //   });
-  };
+  //   // EditeStatusServiceById(serviceId, customerId, status)
+  //   //   .then((res) => {
+  //   //     if (res.status) {
+  //   //       notification.success({
+  //   //         message: "تم التعديل بنجاح"
+  //   //       });
+  //   //       setOpenActiveService(true);
+  //   //     }
+  //   //     router.refresh();
+  //   //   })
+  //   //   .catch((err) => {
+  //   //     notification.error({
+  //   //       message: err.response.data.message
+  //   //     });
+  //   //   })
+  //   //   .finally(() => {
+  //   //     setIsLoading(false);
+  //   //   });
+  // };
 
   //  Customers Table
   const columns: ColumnsType<any> = [
@@ -201,6 +201,7 @@ function UserOrders(props: Props) {
     order_status: item.status,
     admin_id: item.user_admin_id
   }));
+
   return (
     <div className="">
       {isLoading && <Loader />}

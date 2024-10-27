@@ -78,6 +78,12 @@ function Sidebar({ locale }: Props) {
       icon: <TbCategoryFilled />
     },
     {
+      label: t("staticits"),
+      key: "55",
+      url: "/dashboard/staticits",
+      icon: <TbCategoryFilled />
+    },
+    {
       label: t("setting"),
       key: "7",
       icon: <TbCategoryFilled />,
@@ -88,12 +94,7 @@ function Sidebar({ locale }: Props) {
           url: "/dashboard/profile",
           icon: <TbCategoryFilled />
         },
-        {
-          label: t("staticits"),
-          key: "55",
-          url: "/dashboard/staticits",
-          icon: <TbCategoryFilled />
-        },
+       
       ]
     }
   ];

@@ -4,16 +4,15 @@ import Image from "next/image";
 import { useTranslation } from "@/app/i18n/client";
 
 function OrderDataCards({ data, locale }: any) {
-    console.log(data)
     const { t } = useTranslation(locale, "common");
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {data.order_details.map((item: any, index: number) => {
-                let obj = JSON.parse(item.details)
-                let arrDetails = []
-                for (let key in obj) {
+                const obj = JSON.parse(item.details)
+                const arrDetails = []
+                for (const key in obj) {
                     if (obj.hasOwnProperty(key)) {
-                        let newObject: any = { label: key, value: obj[key] };
+                        const newObject: any = { label: key, value: obj[key] };
                         arrDetails.push(newObject);
                     }
                 }

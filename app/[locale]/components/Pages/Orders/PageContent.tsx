@@ -56,7 +56,7 @@ function OrdersList({ locale }: any) {
   const UpdateServiceStatus = async (order_id: string, status: string) => {
     setIsLoading(true);
     try {
-      const res = await UpdateStatus(order_id, status);
+       await UpdateStatus(order_id, status);
       notification.success({
         message: t("edited_successfulle")
       })
