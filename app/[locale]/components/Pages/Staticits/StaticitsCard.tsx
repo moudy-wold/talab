@@ -14,7 +14,7 @@ function StaticitsCard({ locale, data, type }: Props) {
     const { t } = useTranslation(locale, "common");
     const { push } = useRouter()
     return (
-        <div className="">
+        <div className="p-4">
             {/* Start Top Products */}
             <div className="">
                 {/* Start Title */}
@@ -25,13 +25,13 @@ function StaticitsCard({ locale, data, type }: Props) {
                 {/* end Title */}
 
                 {/* Start Products */}
-                <div className="flex items-center justify-between gap-1">
+                <div className=" grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 items-center justify-between gap-1">
                     {data?.map((item: any, index: number) => {
                         return (
                             <div
                                 onClick={() => { push(`/dashboard/products/edit/${item._id}`) }}
                                 key={index}
-                                className="!w-1/5 !h-[232px] cursor-pointer border-2 border-gray-300 rounded-lg p-3 ">
+                                className="!h-[232px] cursor-pointer border-2 border-gray-300 rounded-lg p-3 ">
                                 {/* Start number_of_visits */}
                                 <div className="flex items-center gap-5 justify-center ">
                                     {type == "top_viewed_product" ?
@@ -53,7 +53,7 @@ function StaticitsCard({ locale, data, type }: Props) {
                                 <div className="flex items-center gap-2 my-2 py-2 border-t-2 border-gray-300">
                                     {/* Start Image */}
                                     <div className="">
-                                        <Image src={item?.images[0]} width={75} height={75} alt={item.name} className="!w-[75px] !h-[75px]" />
+                                        <Image src={item?.images[0]} width={75} height={75} alt={item.name} className="rounded-lg !w-[75px] !h-[75px]" />
                                     </div>
                                     {/* End Image */}
 

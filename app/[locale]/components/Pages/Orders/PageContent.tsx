@@ -170,12 +170,13 @@ function OrdersList({ locale }: any) {
   }));
 
   return (
-    <div>
+    <div className="px-5">
       {isLoading && <Loader />}
       <div >
         <Table
           columns={columns}
           dataSource={customerDataToShow}
+          scroll={{ x: 800 }}
           pagination={{
             current: currentPage,
             pageSize: pageSize,

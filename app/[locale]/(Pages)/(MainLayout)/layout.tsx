@@ -25,7 +25,7 @@ function MainLayout({ params: { locale }, children }: RootLayoutProps) {
     <div className={``}>
       <div className="grid lg:grid-cols-[25%_72%] pt-16 lg:pt-0 gap-3 lg-pt-0 ">
         <div className="hidden lg:block">
-          <Sidebar locale={locale} />
+          <Sidebar locale={locale}  />
         </div>
         <div className={``}>
           {children}

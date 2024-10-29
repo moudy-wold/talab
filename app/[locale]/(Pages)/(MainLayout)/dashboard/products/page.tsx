@@ -9,8 +9,13 @@ type Params = {
 function Page({ params: { locale } }: Params) {
 
   return (
-    <div>
-      <ProductsList locale={locale}  />
+    <div className="!w-[390px] sm:!w-[640px] md:!w-[768px] lg:!w-full " >
+
+
+      <div style={{ overflowX: 'auto' }}>
+
+        <ProductsList locale={locale} />
+      </div>
     </div>
   )
 }

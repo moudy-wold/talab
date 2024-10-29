@@ -50,7 +50,7 @@ function ProductsList({ locale }: Props) {
   const [product_questions, setProduct_questions] = useState([]);
   const [openVisits, setOpenVisits] = useState(false)
   const [product_Visits, setProduct_Visits] = useState("")
-  
+
   const [openDates, setOpenDates] = useState(false);
   // const [dates, setDates] = useState<any>({ discount_price: 0, offer_start_date: "", offer_expiry_date: "" })
   const [product_id, setProduct_id] = useState("")
@@ -285,18 +285,18 @@ function ProductsList({ locale }: Props) {
     <div>
       {isLoading && <Loader />}
 
-      <div className="grid grid-cols-[50%_50%] mb-2">
-        <div className="flex items-center">
-          <Button className="">
-            <Link
-              href={`/dashboard/products/create`}
-              className="flex items-center justify-beetwen gap-1"
-            >
-              {t("add_product")} <CiCirclePlus className="mr-1" />
-            </Link>
-          </Button>
+      <div className="grid grid-cols-[40%_60%] lg:grid-cols-2 mb-2">
+          <div className="flex items-center justify-center">
+            <Button className="">
+              <Link
+                href={`/dashboard/products/create`}
+                className="flex items-center justify-beetwen gap-1"
+              >
+                {t("add_product")} <CiCirclePlus className="mr-1" />
+              </Link>
+            </Button>
         </div>
-        <div className="p-4">
+        <div className="lg:p-4">
           <SearchProducts locale={locale} />
         </div>
       </div>

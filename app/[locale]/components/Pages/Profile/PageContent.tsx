@@ -350,14 +350,14 @@ const PageContent = ({ locale }: Props) => {
   };
 
   return (
-    <div>
+    <div className="px-3">
       {isLoading && <Loader />}
       <Form
         form={form}
         name="register-form"
         onFinish={onFinish}
         autoComplete="off"
-        className="grid grid-cols-2 gap-5"
+        className="grid lg:grid-cols-2 gap-5"
       >
 
         {/* Start name */}

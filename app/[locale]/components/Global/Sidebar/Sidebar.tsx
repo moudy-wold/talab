@@ -1,10 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import { useTranslation } from "@/app/i18n/client";
 import { RiAddCircleLine } from "react-icons/ri";
 import { TbCategoryFilled } from "react-icons/tb";
 import { IoSettingsOutline } from "react-icons/io5";
 import Link from "next/link";
+import { Languages } from "@/app/[locale]/utils/constant";
+import { usePathname, useRouter } from "next/navigation";
 
 type Item = {
   label: string;
@@ -13,17 +15,22 @@ type Item = {
   icon: any;
   children?: Item[];
 };
+
 type Props = {
   locale: string;
+  openBurgerMenu?: boolean;
+  setOpenBurgerMenu: any
 };
 
-function Sidebar({ locale }: Props) {
-  const { t } = useTranslation(locale, "common");
+function Sidebar({ locale, openBurgerMenu, setOpenBurgerMenu }: Props) {
+  const { t, i18n } = useTranslation(locale, "common")
 
   const [activeLink, setActiveLink] = useState("");
   const [current, setCurrent] = useState("");
+  const currentPathname = usePathname();
+  const router = useRouter();
 
- 
+
 
   const items: Item[] = [
     {
@@ -94,16 +101,49 @@ function Sidebar({ locale }: Props) {
           url: "/dashboard/profile",
           icon: <TbCategoryFilled />
         },
-       
+
       ]
     }
   ];
 
- 
+  const handleLocaleChange = (newLocale: any) => {
+    if (!currentPathname) return;
+    const pathWithoutLocale = currentPathname.replace(/^\/[^\/]+/, "");
+    localStorage.setItem("direction", newLocale === "ar" ? "rtl" : "ltr");
+    document.dir = newLocale === "ar" ? "rtl" : "ltr";
+    i18n.changeLanguage(newLocale);
+    router.push(`/${newLocale}${pathWithoutLocale}`);
+    // setCurrentLocale(newLocale); // Update the local state
+  };
   return (
     <>
-      <div className={`${locale == "ar" ? "right-0" : "left-0"}  fixed z-10 top-0 w-[320px] h-[100vh]`}>
-        <div className="px-6 py-1 mt-28">
+      <div className={`${locale == "ar" ? (openBurgerMenu ? "right-0 " : "-right-[320px] lg:!right-0") : (openBurgerMenu ? "left-0" : "-left-[320px] lg:!left-0 ")}  fixed z-10 top-0 transition-all duration-150 bg-white  w-[320px] h-[100vh]`}>
+        <div className={`px-6 py-1 mt-12 lg:mt-28`}>
+          <div className="lg:hidden px-2">
+            {/* Start Select */}
+            <div className="">
+              <select
+                defaultValue={locale}
+                onChange={(e) => {
+                  handleLocaleChange(e.target.value);
+                }}
+                className="mt-1"
+              >
+                {Languages.map((item: { id: number; title: string; value: string }, index: number) => {
+                  return (
+                    <Fragment key={index}>
+
+                      <option value={item.value} key={index + 5}>
+                        {item.title}
+                      </option>
+
+                    </Fragment>
+                  );
+                })}
+              </select>
+            </div>
+            {/* {/* End Select */}
+          </div>
           {items.map((item: any, index: number) => (
             <div
               key={index}
@@ -161,7 +201,11 @@ function Sidebar({ locale }: Props) {
                     >
                       <div className="overflow-hidden">
                         {item?.children?.map((child: any, ind: number) => (
-                          <Link href={child.url} key={ind} className="flex p-2 px-4 my-2 items-center gap-2 hover:text-black hover:no-underline hover:bg-gray-100 rounded-lg">
+                          <Link
+                            key={ind}
+                            href={child.url}
+                            onClick={() => { setOpenBurgerMenu(false) }}
+                            className="flex p-2 px-4 my-2 items-center gap-2 hover:text-black hover:no-underline hover:bg-gray-100 rounded-lg">
                             <span>{item.icon}</span>
                             <span className="text-lg  text-black font-semibold ">
                               {child.label}
@@ -175,7 +219,10 @@ function Sidebar({ locale }: Props) {
                   {/* End Whot Us */}
                 </div>
               ) : (
-                <Link href={item.url} className="hover:no-underline hover:bg-gray-100 p-2 my-1 rounded-lg flex items-center gap-2">
+                <Link
+                  href={item.url}
+                  onClick={() => { setOpenBurgerMenu(false) }}
+                  className="hover:no-underline hover:bg-gray-100 p-2 my-1 rounded-lg flex items-center gap-2">
                   <p className="">{item.icon}</p>
                   <p className=" font-semibold p-2 text-xl">{item.label}</p>
                 </Link>

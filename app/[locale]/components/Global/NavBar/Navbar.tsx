@@ -13,6 +13,8 @@ import { notification } from "antd";
 import Loader from "../Loader/LargeLoader/LargeLoader";
 import { MyContext } from "@/app/[locale]/context/myContext";
 import Cookies from 'js-cookie';
+import { GiHamburgerMenu } from "react-icons/gi";
+import Sidebar from "@/app/[locale]/components/Global/Sidebar/Sidebar";
 
 
 type Props = {
@@ -23,44 +25,13 @@ function Navbar({ locale }: Props) {
   const { t, i18n } = useTranslation(locale, "common")
   const [isLoading, setIsLoading] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
+  const [openBurgerMenu, setOpenBurgerMenu] = useState(false);
   const [isLogend, setIsLogend] = useState(false);
-  // const [currentLocale, setCurrentLocale] = useState(locale);
-  const currentPathname = usePathname();
-  const router = useRouter();
   const path = usePathname();
   const { logined, setLogined } = useContext(MyContext);
 
-  // Handle Change Language
-  const handleLocaleChange = (newLocale: any) => {
-    if (!currentPathname) return;
-    const pathWithoutLocale = currentPathname.replace(/^\/[^\/]+/, "");
-    localStorage.setItem("direction", newLocale === "ar" ? "rtl" : "ltr");
-    document.dir = newLocale === "ar" ? "rtl" : "ltr";
-    i18n.changeLanguage(newLocale);
-    router.push(`/${newLocale}${pathWithoutLocale}`);
-    // setCurrentLocale(newLocale); // Update the local state
-  };
-
-  const handleLogOut = () => {
-    LogOut()
-      .then(() => {
-        notification.success({ message: t("succeffly_logout") });
-        localStorage.clear()
-        Cookies.remove('token');
-        setLogined(false)
-        setTimeout(() => {
-          window.location.reload();
-        }, 100);
-      })
-      .catch((err) => {
-        console.log(err)
-        notification.error({ message: err.response.data.message });
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
-
+ 
+ 
   useEffect(() => {
     const logend = localStorage.getItem("isLogend");
     if (logend != undefined && logend == "true") {
@@ -72,13 +43,26 @@ function Navbar({ locale }: Props) {
   return (
     <div className="">
       {isLoading && <Loader />}
-      <main className={`container py-1 lg:py-6  `}>
+      <main className={`container py-3 lg:py-6 `}>
         {/* Start Burger Menu */}
-        <div className={`grid lg:hidden ${isLogend ? "grid-cols-[78%_20%] " : "justify-between"}  items-center `}>
+        <div className={`lg:hidden ${isLogend ? " grid grid-cols-[8%_68%_17%] gap-4 " : "flex  justify-between"}  items-center `}>
+            {/* Start  Burger Icon*/}
+            <div className="">
+            <div className=" !absolute !z-50 top-2">
+                <GiHamburgerMenu
+                  className="text-3xl"
+                  onClick={() => {setOpenBurgerMenu(!openBurgerMenu)}}
+                />
+              </div>
+              </div>
+            {/* End  Burger Icon*/}
 
-          <div className=" flex">
-            <div className="flex items-center gap-1">
-              {isLogend && (
+
+            
+            {/* Start logout && Language Icons */}
+            {/* <div className="flex items-center gap-3"> */}
+              {/* Start LogOut Icon */}
+              {/* {isLogend && (
                 <div
                   className="border-2 border-gray-300  rounded-md cursor-pointer  py-1 flex items-center font-semibold"
                   onClick={() => {
@@ -87,57 +71,39 @@ function Navbar({ locale }: Props) {
                 >
                   <CiLogin className=" text-xl" />
                 </div>
-              )}
-              {/* Start Select */}
-              <div className="">
-                <select
-                  defaultValue={locale}
-                  onChange={(e) => {
-                    handleLocaleChange(e.target.value);
-                  }}
-                  className=""
-                >
-                  {Languages.map((item: { id: number; title: string; value: string }, index: number) => {
-                    return (
-                      <Fragment key={index}>
+              )} */}
+              {/* End LogOut Icon */}
 
-                        <option value={item.value} key={index + 5}>
-                          {item.title}
-                        </option>
+             
+            {/* </div> */}
+            {/* End logout && Language Icons */}
 
-                      </Fragment>
-                    );
-                  })}
-                </select>
-              </div>
-              {/* End Select */}
-            </div>
-
-            <div className="mr-3 relative flex items-center  w-4/5 !z-50">
+            {/* Start Search */}
+            <div className={`relative w-full mx-auto !z-50 -mt-7 `}>
               {!openSearch && (
                 <div
-                  className={`${openSearch ? " right-0  " : " -right-[300px"
-                    } ${isLogend ? "block" : "hidden"} absolute !z-50 top-0  mr-5  transition-all duration-200 w-4/5`}
+                  className={`${!openSearch ? " -right-2  " : " -right-[420px]"
+                    } ${isLogend ? "block" : "hidden"} absolute !z-50 top-0 transition-all duration-200  `}
                 >
                   <SearchProducts locale={locale} />
                 </div>
               )}
             </div>
-          </div>
+            {/* End Search */}
 
-          <div className="flex items-center justify-end">
-            <div className="mr-4">
-              <Link href="/">
-                <Image
-                  src="/assets/logo.png"
-                  height={100}
-                  width={137}
-                  alt="Logo"
-                />
-              </Link>
-            </div>
-          </div>
 
+          {/* Start Logo */}
+          <div className="flex items-center justify-end pt-1">
+            <Link href="/">
+              <Image
+                src="/assets/logo.png"
+                height={80}
+                width={107}
+                alt="Logo"
+              />
+            </Link>
+          </div>
+          {/* End Logo */}
         </div>
         {/* End Burger Menu */}
 
@@ -169,6 +135,18 @@ function Navbar({ locale }: Props) {
           {/* End User Icons */}
         </div>
         {/* ENd Lg Screen */}
+
+        {/* Start SideBar */}
+        
+          <Sidebar
+           locale={locale} 
+           openBurgerMenu={openBurgerMenu}
+           setOpenBurgerMenu={setOpenBurgerMenu}
+           />
+        
+
+        {/* End SideBar */}
+
       </main>
     </div>
   );

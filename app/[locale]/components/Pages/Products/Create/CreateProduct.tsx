@@ -184,7 +184,7 @@ function CreateProduct({ locale }: any) {
   }, []);
 
   return (
-    <div className="">
+    <div className="px-4">
       {isLoading && <LargeLoader />}
       <Form
         form={form}
@@ -394,12 +394,10 @@ function CreateProduct({ locale }: any) {
         }
         {/* End Offer Details */}
 
-
-
         {/* Start compatible_models */}
         <div className="col-span-2">
           <p className="mt-8 mb-3 col-span-2">{t("suitable_devices_for_this_product")} </p>
-          <div className="col-span-2 grid grid-cols-4 gap-5">
+          <div className="col-span-2 grid grid-cols-2  lg:grid-cols-4 gap-5">
             {compatible_models.map((model, index) => {
               return (
                 <div
@@ -443,11 +441,10 @@ function CreateProduct({ locale }: any) {
         </div>
         {/* End compatible_models */}
 
-
         {/* Start Details */}
         <div className="col-span-2">
           <p className="mt-8 ">{t("product_details")} </p>
-          <div className="col-span-2 grid grid-cols-4 gap-5">
+          <div className="col-span-2 grid grid-cols-2 lg:grid-cols-4 gap-5">
             {
               details.map((detail, index) => {
                 return (
