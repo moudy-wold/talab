@@ -212,12 +212,38 @@ function UserIcons({ locale, isLogend }: Props) {
 
     }
   }
+  useEffect(() => {
+    // التحقق من دعم المتصفح للإشعارات
+    if ("Notification" in window) {
+      // التحقق من حالة إذن الإشعارات
+      if (Notification.permission === "default") {
+        // طلب إذن المستخدم إذا لم يتم قبوله أو رفضه بعد
+        Notification.requestPermission().then((permission) => {
+          if (permission === "granted") {
+            console.log("إذن الإشعارات مقبول.");
+          } else {
+            console.log("تم رفض إذن الإشعارات.");
+          }
+        });
+      }
+    } else {
+      console.log("المتصفح لا يدعم الإشعارات.");
+    }
+  }, []);
 
+  // دالة لعرض إشعار
+  const showNotification = () => {
+    if (Notification.permission === "granted") {
+      new Notification("عنوان الإشعار", {
+        body: "هذه هي رسالة الإشعار.",
+        icon: "/assets/logo.png", // اختياري: أيقونة للإشعار
+      });
+    }
+  };
   return (
     <main className="">
       {isLoading && <Loader />}
-      <div className="flex items-center justify-between">
-
+      <div className="flex items-center justify-between">        
         {/* Start Notificatiom Icon */}
         <div
           className={`${isLogend ? "flex" : "hidden"} !flex-col justify-center items-center  relative !z-[99999999] hover:scale-110 transition-all duration-200`}

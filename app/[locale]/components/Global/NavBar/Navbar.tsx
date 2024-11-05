@@ -30,8 +30,6 @@ function Navbar({ locale }: Props) {
   const path = usePathname();
   const { logined, setLogined } = useContext(MyContext);
 
- 
- 
   useEffect(() => {
     const logend = localStorage.getItem("isLogend");
     if (logend != undefined && logend == "true") {
@@ -48,7 +46,7 @@ function Navbar({ locale }: Props) {
         <div className={`lg:hidden ${isLogend ? " grid grid-cols-[8%_68%_17%] gap-4 " : "flex  justify-between"}  items-center `}>
             {/* Start  Burger Icon*/}
             <div className="">
-            <div className=" !absolute !z-50 top-2">
+            <div className=" !absolute !z-50 top-2 mt-[2px]">
                 <GiHamburgerMenu
                   className="text-3xl"
                   onClick={() => {setOpenBurgerMenu(!openBurgerMenu)}}
@@ -129,22 +127,21 @@ function Navbar({ locale }: Props) {
           {/* End Search */}
 
           {/* Start User Icons */}
-          <div className="flex justify-end ">
+          <div className="flex justify-end ">          
             <UserIcons locale={locale} isLogend={isLogend} />
           </div>
           {/* End User Icons */}
         </div>
         {/* ENd Lg Screen */}
 
-        {/* Start SideBar */}
-        
+        {/* Start SideBar */}  
+        <div className="block lg:hidden ">      
           <Sidebar
            locale={locale} 
            openBurgerMenu={openBurgerMenu}
            setOpenBurgerMenu={setOpenBurgerMenu}
            />
-        
-
+          </div>
         {/* End SideBar */}
 
       </main>

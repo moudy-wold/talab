@@ -16,10 +16,11 @@ import dayjs from 'dayjs';
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { MdDelete } from "react-icons/md";
-import {  Currencies } from "@/app/[locale]/utils/constant";
+import { Currencies } from "@/app/[locale]/utils/constant";
 import { GetMainCategories, GetSubCategoriesByMainId } from "@/app/[locale]/api/categories";
 import { AddProduct } from "@/app/[locale]/api/products";
 import LargeLoader from "../../../Global/Loader/LargeLoader/LargeLoader";
+import { IoInformationCircleOutline } from "react-icons/io5";
 
 
 type FieldType = {
@@ -206,41 +207,49 @@ function CreateProduct({ locale }: any) {
         {/* End Producy Name */}
 
         {/* Start images */}
-        <Form.Item<FieldType>
-          name="images"
-          label={<span className="text-sm md:text-base">{t("product_images")}</span>}
-          rules={[{ required: true, message: t("please_enter_photos") }]}
-          valuePropName="fileList"
-          getValueFromEvent={(e: any) => {
-            if (Array.isArray(e)) {
-              return e;
-            }
-            return e?.fileList;
-          }}
-        >
-          <Upload
-            listType="picture"
-            beforeUpload={() => false}
-            className="w-full"
+        <div className="">
+          {/* Start Hint */}
+          <div className="py-2 px-1 flex items-center gap-1">
+            <IoInformationCircleOutline />
+            <p className="text-xs">{t("enter_image_with_webp_format")}</p>
+          </div>
+          {/* End Hint */}
+          <Form.Item<FieldType>
+            name="images"
+            label={<span className="text-sm md:text-base">{t("product_images")}</span>}
+            rules={[{ required: true, message: t("please_enter_photos") }]}
+            valuePropName="fileList"
+            getValueFromEvent={(e: any) => {
+              if (Array.isArray(e)) {
+                return e;
+              }
+              return e?.fileList;
+            }}
           >
-            <Button
-              className="w-full h-12 justify-between text-sm md:text-xl"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                backgroundColor: "#f6f6f6"
-              }}
+            <Upload
+              listType="picture"
+              beforeUpload={() => false}
+              className="w-full"
             >
-              <p>{t("attach_photo_size")}  350px * 350px </p>
-              <Image
-                src="/assets/svg/imageUplaod.svg"
-                alt="asd"
-                width="24"
-                height="24"
-              />
-            </Button>
-          </Upload>
-        </Form.Item>
+              <Button
+                className="w-full h-12 justify-between text-sm md:text-xl"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  backgroundColor: "#f6f6f6"
+                }}
+              >
+                <p>{t("attach_photo_size")}  350px * 350px </p>
+                <Image
+                  src="/assets/svg/imageUplaod.svg"
+                  alt="asd"
+                  width="24"
+                  height="24"
+                />
+              </Button>
+            </Upload>
+          </Form.Item>
+        </div>
         {/* Start images */}
 
         {/* Start Main Category */}
@@ -469,8 +478,13 @@ function CreateProduct({ locale }: any) {
                         className="!rounded-[8px] !py-3"
                       />
                     </Form.Item>
+                    {/* Start Hint */}
+                    <div className=" px-1 py-2  flex items-center gap-1">
+                      <IoInformationCircleOutline />
+                      <p className="text-xs">{t("for_choose_one_option")}</p>
+                    </div>
+                    {/* End Hint */}
                     <div className="px-1 my-3">
-
                       <MdDelete
                         onClick={() => { handleDeleteItemFromDetails(detail) }}
                         className="text-xl hover:text-red-400 hover:scale-110 cursor-pointer transition-all duration-150" />

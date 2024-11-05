@@ -24,6 +24,7 @@ import useSwr from 'swr';
 import moment from "moment";
 import dayjs from 'dayjs';
 import Questions from "@/app/[locale]/components/Pages/Products/Questions/Questions"
+import { IoInformationCircleOutline } from "react-icons/io5";
 
 type FieldType = {
   product_name: string;
@@ -50,7 +51,7 @@ type Props = {
 
 }
 function EditProduct({ locale, id }: Props) {
-  const { t} = useTranslation(locale, "common");
+  const { t } = useTranslation(locale, "common");
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [form] = useForm();
@@ -64,7 +65,7 @@ function EditProduct({ locale, id }: Props) {
   const [loading_cate, setLoading_cate] = useState(false)
   const [dates, setDates] = useState<any>({ offer_start_date: "", offer_expiry_date: "" })
   const [getData, setGetData] = useState(true);
-  const { data: ProductData,  } = useSwr(
+  const { data: ProductData, } = useSwr(
     `/talab/products/${id}`,
     () => GetProductById(id)
   );
@@ -271,7 +272,7 @@ function EditProduct({ locale, id }: Props) {
   }, []);
 
   return (
-    <div className="">
+    <div className="p-4">
       {isLoading && <LargeLoader />}
       <Form
         form={form}
@@ -286,50 +287,57 @@ function EditProduct({ locale, id }: Props) {
         <Form.Item<FieldType>
           name="product_name"
           label={<span className="text-sm  md:text-base">{t("product_name")}</span>}
-          rules={[{ required: true, message: t("please_enter_product_name") }]}
+          rules={[{ required: true, message: t("please_enter_product_name") }]}          
         >
           <Input className="!rounded-[8px] !py-3" />
         </Form.Item>
         {/* End Producy Name */}
-
-        {/* Start images */}
-        <Form.Item<FieldType>
-          name="images"
-          label={<span className="text-sm md:text-base">{t("product_images")}</span>}
-          rules={[{ required: true, message: t("please_enter_photos") }]}
-          valuePropName="fileList"
-          getValueFromEvent={(e: any) => {
-            if (Array.isArray(e)) {
-              return e;
-            }
-            return e?.fileList;
-          }}
-        >
-          <Upload
-            listType="picture"
-            beforeUpload={() => false}
-            className="w-full"
+        <div>
+          {/* Start images */}
+          {/* Start Hint */}
+          <div className="py-2 px-1 flex items-center gap-1">
+            <IoInformationCircleOutline />
+            <p className="text-xs">{t("enter_image_with_webp_format")}</p>
+          </div>
+          {/* End Hint */}
+          <Form.Item<FieldType>
+            name="images"
+            label={<span className="text-sm md:text-base">{t("product_images")}</span>}
+            rules={[{ required: true, message: t("please_enter_photos") }]}
+            className="w-[90vw] md:w-[50vw] lg:w-full"
+            valuePropName="fileList"
+            getValueFromEvent={(e: any) => {
+              if (Array.isArray(e)) {
+                return e;
+              }
+              return e?.fileList;
+            }}
           >
-            <Button
-              className="w-full h-12 justify-between text-sm md:text-xl"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                backgroundColor: "#f6f6f6"
-              }}
+            <Upload
+              listType="picture"
+              beforeUpload={() => false}
+              className="w-full"
             >
-              <p>{t("attach_photo_size")}  350px * 350px </p>
-              <Image
-                src="/assets/svg/imageUplaod.svg"
-                alt="asd"
-                width="24"
-                height="24"
-              />
-            </Button>
-          </Upload>
-        </Form.Item>
-        {/* Start images */}
-
+              <Button
+                className="w-full h-12 justify-between text-sm md:text-xl"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  backgroundColor: "#f6f6f6"
+                }}
+              >
+                <p>{t("attach_photo_size")}  350px * 350px </p>
+                <Image
+                  src="/assets/svg/imageUplaod.svg"
+                  alt="asd"
+                  width="24"
+                  height="24"
+                />
+              </Button>
+            </Upload>
+          </Form.Item>
+          {/* Start images */}
+        </div>
         {/* Start Main Category */}
         <Form.Item<FieldType>
           name="main_categories"
@@ -482,7 +490,7 @@ function EditProduct({ locale, id }: Props) {
         {/* Start compatible_models */}
         <div className="col-span-2">
           <p className="mt-8 mb-3 col-span-2">{t("suitable_devices_for_this_product")} </p>
-          <div className="col-span-2 grid grid-cols-4 gap-5">
+          <div className="lg:col-span-2 grid lg:grid-cols-4 gap-5">
             {compatible_models.map((model: string, index: number) => {
               return (
                 <div
@@ -516,7 +524,7 @@ function EditProduct({ locale, id }: Props) {
               );
             })}
 
-            <div className="w-full flex items-center ">
+            <div className="w-full flex items-center my-2 ">
               <Button className="w-full h-12" onClick={addModelField}>
                 {t("add_new_device")}
               </Button>
@@ -530,7 +538,7 @@ function EditProduct({ locale, id }: Props) {
         {/* Start Details */}
         <div className="col-span-2">
           <p className="mt-8 ">{t("product_details")} </p>
-          <div className="col-span-2 grid grid-cols-4 gap-5">
+          <div className="col-span-2 grid lg:grid-cols-4 gap-5">
             {
               details.map((detail: any, index: number) => {
                 return (
@@ -554,6 +562,12 @@ function EditProduct({ locale, id }: Props) {
                         onChange={(e) => handleDetailChange(index, "content", e.target.value)}
                         className="!rounded-[8px] !py-3"
                       />
+                       {/* Start Hint */}
+                  <div className=" px-1 py-2  flex items-center gap-1">
+                    <IoInformationCircleOutline />
+                    <p className="text-xs">{t("for_choose_one_option")}</p>
+                  </div>
+                  {/* End Hint */}
                     </Form.Item>
                     <div className="px-1 my-3">
 
@@ -567,7 +581,7 @@ function EditProduct({ locale, id }: Props) {
               })
             }
 
-            <div className="w-full flex items-center ">
+            <div className="w-full flex items-center my-2 ">
               <Button className="w-full h-12" onClick={addDetailField}>
                 {t("add_new_feature")}
               </Button>

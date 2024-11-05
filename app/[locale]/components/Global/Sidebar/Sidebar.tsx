@@ -19,7 +19,7 @@ type Item = {
 type Props = {
   locale: string;
   openBurgerMenu?: boolean;
-  setOpenBurgerMenu: any
+  setOpenBurgerMenu?: any
 };
 
 function Sidebar({ locale, openBurgerMenu, setOpenBurgerMenu }: Props) {
@@ -117,11 +117,11 @@ function Sidebar({ locale, openBurgerMenu, setOpenBurgerMenu }: Props) {
   };
   return (
     <>
-      <div className={`${locale == "ar" ? (openBurgerMenu ? "right-0 " : "-right-[320px] lg:!right-0") : (openBurgerMenu ? "left-0" : "-left-[320px] lg:!left-0 ")}  fixed z-10 top-0 transition-all duration-150 bg-white  w-[320px] h-[100vh]`}>
+      <div className={`shadow-2xl ${locale == "ar" ? (openBurgerMenu ? "right-0 " : "-right-[320px] lg:!right-0") : (openBurgerMenu ? "left-0" : "-left-[320px] lg:!left-0 ")}  fixed z-10 top-0 transition-all duration-150 bg-white  w-[320px] h-[100vh]`}>
         <div className={`px-6 py-1 mt-12 lg:mt-28`}>
-          <div className="lg:hidden px-2">
+          <div className="flex items-center border-b-2 border-gray-300 lg:hidden px-2 h-16 ">
             {/* Start Select */}
-            <div className="">
+            <div className="border-2 border-gray-300 rounded-lg p-1">
               <select
                 defaultValue={locale}
                 onChange={(e) => {

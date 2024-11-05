@@ -31,13 +31,13 @@ function EditOffer(props: any) {
     useEffect(() => {
         console.log(props.data)
         if (props.data) {
-                form.setFieldValue('offer_start_date', moment(props?.data?.offer_start_date, 'YYYY-MM-DD'));
-                form.setFieldValue('offer_expiry_date', moment(props?.data?.offer_expiry_date, 'YYYY-MM-DD'));
-                form.setFieldValue('discount_price', +props?.data?.discount_price);
-                
-                setDates((prev:any)=>({...prev, discount_price: +props?.data?.discount_price}))
-                setDates((prev:any)=>({...prev, offer_start_date: props?.data?.offer_start_date }))
-                setDates((prev:any)=>({...prev, offer_expiry_date: props?.data?.offer_expiry_date }))
+            form.setFieldValue('offer_start_date', moment(props?.data?.offer_start_date, 'YYYY-MM-DD'));
+            form.setFieldValue('offer_expiry_date', moment(props?.data?.offer_expiry_date, 'YYYY-MM-DD'));
+            form.setFieldValue('discount_price', +props?.data?.discount_price);
+
+            setDates((prev: any) => ({ ...prev, discount_price: +props?.data?.discount_price }))
+            setDates((prev: any) => ({ ...prev, offer_start_date: props?.data?.offer_start_date }))
+            setDates((prev: any) => ({ ...prev, offer_expiry_date: props?.data?.offer_expiry_date }))
         }
     }, [props]);
 
@@ -45,16 +45,16 @@ function EditOffer(props: any) {
 
     const onFinish = async () => {
         setIsLoading(true);
-        console.log( dates)
+        console.log(dates)
         UpdateOfferProduct(props.data.id, "1", dates.discount_price, dates.offer_start_date, dates.offer_expiry_date)
-        .then((res) => {
-            if (res.status) {
-                notification.success({
-                    message: t("edited_product_to_offer_successfully"),
-                });
-            }
-            setIsLoading(false);
-            props.setOpenEditOffer(false);
+            .then((res) => {
+                if (res.status) {
+                    notification.success({
+                        message: t("edited_product_to_offer_successfully"),
+                    });
+                }
+                setIsLoading(false);
+                props.setOpenEditOffer(false);
                 router.refresh();
             })
             .catch((err) => {
@@ -79,10 +79,10 @@ function EditOffer(props: any) {
             >
                 <div className="flex items-center gap-5 mt-5 mb-1 ">
                     {/* Start Discount Price */}
-                    <div>
+                    <div className=" ">
                         <Form.Item<FieldType>
                             name="discount_price"
-                            label={<span className="text-sm  md:text-base">{t("discount_price")}</span>}
+                            label={<span className="text-sm  md:text-base !h-10  flex items-center ">{t("discount_price")}</span>}
                             rules={[{ required: props.openEditOffer, message: t("please_enter_discount_price") }]}
 
                         >

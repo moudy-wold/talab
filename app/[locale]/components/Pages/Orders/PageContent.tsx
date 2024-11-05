@@ -19,7 +19,7 @@ function OrdersList({ locale }: any) {
   const [totalItems, setTotalItems] = useState(0);
   const [data, setData] = useState([])
   const [index, setIndex] = useState(0);
-  const [openUserOrders,setOpenUserOrders]= useState(false)
+  const [openUserOrders, setOpenUserOrders] = useState(false)
   const [user_Id, setUser_Id] = useState("")
   // First Fetch
   useEffect(() => {
@@ -56,7 +56,7 @@ function OrdersList({ locale }: any) {
   const UpdateServiceStatus = async (order_id: string, status: string) => {
     setIsLoading(true);
     try {
-       await UpdateStatus(order_id, status);
+      await UpdateStatus(order_id, status);
       notification.success({
         message: t("edited_successfulle")
       })
@@ -79,7 +79,7 @@ function OrdersList({ locale }: any) {
       dataIndex: "userName",
       key: "userName",
       sorter: (a, b) => a.userName.localeCompare(b.userName),
-      render: (_, record) => (<span onClick={()=>{setUser_Id(record.admin_id);setOpenUserOrders(true) }}  className="flex items-center gap-1 cursor-pointer hover:text-[#006496] ">{record.order_status == "pending_cancellation" && <div className="bg-red-600 w-3 h-3 rounded-full p-1 border-2 border-red-600"></div>} {record.userName}</span>),
+      render: (_, record) => (<span onClick={() => { setUser_Id(record.admin_id); setOpenUserOrders(true) }} className="flex items-center gap-1 cursor-pointer hover:text-[#006496] ">{record.order_status == "pending_cancellation" && <div className="bg-red-600 w-3 h-3 rounded-full p-1 border-2 border-red-600"></div>} {record.userName}</span>),
     },
     {
       title: t("phoneNumber"),
@@ -170,7 +170,7 @@ function OrdersList({ locale }: any) {
   }));
 
   return (
-    <div className="px-5">
+    <div className="p-5">
       {isLoading && <Loader />}
       <div >
         <Table
