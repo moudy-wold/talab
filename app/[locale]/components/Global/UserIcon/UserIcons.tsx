@@ -54,7 +54,6 @@ function UserIcons({ locale, isLogend }: Props) {
   const getNotificationData = async () => {
     try {
       const res = await GetAllNotifications(1);
-      console.log(res.data.data)
       setTotalItems(res.data.pagination.total);
       setPageSize(res.data.pagination.per_page);
       setNotificatioItems(res?.data?.data)
@@ -90,7 +89,6 @@ function UserIcons({ locale, isLogend }: Props) {
     const isLogend: any = localStorage.getItem("isLogend");
     if (isLogend == "true") {
       getNotificationData();
-      console.log(isLogend)
     }
   }, [isLogend]);
 

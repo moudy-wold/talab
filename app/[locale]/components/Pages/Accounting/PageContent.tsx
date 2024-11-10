@@ -1,5 +1,5 @@
 "use client"
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "@/app/i18n/client";
 import { Table, notification } from "antd";
 import { ColumnsType } from "antd/es/table";
@@ -7,47 +7,19 @@ import moment from "moment";
 import { GetAllOffresProducts } from "@/app/[locale]/api/products";
 import Loader from "../../Global/Loader/Loader";
 
+type Props = {
+  locale: string,
+  data: any
 
-function PageContent({ locale }: any) {
+}
+
+function PageContent({ locale, data }: Props) {
   const { t } = useTranslation(locale, "common");
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(56);
   const [totalItems, setTotalItems] = useState(0);
 
-  const data = [
-    {
-      id: "asd",
-      from_date: "01/01/2024",
-      to_date: "01/07/2024",
-      number_of_requests_per_week: 50,
-      sales_of_the_week: 1000,
-      percentage: "5%",
-      net_receivables: 950,
-      status: ["in_waiting", "done"]
-    },
-    {
-      id: "asd",
-      from_date: "01/01/2024",
-      to_date: "01/07/2024",
-      number_of_requests_per_week: 50,
-      sales_of_the_week: 1000,
-      percentage: "5%",
-      net_receivables: 950,
-      status: ["in_waiting", "done"]
-    }, {
-      id: "asd",
-      from_date: "01/01/2024",
-      to_date: "01/07/2024",
-      number_of_requests_per_week: 50,
-      sales_of_the_week: 1000,
-      percentage: "5%",
-      net_receivables: 950,
-      status: ["in_waiting", "done"]
-    }
-
-
-  ]
 
   const columns: ColumnsType<any> = [
     {
@@ -88,6 +60,12 @@ function PageContent({ locale }: any) {
       align: "center",
     },
     {
+      title: t("admin_commission_amount"),
+      dataIndex: "admin_commission_amount",
+      key: "admin_commission_amount",
+      align: "center",
+    },
+    {
       title: t("status"),
       dataIndex: "status",
       key: "status",
@@ -96,14 +74,16 @@ function PageContent({ locale }: any) {
 
   ];
 
-  const tableData = data?.map((item: any) => ({
+
+  const tableData = data?.data?.map((item: any) => ({
     id: item.id,
     from_date: moment(item.from_date).locale("en").format("YYYY-MM-DD"),
     to_date: moment(item.to_date).locale("en").format("YYYY-MM-DD"),
     number_of_requests_per_week: item.number_of_requests_per_week,
     sales_of_the_week: item.sales_of_the_week,
-    percentage: item.percentage,
+    percentage: `${item.percentage} %`,
     net_receivables: item.net_receivables,
+    admin_commission_amount:item.admin_commission_amount,
     status: item.status
   }));
 

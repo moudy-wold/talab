@@ -117,7 +117,7 @@ function Sidebar({ locale, openBurgerMenu, setOpenBurgerMenu }: Props) {
   };
   return (
     <>
-      <div className={`shadow-2xl ${locale == "ar" ? (openBurgerMenu ? "right-0 " : "-right-[320px] lg:!right-0") : (openBurgerMenu ? "left-0" : "-left-[320px] lg:!left-0 ")}  fixed z-10 top-0 transition-all duration-150 bg-white  w-[320px] h-[100vh]`}>
+      <div className={` ${locale == "ar" ? (openBurgerMenu ? "shadow-2xl right-0 " : "-right-[320px] lg:!right-0") : (openBurgerMenu ? "shadow-2xl left-0" : "-left-[320px] lg:!left-0 ")} lg:shadow-md fixed z-10 top-0 transition-all duration-150 bg-white  w-[320px] h-[100vh]`}>
         <div className={`px-6 py-1 mt-12 lg:mt-28`}>
           <div className="flex items-center border-b-2 border-gray-300 lg:hidden px-2 h-16 ">
             {/* Start Select */}
@@ -204,7 +204,7 @@ function Sidebar({ locale, openBurgerMenu, setOpenBurgerMenu }: Props) {
                           <Link
                             key={ind}
                             href={child.url}
-                            onClick={() => { setOpenBurgerMenu(false) }}
+                            onClick={() => { setOpenBurgerMenu && setOpenBurgerMenu(false) }}
                             className="flex p-2 px-4 my-2 items-center gap-2 hover:text-black hover:no-underline hover:bg-gray-100 rounded-lg">
                             <span>{item.icon}</span>
                             <span className="text-lg  text-black font-semibold ">

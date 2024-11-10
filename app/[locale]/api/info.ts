@@ -10,3 +10,9 @@ export async function GetInfo(): Promise<AxiosResponse<any>> {
   export async function EditInfo(data:any): Promise<AxiosResponse<any>> {
     return await axios.post(`/talab/edit`,data);
   }
+
+  // Get Commissios 
+    export async function GetCommissions(): Promise<AxiosResponse<any>> {
+    return await axios.get(`/talab/commissions`);
+  }
+

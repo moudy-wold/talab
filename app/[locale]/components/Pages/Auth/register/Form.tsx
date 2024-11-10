@@ -254,7 +254,6 @@ const FormComponent = ({ locale }: Props) => {
 
     const Address = { city: city, district: district, neighborhoods: neighborhoods, sokak_no: sokak_no, building_no: building_no, dukkan_no: dukkan_no, flat_no: flat_no }
     const formdata: any = new FormData();
-    console.log(areas_covered)
     formdata.append("userName", userName);
     formdata.append("password", password);
     formdata.append("phoneNumber", phoneNumber);
@@ -265,7 +264,6 @@ const FormComponent = ({ locale }: Props) => {
     }
     formdata.append("categories", JSON.stringify(selectedCategories));
     formdata.append("areas_covered", JSON.stringify(areas_covered));
-
     Register(formdata)
       .then((res) => {
         if (res?.data?.message == "the user exists already") {
@@ -328,6 +326,7 @@ const FormComponent = ({ locale }: Props) => {
         {/* Start name */}
         <Form.Item<FieldType>
           name="userName"
+          label={<span className="text-sm md:text-base">{t("userName")}</span>}
           rules={[{ required: true, message: t("please_enter_name") }]}
         >
           <Input
@@ -375,6 +374,7 @@ const FormComponent = ({ locale }: Props) => {
         {/* Start Phone */}
         <Form.Item<FieldType>
           name="phoneNumber"
+          label={<span className="text-sm md:text-base">{t("phoneNumber")}</span>}
           rules={[{ required: true, message: t("please_enter_phoneNumber") }]}
         >
           <Input
@@ -387,13 +387,8 @@ const FormComponent = ({ locale }: Props) => {
         {/* Start Email */}
         <Form.Item<FieldType>
           name="email"
-          rules={[
-            {
-              required: true,
-              type: "email",
-              message: t("please_enter_email"),
-            },
-          ]}
+          label={<span className="text-sm md:text-base">{t("email")}</span>}
+          rules={[{required: true,type: "email",message: t("please_enter_email"),},]}
         >
           <Input
             placeholder={t("email")}
@@ -636,7 +631,7 @@ const FormComponent = ({ locale }: Props) => {
         {/* Start recaptcha*/}
         <Form.Item<FieldType>
           name="recaptcha"
-          rules={[{ required: true, message: t("please_confirm_that_you_are_not_robot") },]}
+          rules={[{ required: false, message: t("please_confirm_that_you_are_not_robot") },]}
         >
           {/* <ReCAPTCHA sitekey={process.env.SITE_KEY!} onChange={setCapched} /> */}
           <ReCAPTCHA sitekey={process.env.SITE_KEY!}/>
