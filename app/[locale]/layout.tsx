@@ -41,9 +41,7 @@ export default async function RootLayout({ params: { locale }, children }: RootL
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <MyProvider>
-          <div className="absolute ">
-            {/* <BurgerMenu /> */}
-          </div>
+         
 
           <div className="fixed lg:relative z-40 bg-white w-full">
             <Navbar locale={locale} />

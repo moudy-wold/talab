@@ -438,52 +438,52 @@ function EditProduct({ locale, id }: Props) {
         </Form.Item>
         {/* End description */}
 
-        {/* Start offers On Of */}
-        <Form.Item<FieldType>
-          name="is_on_offer"
-          label={<span className="text-sm  md:text-base">{t("is_it_included_in_the_list_of_offers")}</span>}
-        >
-          <Switch onChange={() => { setIs_offer(!is_offer) }} />
-        </Form.Item>
-        {/* End offers On Of*/}
+          {/* Start offers On Of */}
+          <Form.Item<FieldType>
+            name="is_on_offer"
+            label={<span className="text-sm  md:text-base">{t("is_it_included_in_the_list_of_offers")}</span>}
+          >
+            <Switch onChange={() => { setIs_offer(!is_offer) }} />
+          </Form.Item>
+          {/* End offers On Of*/}
 
-        {/* Start Offer Details */}
-        {is_offer &&
-          <div className="col-span-2 flex gap-8 items-center ">
-            {/* Start discount */}
-            <Form.Item<FieldType>
-              name="discount_price"
-              label={<span className="text-sm  md:text-base">{t("discount_price")}</span>}
-              className="w-1/2"
-            >
-              <Input className="!rounded-[8px] !py-3" />
-            </Form.Item>
-            {/* End discount */}
-            {/* Start Start Date */}
-            <div className="w-1/2 ">
+          {/* Start Offer Details */}
+          {is_offer &&
+            <div className="col-span-2 flex gap-8 items-center ">
+              {/* Start discount */}
               <Form.Item<FieldType>
-                name="offer_start_date"
-                label={<span className="text-sm  md:text-base">{t("offer_start_date")}</span>}
-                rules={[{ required: is_offer, message: t("please_enter_start_date") }]}
+                name="discount_price"
+                label={<span className="text-sm  md:text-base">{t("discount_price")}</span>}
+                className="w-1/2"
               >
-                <DatePicker disabledDate={disabledDate} onChange={(value, option) => { setDates((prev: any) => ({ ...prev, offer_start_date: option })) }} className={`w-full !h-12`} />
+                <Input className="!rounded-[8px] !py-3" />
               </Form.Item>
-            </div>
-            {/* End Start Date */}
-            {/* Start Date For Offer */}
-            <Form.Item<FieldType>
-              name="offer_expiry_date"
-              label={<span className="text-sm  md:text-base">{t("offer_start_date")}</span>}
-              rules={[{ required: false, message: t("please_enter_start_date") }]}
-              className={` w-1/2`}
-            >
-              <DatePicker disabledDate={disabledDate} onChange={(value, option) => { setDates((prev: any) => ({ ...prev, offer_start_date: option })) }} className={`w-full !h-12`} />
-            </Form.Item>
+              {/* End discount */}
+              {/* Start Start Date */}
+              <div className="w-1/2 ">
+                <Form.Item<FieldType>
+                  name="offer_start_date"
+                  label={<span className="text-sm  md:text-base">{t("offer_start_date")}</span>}
+                  rules={[{ required: is_offer, message: t("please_enter_start_date") }]}
+                >
+                  <DatePicker placeholder={t("choose_date")} disabledDate={disabledDate} onChange={(value, option) => { setDates((prev: any) => ({ ...prev, offer_start_date: option })) }} className={`w-full !h-12`} />
+                </Form.Item>
+              </div>
+              {/* End Start Date */}
+              {/* Start Date For Offer */}
+              <Form.Item<FieldType>
+                name="offer_expiry_date"
+                label={<span className="text-sm  md:text-base">{t("offer_start_date")}</span>}
+                rules={[{ required: false, message: t("please_enter_start_date") }]}
+                className={` w-1/2`}
+              >
+                <DatePicker placeholder={t("choose_date")} disabledDate={disabledDate} onChange={(value, option) => { setDates((prev: any) => ({ ...prev, offer_start_date: option })) }} className={`w-full !h-12`} />
+              </Form.Item>
 
-            {/* End Date For Offer */}
-          </div>
-        }
-        {/* End Offer Details */}
+              {/* End Date For Offer */}
+            </div>
+          }
+          {/* End Offer Details */}
 
 
 

@@ -22,7 +22,6 @@ type Props = {
 }
 
 function Navbar({ locale }: Props) {
-  const { t, i18n } = useTranslation(locale, "common")
   const [isLoading, setIsLoading] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
   const [openBurgerMenu, setOpenBurgerMenu] = useState(false);
@@ -42,52 +41,32 @@ function Navbar({ locale }: Props) {
     <div className="">
       {isLoading && <Loader />}
       <main className={`container py-3 lg:py-6 `}>
+        
         {/* Start Burger Menu */}
         <div className={`lg:hidden ${isLogend ? " grid grid-cols-[8%_68%_17%] gap-4 " : "flex  justify-between"}  items-center `}>
-            {/* Start  Burger Icon*/}
-            <div className="">
+          {/* Start  Burger Icon*/}
+          <div className="">
             <div className=" !absolute !z-50 top-2 mt-[2px]">
-                <GiHamburgerMenu
-                  className="text-3xl"
-                  onClick={() => {setOpenBurgerMenu(!openBurgerMenu)}}
-                />
-              </div>
-              </div>
-            {/* End  Burger Icon*/}
-
-
-            
-            {/* Start logout && Language Icons */}
-            {/* <div className="flex items-center gap-3"> */}
-              {/* Start LogOut Icon */}
-              {/* {isLogend && (
-                <div
-                  className="border-2 border-gray-300  rounded-md cursor-pointer  py-1 flex items-center font-semibold"
-                  onClick={() => {
-                    handleLogOut();
-                  }}
-                >
-                  <CiLogin className=" text-xl" />
-                </div>
-              )} */}
-              {/* End LogOut Icon */}
-
-             
-            {/* </div> */}
-            {/* End logout && Language Icons */}
-
-            {/* Start Search */}
-            <div className={`relative w-full mx-auto !z-50 -mt-7 `}>
-              {!openSearch && (
-                <div
-                  className={`${!openSearch ? " -right-2  " : " -right-[420px]"
-                    } ${isLogend ? "block" : "hidden"} absolute !z-50 top-0 transition-all duration-200  `}
-                >
-                  <SearchProducts locale={locale} />
-                </div>
-              )}
+              <GiHamburgerMenu
+                className="text-3xl"
+                onClick={() => { setOpenBurgerMenu(!openBurgerMenu) }}
+              />
             </div>
-            {/* End Search */}
+          </div>
+          {/* End  Burger Icon*/}
+
+          {/* Start Search */}
+          <div className={`relative w-full mx-auto !z-50 -mt-7 `}>
+            {!openSearch && (
+              <div
+                className={`${!openSearch ? " -right-2  " : " -right-[420px]"
+                  } ${isLogend ? "block" : "hidden"} absolute !z-50 top-0 transition-all duration-200  `}
+              >
+                <SearchProducts locale={locale} />
+              </div>
+            )}
+          </div>
+          {/* End Search */}
 
 
           {/* Start Logo */}
@@ -127,21 +106,21 @@ function Navbar({ locale }: Props) {
           {/* End Search */}
 
           {/* Start User Icons */}
-          <div className="flex justify-end ">          
+          <div className="flex justify-end ">
             <UserIcons locale={locale} isLogend={isLogend} />
           </div>
           {/* End User Icons */}
         </div>
         {/* ENd Lg Screen */}
 
-        {/* Start SideBar */}  
-        <div className="block lg:hidden ">      
+        {/* Start SideBar */}
+        <div className="block lg:hidden ">
           <Sidebar
-           locale={locale} 
-           openBurgerMenu={openBurgerMenu}
-           setOpenBurgerMenu={setOpenBurgerMenu}
-           />
-          </div>
+            locale={locale}
+            openBurgerMenu={openBurgerMenu}
+            setOpenBurgerMenu={setOpenBurgerMenu}
+          />
+        </div>
         {/* End SideBar */}
 
       </main>

@@ -36,9 +36,10 @@ type FieldType = {
   quantity: string;
   discount_price: string;
   description: string;
-  is_on_offer: boolean;
   compatible_models: any;
   details: unknown;
+  is_on_offer: boolean;
+  offer_start_date:string,
   offer_expiry_date: string;
 };
 function CreateProduct({ locale }: any) {
@@ -382,7 +383,7 @@ function CreateProduct({ locale }: any) {
                 label={<span className="text-sm  md:text-base">{t("offer_start_date")}</span>}
                 rules={[{ required: is_offer, message: t("please_enter_start_date") }]}
               >
-                <DatePicker disabledDate={disabledDate} onChange={(value, option) => { setDates((prev: any) => ({ ...prev, offer_start_date: option })) }} className={`w-full !h-12`} />
+                <DatePicker placeholder={t("choose_date")} disabledDate={disabledDate} onChange={(value, option) => { setDates((prev: any) => ({ ...prev, offer_start_date: option })) }} className={`w-full !h-12`} />
               </Form.Item>
             </div>
             {/* End Start Date */}
@@ -395,7 +396,7 @@ function CreateProduct({ locale }: any) {
               rules={[{ required: is_offer, message: t("please_enter_end_date") }]}
               className={` w-1/2`}
             >
-              <DatePicker disabledDate={disabledDate} onChange={(value, option) => { setDates((prev: any) => ({ ...prev, offer_start_date: option })) }} className={`w-full !h-12`} />
+              <DatePicker placeholder={t("choose_date")} disabledDate={disabledDate} onChange={(value, option) => { setDates((prev: any) => ({ ...prev, offer_start_date: option })) }} className={`w-full !h-12`} />
             </Form.Item>
 
             {/* End Date For Offer */}
