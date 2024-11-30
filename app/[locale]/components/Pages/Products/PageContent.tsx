@@ -293,7 +293,7 @@ function ProductsList({ locale }: Props) {
               </Link>
             </Button>
         </div>
-        <div className="lg:p-4">
+        <div className="hidden lg:block lg:p-4">
           <SearchProducts locale={locale} />
         </div>
       </div>

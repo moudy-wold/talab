@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { DeleteAllNotifications, DeleteNotoficationById, GetAllNotifications, SetAllNotoficationAsRead, SetNotoficationAsReadById } from "@/app/[locale]/api/notifications";
 import { IoNotificationsOutline } from "react-icons/io5";
-import { Menu, Modal, notification, Pagination, Space, Spin } from "antd";
+import { Menu, notification, Pagination, Space, Spin } from "antd";
 import { useTranslation } from "@/app/i18n/client";
 import Loader from "@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader";
-import { usePathname, useRouter } from "next/navigation"
+import {  useRouter } from "next/navigation"
 import { MdDeleteForever, MdOutlineDone } from "react-icons/md";
 import Link from "next/link";
 import { SlOptions } from "react-icons/sl"
@@ -162,7 +162,7 @@ function Notifications({ locale, isLogend }: any) {
     return (
         <div>
             <div
-                className={`${isLogend ? "flex" : "hidden"} !flex-col justify-center items-center mx-5 mt-1 relative !z-[99999999] hover:scale-110 transition-all duration-200`}
+                className={`${isLogend ? "flex" : "hidden"} !flex-col justify-center items-center mx-5 mt-1 relative !z-[99999999] shadow-2xl hover:scale-110 transition-all duration-200`}
                 onMouseEnter={handleMouseEnterOnNotificationsIcon}
                 onMouseLeave={handleMouseLeaveOnNotificationsIcon}
             >

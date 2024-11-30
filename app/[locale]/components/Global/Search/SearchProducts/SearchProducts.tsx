@@ -6,7 +6,7 @@ import Link from "next/link";
 import Loader from "@/app/[locale]/components/Global/Loader/Loader";
 import { useTranslation } from "@/app/i18n/client";
 import { ProductsSearch } from "@/app/[locale]/api/products"
-import { notification } from "antd";
+import { notification, Pagination } from "antd";
 type Props = {
   locale: string
 }
@@ -17,14 +17,35 @@ function SearchProducts({ locale }: Props) {
   const [data, setData] = useState([]);
   const [openSearch, setOpenSearch] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalItems, setTotalItems] = useState<any>(0);
+
+  const handlePageChange = async (page: any) => {
+    setIsLoading(true);
+    try {
+      const res = await ProductsSearch(inputvalue, page);
+      setTotalItems(res.data.pagination.total);
+      setPageSize(res.data.pagination.per_page);
+      setCurrentPage(page)
+    } catch (err: any) {
+      notification.error({
+        message: err.response.data.message,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+
+  };
   const getData = () => {
     setIsLoading(true);
-    ProductsSearch(inputvalue,1)
+    ProductsSearch(inputvalue, 1)
       .then((res) => {
         if (res.status) {
           setData(res.data?.data)
           setOpenSearch(true)
         }
+        console.log(res.data.data)
       })
       .catch((err) => {
         console.log(err)
@@ -62,7 +83,7 @@ function SearchProducts({ locale }: Props) {
   }, [wrapperRef]);
 
   return (
-    <div className="w-full relative !z-50 border-b-2 border-gray-300 md:border-0" ref={wrapperRef}>
+    <div className="w-full relative !z-30 border-b-2 border-gray-300 md:border-0" ref={wrapperRef}>
       <div className="flex items-center w-full ">
         <input
           type="text"
@@ -85,8 +106,8 @@ function SearchProducts({ locale }: Props) {
 
       {openSearch ?
         <>
-          {/* {data.length ?
-            <div className=" max-h-[400px] overflow-scroll absolute z-50 w-full min-h-10 bg-white border-[1px] border-gray-300 rounded-lg p-1 top-[58px] right-0 shadow-lg " >
+          {data.length ?
+            <div className=" max-h-[400px] overflow-y-scroll absolute z-50 w-full min-h-10 bg-white border-[1px] border-gray-300 rounded-lg p-1 top-[58px] right-0 shadow-lg " >
               {data.map((item: any) => (
                 <Link key={item._id} href={`products/${item._id}`}>
                   <div className="flex  border-b-[1px] border-gray-400 p-1 hover:bg-[#006496] [&>div>p]:hover:text-white  ">
@@ -100,12 +121,23 @@ function SearchProducts({ locale }: Props) {
                   </div>
                 </Link>
               ))}
+              {/* Start Pagination */}
+              <div className={`mx-auto my-2 w-fit [&>ul]:flex [&>ul]:items-center [&>ul>li]:border-[1px] [&>ul>li]:!pb-[3px] [&>ul>li]:border-[#006496] [&>ul>li]:rounded-md] [&>ul]:w-full notification-pagination`}>
+                <Pagination
+                  current={currentPage}
+                  total={totalItems}
+                  pageSize={pageSize}
+                  onChange={handlePageChange}
+                  simple
+                />
 
+              </div>
+              {/* End Pagination */}
             </div> :
             <div className="absolute w-full min-h-10 bg-white border-[1px] border-gray-300 rounded-lg p-4 top-[58px] right-0 shadow-lg "  >
               <p className=" text-xl"> {t("no_matching_data")}</p>
             </div>
-          } */}
+          }
         </> : <></>}
 
     </div>

@@ -17,10 +17,11 @@ import { IoIosCloseCircleOutline } from "react-icons/io";
 
 
 type Props = {
-  locale: string
+  locale: string,
+  logo:string,
 }
 
-function Navbar({ locale }: Props) {
+function Navbar({ locale,logo }: Props) {
   const { t, i18n } = useTranslation(locale, "common");
   const currentPathname = usePathname();
 
@@ -97,7 +98,7 @@ function Navbar({ locale }: Props) {
 
           {/* Start Search */}
           <div className={`relative w-full mx-auto !z-50 -mt-7 `}>
-            <div className={`${isLogend ? "block" : "hidden"} w-10 flex items-center absolute top-1 -right-2`}>
+            <div className={`${isLogend ? "block" : "hidden"} w-10 flex items-center absolute top-1 md:-top-1 right-2 md:-right-12`}>
               {openSearch ? (
                 <p><IoIosCloseCircleOutline onClick={() => { setOpenSearch(false) }} className={`text-xl`} /></p>
               ) : (
@@ -105,8 +106,8 @@ function Navbar({ locale }: Props) {
               )}
             </div>
             <div
-              className={`${openSearch ? " -right-11  " : " -right-[420px]"
-                } ${isLogend ? "block" : "hidden"} absolute w-[320px] !z-50 top-12 transition-all duration-200  `}
+              className={`${openSearch ? " right-1/2 translate-x-1/2" : " -right-[1500px]"
+                } ${isLogend ? "block" : "hidden"} absolute w-[320px] flex items-center justify-center mx-auto md:w-full !z-50 top-12 transition-all duration-200  `}
             >
               <SearchProducts locale={locale} />
             </div>
