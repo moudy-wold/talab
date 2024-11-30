@@ -388,7 +388,7 @@ const FormComponent = ({ locale }: Props) => {
         <Form.Item<FieldType>
           name="email"
           label={<span className="text-sm md:text-base">{t("email")}</span>}
-          rules={[{required: true,type: "email",message: t("please_enter_email"),},]}
+          rules={[{ required: true, type: "email", message: t("please_enter_email"), },]}
         >
           <Input
             placeholder={t("email")}
@@ -634,7 +634,7 @@ const FormComponent = ({ locale }: Props) => {
           rules={[{ required: false, message: t("please_confirm_that_you_are_not_robot") },]}
         >
           {/* <ReCAPTCHA sitekey={process.env.SITE_KEY!} onChange={setCapched} /> */}
-          <ReCAPTCHA sitekey={process.env.SITE_KEY!}/>
+          <ReCAPTCHA sitekey={process.env.SITE_KEY!} />
         </Form.Item>
         {/*End  recaptcha*/}
 

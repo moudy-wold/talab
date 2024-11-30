@@ -20,7 +20,7 @@ function Login({locale}:Props) {
             /> */}
           </div>
 
-          <div className="max-w-xl mx-auto shadow-xl px-11 py-5 bg-white rounded-md">
+          <div className="max-w-xl mx-auto shadow-xl px-4 lg:px-11 py-5 bg-white rounded-md">
             <div className="md:px-5">
               <Form locale={locale}/>
             </div>

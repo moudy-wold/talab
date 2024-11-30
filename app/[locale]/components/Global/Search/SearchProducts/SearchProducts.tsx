@@ -5,60 +5,45 @@ import { CiSearch } from "react-icons/ci";
 import Link from "next/link";
 import Loader from "@/app/[locale]/components/Global/Loader/Loader";
 import { useTranslation } from "@/app/i18n/client";
-
+import { ProductsSearch } from "@/app/[locale]/api/products"
+import { notification } from "antd";
 type Props = {
   locale: string
 }
-function SearchProducts({locale }: Props) {
+function SearchProducts({ locale }: Props) {
   const { t } = useTranslation(locale, "common")
   const [isLoading, setIsLoading] = useState(false);
   const [inputvalue, setInputValue] = useState("");
   const [data, setData] = useState([]);
   const [openSearch, setOpenSearch] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
-
+  const getData = () => {
+    setIsLoading(true);
+    ProductsSearch(inputvalue,1)
+      .then((res) => {
+        if (res.status) {
+          setData(res.data?.data)
+          setOpenSearch(true)
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+        notification.success({
+          message: err.response.data.error.message
+        })
+      })
+      .finally(() => {
+        setIsLoading(false);
+      })
+  }
   const handleOnChange = () => {
-    // const getData = () => {
-    //   setIsLoading(true);
-    //   SearchProductsForCustomer(inputvalue)
-    //     .then((res) => {
-    //       if (res.status) {
-    //         setData(res.data?.data)
-    //         setOpenSearch(true)            
-    //       }
-    //     })
-    //     .catch((err) => {
-    //       console.log(err)
-    //       notification.success({
-    //         message: err.response.data.error.message
-    //       })
-    //     })
-    //     .finally(() => {
-    //       setIsLoading(false);
-    //     })
-    // }
-    // const interval = setTimeout(getData, 1000);
+
+    const interval = setTimeout(getData, 1000);
   }
 
   const handleSearch = () => {
-    // setIsLoading(true);
-
-    // SearchProductsForCustomer(inputvalue)
-    //   .then((res) => {
-    //     if (res.status) {
-    //       setData(res.data?.data)
-    //       setOpenSearch(true)
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     notification.success({
-    //       message: err.response.data.error.errors[0].msg
-    //     })
-    //   })
-    //   .finally(() => {
-    //     setIsLoading(false);
-
-    //   })
+    setIsLoading(true);
+    getData()
   }
 
 
@@ -77,21 +62,19 @@ function SearchProducts({locale }: Props) {
   }, [wrapperRef]);
 
   return (
-    <div className="w-full relative !z-50" ref={wrapperRef}>
-
+    <div className="w-full relative !z-50 border-b-2 border-gray-300 md:border-0" ref={wrapperRef}>
       <div className="flex items-center w-full ">
-
         <input
           type="text"
           placeholder={t("search...")}
           onChange={(e) => { handleOnChange(); setInputValue(e.target.value) }}
           value={inputvalue}
-          className="outline-none px-2 lg:px-4 lg:py-[10px] border-2 border-solid w-11/12 rounded-s-md text-lg text-[#8c8c8c]"
+          className="outline-none px-2 lg:px-4 py-[7px] lg:py-[9px] border-2 border-solid w-11/12 rounded-s-md text-lg text-[#8c8c8c]"
         />
         <Link href={`/search/${inputvalue}`} >
           <button
             onClick={() => { handleSearch() }}
-            className={`${isLoading ? "bg-white" : "bg-[#006496]"} bg-[#006496] w-7 h-7 lg:w-12 lg:h-12 text-xs text-white flex items-center justify-center rounded-e-md border-[2px] border-[#006496]`}
+            className={`${isLoading ? "bg-white" : "bg-[#006496]"} bg-[#006496] w-10 h-11 lg:w-12 lg:h-12 text-xs text-white flex items-center justify-center rounded-e-md border-[2px] border-[#006496]`}
           >
             {isLoading ?
               <Loader /> :
@@ -102,7 +85,7 @@ function SearchProducts({locale }: Props) {
 
       {openSearch ?
         <>
-          {data.length ?
+          {/* {data.length ?
             <div className=" max-h-[400px] overflow-scroll absolute z-50 w-full min-h-10 bg-white border-[1px] border-gray-300 rounded-lg p-1 top-[58px] right-0 shadow-lg " >
               {data.map((item: any) => (
                 <Link key={item._id} href={`products/${item._id}`}>
@@ -122,7 +105,7 @@ function SearchProducts({locale }: Props) {
             <div className="absolute w-full min-h-10 bg-white border-[1px] border-gray-300 rounded-lg p-4 top-[58px] right-0 shadow-lg "  >
               <p className=" text-xl"> {t("no_matching_data")}</p>
             </div>
-          }
+          } */}
         </> : <></>}
 
     </div>

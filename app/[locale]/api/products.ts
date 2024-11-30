@@ -5,6 +5,10 @@ export async function GetAllProduct(page?:number): Promise<AxiosResponse<any>> {
   return await axios.get(`/talab/products?page=${page}`);
 }
 
+export async function ProductsSearch(value:string,page?:number): Promise<AxiosResponse<any>> {
+  return await axios.get(`/talab/products?search=${value}&page=${page}`);
+}
+
 export async function GetAllOffresProducts(page?:number): Promise<AxiosResponse<any>> {
   return await axios.get(`/talab/products/has-offers?page=${page}`);
 }

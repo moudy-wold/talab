@@ -7,6 +7,13 @@ import { IoSettingsOutline } from "react-icons/io5";
 import Link from "next/link";
 import { Languages } from "@/app/[locale]/utils/constant";
 import { usePathname, useRouter } from "next/navigation";
+import { MdBorderClear, MdOutlineBorderAll } from "react-icons/md";
+import { IoIosAddCircleOutline } from "react-icons/io";
+import { MdOutlineLocalOffer } from "react-icons/md";
+import { FaFirstOrderAlt } from "react-icons/fa";
+import { MdAccountBalance } from "react-icons/md";
+import { IoStatsChartSharp } from "react-icons/io5";
+import { CgProfile } from "react-icons/cg";
 
 type Item = {
   label: string;
@@ -24,13 +31,11 @@ type Props = {
 
 function Sidebar({ locale, openBurgerMenu, setOpenBurgerMenu }: Props) {
   const { t, i18n } = useTranslation(locale, "common")
-
   const [activeLink, setActiveLink] = useState("");
   const [current, setCurrent] = useState("");
   const currentPathname = usePathname();
   const router = useRouter();
-
-
+  const [currentLocale, setCurrentLocale] = useState('')
 
   const items: Item[] = [
     {
@@ -42,13 +47,13 @@ function Sidebar({ locale, openBurgerMenu, setOpenBurgerMenu }: Props) {
           label: t("all_products"),
           key: "22",
           url: "/dashboard/products",
-          icon: <TbCategoryFilled />
+          icon: <MdOutlineBorderAll />
         },
         {
           label: t("add_product"),
           key: "22",
           url: "/dashboard/products/create",
-          icon: <TbCategoryFilled />
+          icon: <IoIosAddCircleOutline />
         },
       ]
     },
@@ -56,18 +61,18 @@ function Sidebar({ locale, openBurgerMenu, setOpenBurgerMenu }: Props) {
       label: t("offers"),
       key: "5",
       url: "/dashboard/offers",
-      icon: <TbCategoryFilled />
+      icon: <MdOutlineLocalOffer />
     },
     {
       label: t("orders"),
       key: "4",
-      icon: <IoSettingsOutline />,
+      icon: <FaFirstOrderAlt />,
       children: [
         {
           label: t("all_orders"),
           key: "4.1",
           url: "/dashboard/orders",
-          icon: <RiAddCircleLine />
+          icon: <MdBorderClear />
         },
         // {
         //   label: t("return_order"),
@@ -82,24 +87,24 @@ function Sidebar({ locale, openBurgerMenu, setOpenBurgerMenu }: Props) {
       label: t("accounting"),
       key: "6",
       url: "/dashboard/accounting",
-      icon: <TbCategoryFilled />
+      icon: <MdAccountBalance />
     },
     {
       label: t("staticits"),
       key: "55",
       url: "/dashboard/staticits",
-      icon: <TbCategoryFilled />
+      icon: <IoStatsChartSharp />
     },
     {
       label: t("setting"),
       key: "7",
-      icon: <TbCategoryFilled />,
+      icon: <IoSettingsOutline />,
       children: [
         {
           label: t("profile"),
           key: "5",
           url: "/dashboard/profile",
-          icon: <TbCategoryFilled />
+          icon: <CgProfile />
         },
 
       ]
@@ -113,7 +118,7 @@ function Sidebar({ locale, openBurgerMenu, setOpenBurgerMenu }: Props) {
     document.dir = newLocale === "ar" ? "rtl" : "ltr";
     i18n.changeLanguage(newLocale);
     router.push(`/${newLocale}${pathWithoutLocale}`);
-    // setCurrentLocale(newLocale); // Update the local state
+    setCurrentLocale(newLocale); // Update the local state
   };
   return (
     <>
@@ -144,6 +149,7 @@ function Sidebar({ locale, openBurgerMenu, setOpenBurgerMenu }: Props) {
             </div>
             {/* {/* End Select */}
           </div>
+
           {items.map((item: any, index: number) => (
             <div
               key={index}
@@ -221,7 +227,11 @@ function Sidebar({ locale, openBurgerMenu, setOpenBurgerMenu }: Props) {
               ) : (
                 <Link
                   href={item.url}
-                  onClick={() => { setOpenBurgerMenu(false) }}
+                  onClick={() => {
+                    if (setOpenBurgerMenu) {
+                      setOpenBurgerMenu(false);
+                    }
+                  }}
                   className="hover:no-underline hover:bg-gray-100 p-2 my-1 rounded-lg flex items-center gap-2">
                   <p className="">{item.icon}</p>
                   <p className=" font-semibold p-2 text-xl">{item.label}</p>

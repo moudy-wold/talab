@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 import { MyProvider } from './context/myContext';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-const Navbar = dynamic(() => import("@/app/[locale]/components/Global/NavBar/Navbar"))
+const Navbar = dynamic(() => import("@/app/[locale]/components/Global/NavBar/Navbar"),{ssr:false})
 
 
 const geistSans = localFont({
@@ -34,6 +34,25 @@ interface RootLayoutProps {
   children: ReactNode;
 }
 
+// export async function generateMetadata({}) {
+//   const headerData = await GetHeaderData();
+//   const companyName = headerData?.data?.data?.company_name || "LOGICPRODEV";
+//   const logoData = await GetLogo();
+
+//   return {
+//     title: companyName,
+//     description: "WEB",
+//     icons: {
+//       icon: logoData.data.data.icon,
+//     },
+//     openGraph: {
+//       images: logoData?.data?.data.logo,
+//       // description: data.data.meta_description,
+//       type: "website",
+//       title: "LogicProDev | Home Page",
+//     },
+//   };
+// }
 
 export default async function RootLayout({ params: { locale }, children }: RootLayoutProps) {
   return (

@@ -279,14 +279,11 @@ function ProductsList({ locale }: Props) {
       });
   }
 
-
-
   return (
     <div>
       {isLoading && <Loader />}
-
       <div className="grid grid-cols-[40%_60%] lg:grid-cols-2 p-4 mb-2">
-          <div className="flex items-center justify-center ">
+          <div className="flex items-center  ">
             <Button className="">
               <Link
                 href={`/dashboard/products/create`}

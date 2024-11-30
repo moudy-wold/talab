@@ -1,8 +1,8 @@
 "use client"
 import React, { ReactNode, useEffect } from "react";
-import Sidebar from "@/app/[locale]/components/Global/Sidebar/Sidebar";
 import { useRouter } from "next/navigation";
-
+import dynamic from "next/dynamic";
+const Sidebar = dynamic(() => import("@/app/[locale]/components/Global/Sidebar/Sidebar"), { ssr: false })
 
 interface RootLayoutProps {
   params: {
@@ -12,20 +12,20 @@ interface RootLayoutProps {
 }
 
 function MainLayout({ params: { locale }, children }: RootLayoutProps) {
-  const {push} = useRouter();
-  
+  const router = useRouter();
+
   useEffect(() => {
     const logend = localStorage.getItem("isLogend");
     if (logend == undefined || logend !== "true") {
-      push("/auth/login")
+      router.push("/auth/login")
     }
-  }, [])
+  }, [router])
   return (
 
     <div className={``}>
       <div className="grid lg:grid-cols-[25%_72%] pt-16 lg:pt-0 gap-3 lg-pt-0 ">
         <div className="hidden lg:block">
-          <Sidebar locale={locale}  />
+          <Sidebar locale={locale} />
         </div>
         <div className={``}>
           {children}

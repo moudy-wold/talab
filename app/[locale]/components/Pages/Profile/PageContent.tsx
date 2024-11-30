@@ -123,11 +123,6 @@ const PageContent = ({ locale }: Props) => {
 
   useEffect(() => {
     const data = infoData?.data;
-    // const getCitiesAndDistricts = async () => {
-    //   await getCategories()
-    //   await getCities()
-    //   await GetDistricts(); 
-    // }
 
     if (!isLoading && data) {
 
@@ -140,7 +135,7 @@ const PageContent = ({ locale }: Props) => {
       setGetData(true)
 
       // إعداد البيانات بعد تحميل الخيارات
-      // console.log(data?.data)
+      console.log(data?.data)
       form.setFieldValue('userName', data?.data?.userName);
       form.setFieldValue('phoneNumber', data?.data?.phoneNumber);
       form.setFieldValue('avatar', [{
@@ -324,7 +319,7 @@ const PageContent = ({ locale }: Props) => {
     // End Fixed Code *************
 
     formdata.append("categories", JSON.stringify(selectedCategories));
-    formdata.append("areas_covered", JSON.stringify(areas_covered));     
+    formdata.append("areas_covered", JSON.stringify(areas_covered));
     EditInfo(formdata)
       .then((res) => {
         if (res?.data?.message == "the user exists already") {
@@ -595,7 +590,7 @@ const PageContent = ({ locale }: Props) => {
         {/* End Areas Covered */}
 
         {/* Start Submit Register */}
-        <div className="">
+        <div className="col-span-2">
           <button
             type="submit"
             className=" rounded-full py-2 md:pb-3 px-5 md:px-8 text-lg md:text-xl border-2 border-[#006496] bg-[#006496] text-white hover:text-[#006496] hover:bg-white transition-all duration-200"

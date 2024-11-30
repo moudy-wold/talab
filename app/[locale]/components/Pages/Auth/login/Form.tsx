@@ -1,9 +1,9 @@
 'use client'
+import React, { useContext, useState } from 'react';
 import { Login } from '@/app/[locale]/api/auth';
 import Loader from '@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader';
 import { Form, Input, notification } from 'antd';
 import Link from 'next/link';
-import { useContext, useState } from 'react';
 import { useRouter } from "next/navigation"
 import Cookies from 'js-cookie';
 import { useTranslation } from '@/app/i18n/client';
@@ -27,8 +27,8 @@ function FormComponent({ locale }: Props) {
     email: "",
     password: ""
   });
-
   const router = useRouter()
+
   const onFinish = () => {
     setIsLoading(true)
     Cookies.remove('token');
@@ -42,7 +42,7 @@ function FormComponent({ locale }: Props) {
           Cookies.set('token', res.data.token, { expires: 7, path: "/" });
           localStorage.setItem("isLogend", "true");
           setLogined(true)
-          router.push("/dashboard")
+          router.push("/")
         }
       })
       .catch((err: any) => {

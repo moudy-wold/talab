@@ -1,24 +1,26 @@
- "use server";
+"use server";
 import axios from "axios";
 import { cookies } from "next/headers";
 
 // Fetch CSRF token from Laravel Sanctum
 export default async function fetchCsrfToken() {
   try {
-    const res :any = await axios.get("https://mobilstore.aymankanawi.info/sanctum/csrf-cookie", {
-      withCredentials: true, // ensure cookies are sent and received
-    });
+    const res: any = await axios.get(
+      "http://api.logicprodev.com/sanctum/csrf-cookie",
+      {
+        withCredentials: true, // ensure cookies are sent and received
+      }
+    );
 
-    const xsrfToken :any  = res.headers["set-cookie"]
-      .find((cookie :any) => cookie.includes("XSRF-TOKEN"))
+    const xsrfToken: any = res.headers["set-cookie"]
+      .find((cookie: any) => cookie.includes("XSRF-TOKEN"))
       ?.split("XSRF-TOKEN=")[1]
       ?.split(";")[0];
 
     const mobilStoreSession = res.headers["set-cookie"]
-      .find((cookie :any) => cookie.includes("mobil_store_session"))
+      .find((cookie: any) => cookie.includes("mobil_store_session"))
       ?.split("mobil_store_session=")[1]
       ?.split(";")[0];
-
 
     if (xsrfToken) {
       cookies().set("XSRF-TOKEN", xsrfToken);
@@ -27,17 +29,16 @@ export default async function fetchCsrfToken() {
       cookies().set("mobil_store_session", mobilStoreSession);
     }
 
-    return [xsrfToken, mobilStoreSession ];
+    return [xsrfToken, mobilStoreSession];
   } catch (error) {
     console.error("Error fetching CSRF token:", error);
     return null;
   }
 }
 
-
 // export default async function fetchCsrfToken() {
 //   try {
-//     const res = await axios.get("http://localhost:8000/sanctum/csrf-cookie", {
+//     const res = await axios.get("http://api.logicprodev.com/sanctum/csrf-cookie", {
 //       withCredentials: true, // Ensure that cookies are included
 //     });
 
@@ -51,9 +52,7 @@ export default async function fetchCsrfToken() {
 //     // const xsrfToken = rawXsrfToken ? decodeURIComponent(rawXsrfToken) : null;
 //     const xsrfToken = rawXsrfToken;
 
-
 //     // console.log(xsrfToken);
-
 
 //     // Find mobil_store_session in the cookies
 //     const mobilStoreSession = setCookieHeaders.find((cookie) =>
@@ -62,7 +61,6 @@ export default async function fetchCsrfToken() {
 
 //     // Return both tokens if they exist, otherwise return null
 //     // const xsrfToken = decodeURIComponent(getCookie("XSRF-TOKEN"));
-
 
 //     if (xsrfToken || mobilStoreSession) {
 //       return [xsrfToken, mobilStoreSession];
