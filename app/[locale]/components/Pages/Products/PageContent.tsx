@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import Loader from "@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader";
@@ -16,7 +16,7 @@ import { CiCirclePlus, CiEdit } from "react-icons/ci";
 import { RiDeleteBinLine } from "react-icons/ri";
 import ImagesSlider from "../../Global/ImagesSlider/ImagesSlider";
 import SearchProducts from "../../Global/Search/SearchProducts/SearchProducts";
-import { DeleteProduct, GetAllProduct, UpdateOfferProduct } from "@/app/[locale]/api/products";
+import { DeleteProduct, GetAllProduct, ProductsSearch, UpdateOfferProduct } from "@/app/[locale]/api/products";
 import { useTranslation } from "@/app/i18n/client";
 import { FaQuestion } from "react-icons/fa";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
@@ -33,12 +33,15 @@ const EditOffer = dynamic(() => import('./EditOffer/EditOffer'), { ssr: false })
 
 type Props = {
   locale: string,
+  search_data?: any,
+  params_searchValue?:string,
 }
 
-function ProductsList({ locale }: Props) {
+function ProductsList({ locale, search_data, params_searchValue }: Props) {
   const { t } = useTranslation(locale, "common");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const path = usePathname()
   const [openDelete, setOpenDelete] = useState(false);
   const [openImages, setOpenImages] = useState(false);
   const [images, setImages] = useState([]);
@@ -64,6 +67,7 @@ function ProductsList({ locale }: Props) {
 
 
   const getData = async () => {
+
     try {
       const res = await GetAllProduct(1);
       setCurrentPage(res.data.pagination.current_page);
@@ -78,27 +82,49 @@ function ProductsList({ locale }: Props) {
 
   // First Fetch
   useEffect(() => {
-    getData()
+    if (!search_data) {
+      getData()
+    }else{
+      setCurrentPage(search_data?.pagination.current_page);
+      setTotalItems(search_data?.pagination.total);
+      setPageSize(search_data?.pagination.per_page);
+      setData(search_data?.data)
+    } 
   }, [])
-
   const handlePageChange = async (page: any) => {
-    // setPage(page + 1);
     setIsLoading(true);
-    try {
-      console.log(page)
-      const res = await GetAllProduct(page);
-      console.log(res.data.data)
-      setData(res.data.customers);
-      setCurrentPage(res.data.pagination.current_page);
-      setData(res.data.data)
-      setIsLoading(false);
-
-    } catch (err: any) {
-      setIsLoading(false);
-      console.log(err)
-      notification.error({
-        message: err.response.data.message,
-      });
+    if(!search_data){
+      try {
+        console.log(page)
+        const res = await GetAllProduct(page);
+        console.log(res.data.data)
+        setData(res.data.customers);
+        setCurrentPage(res.data.pagination.current_page);
+        setData(res.data.data)
+        setIsLoading(false);
+        
+      } catch (err: any) {
+        setIsLoading(false);
+        console.log(err)
+        notification.error({
+          message: err.response.data.message,
+        });
+      }
+    }else{
+      try {
+        const res = await ProductsSearch(params_searchValue,1);  
+        setData(res.data.customers);
+        setCurrentPage(res.data.pagination.current_page);
+        setData(res.data.data)
+        setIsLoading(false);
+        
+      } catch (err: any) {
+        setIsLoading(false);
+        console.log(err)
+        notification.error({
+          message: err.response.data.message,
+        });
+      }
     }
   };
 
@@ -280,18 +306,18 @@ function ProductsList({ locale }: Props) {
   }
 
   return (
-    <div>
+    <div className={`${path.includes("search") ?  "pt-6 md:pt-10" : "pt-0"}`}>
       {isLoading && <Loader />}
-      <div className="grid grid-cols-[40%_60%] lg:grid-cols-2 p-4 mb-2">
-          <div className="flex items-center  ">
-            <Button className="">
-              <Link
-                href={`/dashboard/products/create`}
-                className="flex items-center justify-beetwen gap-1"
-              >
-                {t("add_product")} <CiCirclePlus className="mr-1" />
-              </Link>
-            </Button>
+      <div className={`${path.includes("search") ?  "hidden" : "grid"}  grid-cols-[40%_60%] lg:grid-cols-2 p-4 mb-2`}>
+        <div className="flex items-center  ">
+          <Button className="">
+            <Link
+              href={`/dashboard/products/create`}
+              className="flex items-center justify-beetwen gap-1"
+            >
+              {t("add_product")} <CiCirclePlus className="mr-1" />
+            </Link>
+          </Button>
         </div>
         <div className="hidden lg:block lg:p-4">
           <SearchProducts locale={locale} />

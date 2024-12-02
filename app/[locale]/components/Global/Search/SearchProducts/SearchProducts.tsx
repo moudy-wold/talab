@@ -92,14 +92,14 @@ function SearchProducts({ locale }: Props) {
           value={inputvalue}
           className="outline-none px-2 lg:px-4 py-[7px] lg:py-[9px] border-2 border-solid w-11/12 rounded-s-md text-lg text-[#8c8c8c]"
         />
-        <Link href={`/search/${inputvalue}`} >
+        <Link href={`/dashboard/search/${inputvalue}`} className={`${inputvalue.trim() === "" && "pointer-events-none"}`} >
           <button
             onClick={() => { handleSearch() }}
-            className={`${isLoading ? "bg-white" : "bg-[#006496]"} bg-[#006496] w-10 h-11 lg:w-12 lg:h-12 text-xs text-white flex items-center justify-center rounded-e-md border-[2px] border-[#006496]`}
+            className={`${isLoading ? "bg-white" : "bg-[#006496]"} ${inputvalue.trim() === "" && "pointer-events-none"}  bg-[#006496] w-10 h-11 lg:w-12 lg:h-12 text-xs text-white flex items-center justify-center rounded-e-md border-[2px] border-[#006496]`}
           >
             {isLoading ?
               <Loader /> :
-              <CiSearch className="w-7 h-7 lg:font-bold" />}
+              <CiSearch className={`${inputvalue.trim() === "" && "pointer-events-none"}  w-7 h-7 lg:font-bold`} />}
           </button>
         </Link>
       </div>
@@ -109,7 +109,7 @@ function SearchProducts({ locale }: Props) {
           {data.length ?
             <div className=" max-h-[400px] overflow-y-scroll absolute z-50 w-full min-h-10 bg-white border-[1px] border-gray-300 rounded-lg p-1 top-[58px] right-0 shadow-lg " >
               {data.map((item: any) => (
-                <Link key={item._id} href={`products/${item._id}`}>
+                <Link key={item._id} href={`/dashboard/products/${item._id}`}>
                   <div className="flex  border-b-[1px] border-gray-400 p-1 hover:bg-[#006496] [&>div>p]:hover:text-white  ">
                     <div className="p-2">
                       <Image src={item.images[0]} alt={item.name} width={60} height={60} className="border-[1px] border-gray-300 rounded-xl !w-16 !h-16" />
