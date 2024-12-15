@@ -33,10 +33,8 @@ function UserIcons({ locale, isLogend }: Props) {
     document.dir = newLocale === "ar" ? "rtl" : "ltr";
     i18n.changeLanguage(newLocale);
     router.push(`/${newLocale}${pathWithoutLocale}`);
-    // setCurrentLocale(newLocale); // Update the local state
+    setCurrentLocale(newLocale); // Update the local state
   };
-
-
 
   const handleLogOut = () => {
     setOpenLogOut(false)
@@ -60,20 +58,9 @@ function UserIcons({ locale, isLogend }: Props) {
       });
   }
 
-
-
-
-
-
-
-
-
   useEffect(() => {
-    // التحقق من دعم المتصفح للإشعارات
     if ("Notification" in window) {
-      // التحقق من حالة إذن الإشعارات
       if (Notification.permission === "default") {
-        // طلب إذن المستخدم إذا لم يتم قبوله أو رفضه بعد
         Notification.requestPermission().then((permission) => {
           if (permission === "granted") {
             console.log("إذن الإشعارات مقبول.");

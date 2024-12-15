@@ -1,5 +1,5 @@
 "use client";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useContext, useState } from "react";
 import { useTranslation } from "@/app/i18n/client";
 import { RiAddCircleLine } from "react-icons/ri";
 import { TbCategoryFilled } from "react-icons/tb";
@@ -14,6 +14,11 @@ import { FaFirstOrderAlt } from "react-icons/fa";
 import { MdAccountBalance } from "react-icons/md";
 import { IoStatsChartSharp } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
+import { CiLogout } from "react-icons/ci";
+import { Modal, notification } from "antd";
+import { LogOut } from "@/app/[locale]/api/auth";
+import Cookies from 'js-cookie';
+import { MyContext } from "@/app/[locale]/context/myContext";
 
 type Item = {
   label: string;
@@ -31,11 +36,14 @@ type Props = {
 
 function Sidebar({ locale, openBurgerMenu, setOpenBurgerMenu }: Props) {
   const { t, i18n } = useTranslation(locale, "common")
+  const [isLoading, setIsLoading] = useState(false);
   const [activeLink, setActiveLink] = useState("");
   const [current, setCurrent] = useState("");
   const currentPathname = usePathname();
   const router = useRouter();
   const [currentLocale, setCurrentLocale] = useState('')
+  const [openLogOut, setOpenLogOut] = useState(false);
+  const { setLogined } = useContext(MyContext);
 
   const items: Item[] = [
     {
@@ -120,6 +128,29 @@ function Sidebar({ locale, openBurgerMenu, setOpenBurgerMenu }: Props) {
     router.push(`/${newLocale}${pathWithoutLocale}`);
     setCurrentLocale(newLocale); // Update the local state
   };
+
+
+  const handleLogOut = () => {
+    setOpenLogOut(false)
+    setIsLoading(true)
+    LogOut()
+      .then(() => {
+        notification.success({ message: t("succeffly_logout") });
+        localStorage.clear();
+        Cookies.remove('token');
+        setLogined(false)
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+        router.push("/auth/login")
+      })
+      .catch((err) => {
+        notification.error({ message: err.response.data.message });
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }
   return (
     <>
       <div className={` ${locale == "ar" ? (openBurgerMenu ? "shadow-2xl right-0 " : "-right-[320px] lg:!right-0") : (openBurgerMenu ? "shadow-2xl left-0" : "-left-[320px] lg:!left-0 ")} lg:shadow-md fixed z-10 top-0 transition-all duration-150 bg-white  w-[320px] h-[100vh]`}>
@@ -151,13 +182,7 @@ function Sidebar({ locale, openBurgerMenu, setOpenBurgerMenu }: Props) {
           </div>
 
           {items.map((item: any, index: number) => (
-            <div
-              key={index}
-              className=""
-              onClick={() => {
-                // handleClick(item);
-              }}
-            >
+            <div key={index}>
               {item.children ? (
                 <div
                   className={`rounded-lg my-1 ${current == item.key ? "bg-gray-400" : "bg-white"
@@ -239,8 +264,25 @@ function Sidebar({ locale, openBurgerMenu, setOpenBurgerMenu }: Props) {
               )}
             </div>
           ))}
+          <div className="flex items-center relative cursor-pointer mt-2" onClick={() => { setOpenLogOut(true) }}>
+            <p className="mx-2">  <CiLogout className=" text-xl text-[#8c8c8c]" /></p>
+            <span className=" lg:hidden block mt-[4px] text-center text-xl font-semibold">{t("logout")}</span>
+          </div>
         </div>
       </div>
+      {/* Start LogOut Model */}
+      <Modal
+        title={t("logout")}
+        centered
+        open={openLogOut}
+        okButtonProps={{}}
+        onOk={() => { handleLogOut() }}
+        onCancel={() => { setOpenLogOut(false) }}
+        width={500}
+      >
+        <p>{t("are_you_sure_log_out")} </p>
+      </Modal>
+      {/* End LogOut Model */}
     </>
   );
 }
