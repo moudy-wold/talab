@@ -22,7 +22,7 @@ type FieldType = {
 function FormComponent({ locale }: Props) {
   const { t } = useTranslation(locale, "common")
   const [isLoading, setIsLoading] = useState(false);
-  const {  setLogined } = useContext(MyContext);
+  const { setLogined } = useContext(MyContext);
   const [obj, setObj] = useState({
     email: "",
     password: ""
@@ -41,7 +41,7 @@ function FormComponent({ locale }: Props) {
           })
           Cookies.set('token', res.data.token, { expires: 7, path: "/" });
           localStorage.setItem("isLogend", "true");
-          setLogined(true)
+          // setLogined(true)
           router.push("/")
         }
       })

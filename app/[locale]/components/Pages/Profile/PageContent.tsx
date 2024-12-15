@@ -167,7 +167,6 @@ const PageContent = ({ locale }: Props) => {
             value: item.city,
           }
         });
-        console.log(filteredCities)
         setSelectedCities(updatedCities)
         setSelectedDistricts(districts); // إعداد المناطق المحددة
       }
@@ -344,6 +343,13 @@ const PageContent = ({ locale }: Props) => {
       });
   };
 
+  const handleFinishFailed = (errorInfo: any) => {
+    form.scrollToField(errorInfo.errorFields[0].name, {
+      behavior: 'smooth',
+      block: 'center',
+    });
+  };
+
   return (
     <div className="px-3">
       {isLoading && <Loader />}
@@ -351,6 +357,7 @@ const PageContent = ({ locale }: Props) => {
         form={form}
         name="register-form"
         onFinish={onFinish}
+        onFinishFailed={handleFinishFailed}
         autoComplete="off"
         className="grid lg:grid-cols-2 gap-5"
       >
@@ -461,9 +468,7 @@ const PageContent = ({ locale }: Props) => {
             {/* Start neighborhoods */}
             <Form.Item<FieldType>
               name="neighborhoods"
-              rules={[
-                { required: true, message: t("please_enter_neighborhoods") },
-              ]}
+              rules={[{ required: true, message: t("please_enter_neighborhoods") },]}
             >
               <Select
                 placeholder={t("select_neighborhoods")}

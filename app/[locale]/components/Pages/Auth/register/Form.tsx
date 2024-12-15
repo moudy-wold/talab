@@ -60,11 +60,10 @@ const FormComponent = ({ locale }: Props) => {
   const [categories, setCategories] = useState<any>([])
   const [dynamicDistrict, setDynamicDistrict] = useState<any>();
   const [neighborhoodss, setNeighborhoods] = useState()
-
+  const [form] = Form.useForm();
   const handleChangeCategories = (value: string[]) => {
     setSlectedCategories(value)
   };
-
 
   const handleChangeIstanbulDistrict = (value: string[]) => {
     if (value.includes(AllOption)) {
@@ -80,27 +79,9 @@ const FormComponent = ({ locale }: Props) => {
     if (value.includes(AllOption)) {
       setSelectedCities([AllOption]);
       setIsAllCitiesSelected(true);
-      // let newCity = { "all": [] }
-      // setAreasCovered((prevAreasCovered: any) =>
-      //   prevAreasCovered.map((area: any) =>
-      //     area.country === "turkey" ? { ...area, city: newCity } : area
-      //   )
-      // );
     } else {
       setSelectedCities(value);
       setIsAllCitiesSelected(false);
-      // let newCity: any = {};
-      // value.map((val: any) => {
-      //   newCity = {
-      //     ...newCity,
-      //     [val]: "all"
-      //   };
-      // });
-      // setAreasCovered((prevAreasCovered: any) =>
-      //   prevAreasCovered.map((area: any) =>
-      //     area.country === "turkey" ? { ...area, city: newCity } : area
-      //   )
-      // );
     }
   };
 
@@ -108,14 +89,6 @@ const FormComponent = ({ locale }: Props) => {
     { label: 'Select All', value: AllOption },
     ...istDistrict.map((item: any) => ({ ...item, disabled: isAllDistrictsSelected })),
   ];
-
-  // const w = [
-  //   { label: 'Select All', value: AllOption },
-  //   ...cities.map((item: any) => ({
-  //     ...item, 
-  //     disabled: false // تعطيل الخيارات يعتمد على handleChangeCities
-  //   })),
-  // ];
 
   const citiesWithAll = [
     { label: 'Select All', value: AllOption },
@@ -288,6 +261,13 @@ const FormComponent = ({ locale }: Props) => {
       });
   };
 
+  const handleFinishFailed = (errorInfo:any) => {
+    form.scrollToField(errorInfo.errorFields[0].name, {
+      behavior: 'smooth',
+      block: 'center',
+    });
+  };
+
   useEffect(() => {
     const getCategories = async () => {
       try {
@@ -321,7 +301,12 @@ const FormComponent = ({ locale }: Props) => {
   return (
     <div>
       {isLoading && <Loader />}
-      <Form name="register-form" onFinish={onFinish} autoComplete="off">
+      <Form
+        name="register-form"
+        onFinish={onFinish}
+        autoComplete="off"
+        onFinishFailed={handleFinishFailed}
+      >
 
         {/* Start name */}
         <Form.Item<FieldType>

@@ -212,7 +212,7 @@ function Sidebar({ locale, openBurgerMenu, setOpenBurgerMenu }: Props) {
                             href={child.url}
                             onClick={() => { setOpenBurgerMenu && setOpenBurgerMenu(false) }}
                             className="flex p-2 px-4 my-2 items-center gap-2 hover:text-black hover:no-underline hover:bg-gray-100 rounded-lg">
-                            <span>{item.icon}</span>
+                            <span>{child.icon}</span>
                             <span className="text-lg  text-black font-semibold ">
                               {child.label}
                             </span>

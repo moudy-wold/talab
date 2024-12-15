@@ -1,7 +1,7 @@
 'use client';
 import { ForgetPass } from "@/app/[locale]/api/auth";
 import LargeLoader from '@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader';
-import {   Form, Input, Modal, notification } from 'antd';
+import { Form, Input, Modal, notification } from 'antd';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -47,7 +47,7 @@ function FormComponent(props: any) {
   return (
     <div className="m-auto p-4">
       {isLoading && <LargeLoader />}
-     
+
       <h1 className="text-primary-foreground text-xl md:text-xl xl:text-3xl text-center mb-7 font-semibold">
         {t("send_password_change_request")}
       </h1>

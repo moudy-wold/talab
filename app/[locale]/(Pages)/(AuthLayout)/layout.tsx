@@ -1,15 +1,13 @@
-import React from "react";
+import React ,{ReactNode } from "react";
 
 interface RootLayoutProps {
-  children: React.ReactNode;
+  params: {
+    locale: string;
+  };
+  children: ReactNode;
 }
 
- async function AuthLayout({  children }: RootLayoutProps) {
-  return (
-  <div className="pt-10 lg:pt-0">
-    {children}
-
-    </div>);
+export default async function AuthLayout({ params: { locale }, children }: RootLayoutProps) {
+  return <div className="pt-10 lg:pt-0">{children}</div>;
 }
-
-export default AuthLayout;
+ 

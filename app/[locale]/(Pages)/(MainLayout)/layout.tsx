@@ -1,7 +1,8 @@
 "use client"
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode, useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import { MyContext } from "../../context/myContext";
 const Sidebar = dynamic(() => import("@/app/[locale]/components/Global/Sidebar/Sidebar"), { ssr: false })
 
 interface RootLayoutProps {
@@ -13,7 +14,7 @@ interface RootLayoutProps {
 
 function MainLayout({ params: { locale }, children }: RootLayoutProps) {
   const router = useRouter();
-
+  const { logined } = useContext(MyContext)
   useEffect(() => {
     const logend = localStorage.getItem("isLogend");
     if (logend == undefined || logend !== "true") {

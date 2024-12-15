@@ -1,10 +1,10 @@
 "use client";
 import Form from './Form';
 
-type Props ={
+type Props = {
   locale: string
 }
-async function ChangePassword({locale} :Props) {
+async function ChangePassword({ locale }: Props) {
   return (
     <main className="py-5 md:px-9">
       <div className=" bg-no-repeat bg-contain bg-bottom max-lg:pb-44  h-[calc(100vh-220px)] flex items-center">
@@ -34,5 +34,5 @@ async function ChangePassword({locale} :Props) {
   );
 }
 
-export default ChangePassword ;
-  ;
+export default ChangePassword;
+;

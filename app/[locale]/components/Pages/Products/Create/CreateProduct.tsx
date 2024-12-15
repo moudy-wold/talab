@@ -22,7 +22,6 @@ import { AddProduct } from "@/app/[locale]/api/products";
 import LargeLoader from "../../../Global/Loader/LargeLoader/LargeLoader";
 import { IoInformationCircleOutline } from "react-icons/io5";
 
-
 type FieldType = {
   product_name: string;
   category: string;
@@ -39,9 +38,10 @@ type FieldType = {
   compatible_models: any;
   details: unknown;
   is_on_offer: boolean;
-  offer_start_date:string,
+  offer_start_date: string,
   offer_expiry_date: string;
 };
+
 function CreateProduct({ locale }: any) {
   const { t } = useTranslation(locale, "common");
   const router = useRouter();
@@ -59,6 +59,7 @@ function CreateProduct({ locale }: any) {
   const disabledDate = (current: any) => {
     return current && current < dayjs().startOf('day');
   };
+
   const Get_main_categories = async () => {
     try {
       const res = await GetMainCategories();
@@ -143,6 +144,13 @@ function CreateProduct({ locale }: any) {
       });
   };
 
+  const handleFinishFailed = (errorInfo: any) => {
+    form.scrollToField(errorInfo.errorFields[0].name, {
+      behavior: 'smooth',
+      block: 'center',
+    });
+  };
+
   // Start Details
   const addDetailField = () => {
     setDetails([...details, { title: "", content: "" }]);
@@ -154,7 +162,6 @@ function CreateProduct({ locale }: any) {
     newDetails[index][field] = value;
     setDetails(newDetails);
   };
-
 
   const handleDeleteItemFromDetails = (detail: any) => {
     const newArr = details.filter((item: any) => item.title !== detail.title);
@@ -195,6 +202,7 @@ function CreateProduct({ locale }: any) {
         autoComplete="off"
         layout="vertical"
         onFinish={onFinish}
+        onFinishFailed={handleFinishFailed}
         className="lg:grid  lg:grid-cols-2 gap-4"
       >
         {/* Start Producy Name */}

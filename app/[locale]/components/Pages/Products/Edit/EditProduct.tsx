@@ -229,6 +229,12 @@ function EditProduct({ locale, id }: Props) {
       });
   };
 
+  const handleFinishFailed = (errorInfo:any) => {
+    form.scrollToField(errorInfo.errorFields[0].name, {
+      behavior: 'smooth',
+      block: 'center',
+    });
+  };
   // Start Details
   const addDetailField = () => {
     setDetails([...details, { title: "", content: "" }]);
@@ -281,6 +287,7 @@ function EditProduct({ locale, id }: Props) {
         autoComplete="off"
         layout="vertical"
         onFinish={onFinish}
+        onFinishFailed={handleFinishFailed}
         className="lg:grid  lg:grid-cols-2 gap-4"
       >
         {/* Start Producy Name */}

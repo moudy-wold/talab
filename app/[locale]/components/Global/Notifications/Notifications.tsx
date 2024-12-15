@@ -53,11 +53,10 @@ function Notifications({ locale, isLogend }: any) {
     const getNotificationData = async () => {
         try {
             const res = await GetAllNotifications(1);
-            console.log(res.data.data)
             setTotalItems(res.data.pagination.total);
             setPageSize(res.data.pagination.per_page);
             setNotificatioItems(res?.data?.data)
-            setNotificationsLength(res.data.data[0].unread_count)
+            setNotificationsLength(res?.data?.data[0]?.unread_count)
         } catch (err: any) {
             console.log(err)
         }
