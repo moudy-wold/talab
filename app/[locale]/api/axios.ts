@@ -1,7 +1,7 @@
 import axios from "axios";
 import { GetTokenInSsr } from "./getTokenInssr";
 import RedirectInCsc from "./redirectIncCsc";
-
+import i18next from "i18next";
 import fetchCsrfToken from "./CsrfToken";
 
 const axiosInstance = axios.create({
@@ -19,6 +19,8 @@ axiosInstance.interceptors.request.use(async (config) => {
   if (config.data instanceof FormData) {
     config.headers["Content-Type"] = "multipart/form-data";
   }
+  // config.headers["Accept-Language"] = i18next.logger.options.lng || "en";
+  // config.headers["Accept-Language"] = i18next.language || "en";
   config.headers.Authorization = `Bearer ${token}`;
   config.headers["Accept"] = "/";
 
