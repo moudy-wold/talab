@@ -32,25 +32,25 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async (error: any) => {
-    console.log(error.response, "qqqqqqqqqqqqqqqqqqq");
-    if (error?.response?.status == 401) {
-      console.log("from 401");
-      await RedirectInCsc();
-    }
+    console.log(error.response, "error from main axios fild");
+    // if (error?.response?.status == 401) {
+    //   console.log("from 401");
+    //   // await RedirectInCsc();
+    // }
     if (
       error?.response?.data?.message == "Unauthorized" ||
       error?.response?.data?.message == "Unauthenticated."
     ) {
       console.log("from un");
-      await RedirectInCsc();
+      // await RedirectInCsc();
     }
-    if (
-      error?.response?.status === 403 &&
-      !error?.response?.data?.plan_expire
-    ) {
-      console.log("from plan");
-      await RedirectInCsc();
-    }
+    // if (
+    //   error?.response?.status === 403 &&
+    //   !error?.response?.data?.plan_expire
+    // ) {
+    //   console.log("from plan");
+    //   await RedirectInCsc();
+    // }
 
     return Promise.reject(error);
   }

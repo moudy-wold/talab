@@ -9,6 +9,8 @@ import { MdDeleteForever, MdOutlineDone } from "react-icons/md";
 import Link from "next/link";
 import { SlOptions } from "react-icons/sl"
 import { IoIosNotificationsOff } from "react-icons/io";
+import useEcho from "@/app/[locale]/api/echo";
+
 function Notifications({ locale, isLogend }: any) {
     const { t } = useTranslation(locale, "common");
     const router = useRouter();
@@ -23,12 +25,12 @@ function Notifications({ locale, isLogend }: any) {
     const [totalItems, setTotalItems] = useState<any>(0);
 
 
-    useEffect(() => {
-        const isLogend: any = localStorage.getItem("isLogend");
-        if (isLogend == "true") {
-            getNotificationData();
-        }
-    }, [isLogend]);
+    // useEffect(() => {
+    //     const isLogend: any = localStorage.getItem("isLogend");
+    //     if (isLogend == "true") {
+    //         getNotificationData();
+    //     }
+    // }, [isLogend]);
 
     const handlePageChange = async (page: any) => {
         setIsLoadingForPagination(true);
@@ -157,6 +159,57 @@ function Notifications({ locale, isLogend }: any) {
             setIsLoadingOnNotificationAsRead(false);
         }
     }
+    const echo: any = useEcho();
+
+    useEffect(() => {
+        const user_id = localStorage.getItem("userId");
+        if (user_id != undefined && user_id != "undefined") {
+
+            if (echo) {
+                // console.log('Echo connection success:', echo);
+                var userID = JSON.parse(user_id); // Replace the following with the current user's ID from authentication
+
+                const channelName = `notifications.${userID}`;
+
+                const channel = echo.private(channelName)
+                    .listen('.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated', async (event: any) => {
+                        console.log('Notification received:', event);
+                        // your code funtions or logic here write for notify web socket
+                    })
+                    .error((error: any) => {
+                        console.error('Error in channel subscription:', error);
+                    });
+
+
+                // test channel test
+                echo.channel('new').listen('NewEvent', async (e: any) => {
+                    console.log(e);
+                });
+
+                // can u use the const chaneel or the down code channel_1 for listen notifications
+                // *******************************
+
+                // const channel_1 = echo.private(channelName).notification((notification) => {
+                //     console.log('notify',notification);
+                // })
+                // .error((error) => {
+                //     console.error('Error in channel subscription:', error);
+                // });
+
+                // console.log(channel);
+
+                return () => {
+                    channel.stopListening('.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated');
+                    echo.leaveChannel(`private-notifications.${userID}`);
+                    // echo.leave(`notifications.${userID}`);
+                };
+
+            } else {
+                console.log('WebSocket not connected');
+            }
+        }
+
+    }, [echo]);
 
     return (
         <div>

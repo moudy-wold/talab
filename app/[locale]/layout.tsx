@@ -8,8 +8,9 @@ import dynamic from "next/dynamic";
 import { MyProvider } from './context/myContext';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { GetInfo, GetLogoAndIcon } from "./api/info";
+import { GetFooterData, GetInfo, GetLogoAndIcon } from "./api/info";
 const Navbar = dynamic(() => import("@/app/[locale]/components/Global/NavBar/Navbar"), { ssr: false })
+const Footer = dynamic(() => import("@/app/[locale]/components/Global/Footer/Footer"), { ssr: false })
 
 
 const geistSans = localFont({
@@ -55,18 +56,25 @@ export async function generateMetadata({ }) {
 }
 
 export default async function RootLayout({ params: { locale }, children }: RootLayoutProps) {
+  const logoData = await GetLogoAndIcon();  
+  const logo = logoData?.data?.data?.logo || "";  
+  const footerData = await GetFooterData();
+
   return (
     <html lang={locale} dir={dir(locale)} style={{ direction: locale == "ar" ? "rtl" : "ltr" }}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <MyProvider>
           <div className="fixed lg:relative z-40 bg-white w-full">
-            <Navbar locale={locale} logo="" />
+            <Navbar locale={locale} logo={logo} />
           </div>
 
           <div>
             {children}
           </div>
+          <div>
+            <Footer locale={locale} data={footerData?.data?.data} logo={logo}/>
+            </div>
         </MyProvider>
       </body>
     </html>

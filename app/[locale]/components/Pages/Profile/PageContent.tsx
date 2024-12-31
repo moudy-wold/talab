@@ -59,6 +59,102 @@ const PageContent = ({ locale }: Props) => {
     `/talab`,
     () => GetInfo()
   );
+  useEffect(() => {
+    const data = infoData?.data;
+
+    if (!isLoading && data) {
+
+      if (!getData) {
+        // تحميل المناطق
+        getCategories()
+        GetDistricts();
+        getCities()
+      };
+      setGetData(true)
+
+      // إعداد البيانات بعد تحميل الخيارات
+      console.log(data?.data)
+      form.setFieldValue('userName', data?.data?.userName);
+      form.setFieldValue('phoneNumber', data?.data?.phoneNumber);
+      form.setFieldValue('avatar', [{
+        uid: '-1',
+        name: 'avatar',
+        status: 'done',
+        url: data?.data?.avatar,
+      }]);
+      const Address = JSON.parse(data?.data?.address)
+      form.setFieldValue('city', Address.city);
+      form.setFieldValue('district', Address.district);
+      form.setFieldValue('neighborhoods', Address.neighborhoods);
+      form.setFieldValue('sokak_no', Address.sokak_no);
+      form.setFieldValue('building_no', Address.building_no);
+      form.setFieldValue('dukkan_no', Address.dukkan_no);
+      form.setFieldValue('flat_no', Address.flat_no);
+      let turkye_areas = data?.data?.areas_covered.find((item: any) => item.country === "turkey");
+      console.log(turkye_areas)
+      let istanbul_districts = turkye_areas?.city.find((item: any) => item.city === "istanbul");
+      if (turkye_areas?.city[0]?.city === "all") {
+        setSelectedCities([AllOption])
+        setIsAllCitiesSelected(true)
+        setSelectedDistricts([AllOption]);
+        setIsAllDistrictsSelected(true);
+      } else if(turkye_areas?.city?.length == 82){
+        setSelectedCities([AllOption])
+        setIsAllCitiesSelected(true)
+
+      }else {
+        const filteredCities = turkye_areas.city.filter((city: any) => city.city !== "istanbul");
+        const updatedCities = filteredCities?.map((item: any) => {
+          return {
+            label: item.city,
+            value: item.city,
+          }
+        });
+        setSelectedCities(updatedCities)
+      }
+      if(istanbul_districts != undefined ){
+
+        if (   istanbul_districts?.districts[0] === "all") {
+          setSelectedDistricts([AllOption]);
+          setIsAllDistrictsSelected(true);
+        } else {
+          const districts = istanbul_districts.districts;
+          setSelectedDistricts(districts); // إعداد المناطق المحددة
+        }
+      }
+
+      // if (data?.data?.areas_covered[0]?.city[0]?.city === "all" && data?.data?.areas_covered[0]?.city[0]?.districts[0] === 'all') {
+
+      //   setSelectedDistricts([AllOption]); // في حالة تحديد جميع المناطق
+      //   setIsAllDistrictsSelected(true);
+      //   setSelectedCities([AllOption])
+      //   setIsAllCitiesSelected(true)
+      // } else {
+      //   const districts = data.data.areas_covered[0].city[0].districts;
+      //   const filteredCities = data.data.areas_covered[0].city.filter((city: any) => city.city !== "istanbul");
+      //   const updatedCities = filteredCities?.map((item: any) => {
+      //     return {
+      //       label: item.city,
+      //       value: item.city,
+      //     }
+      //   });
+      //   setSelectedCities(updatedCities)
+      //   setSelectedDistricts(districts); // إعداد المناطق المحددة
+      // }
+
+      const newCategories = data?.data?.categories.map((item: any) => ({
+        label: item.name,
+        value: item.id,
+      }));
+
+      setSelectedCategories(newCategories)
+
+      form.setFieldsValue({ categories: selectedCategories });
+      form.setFieldsValue({ district_istanbul: selectedDistricts });
+      form.setFieldsValue({ cities: selectedCities });
+
+    }
+  }, [infoData, getData]);
   // Handle select change
   const handleChangeIstanbulDistrict = (value: string[]) => {
     if (value.includes(AllOption)) {
@@ -121,70 +217,8 @@ const PageContent = ({ locale }: Props) => {
     }
   };
 
-  useEffect(() => {
-    const data = infoData?.data;
 
-    if (!isLoading && data) {
-
-      if (!getData) {
-        // تحميل المناطق
-        getCategories()
-        GetDistricts();
-        getCities()
-      };
-      setGetData(true)
-
-      // إعداد البيانات بعد تحميل الخيارات
-      console.log(data?.data)
-      form.setFieldValue('userName', data?.data?.userName);
-      form.setFieldValue('phoneNumber', data?.data?.phoneNumber);
-      form.setFieldValue('avatar', [{
-        uid: '-1',
-        name: 'avatar',
-        status: 'done',
-        url: data?.data?.avatar,
-      }]);
-      const Address = JSON.parse(data?.data?.address)
-      form.setFieldValue('city', Address.city);
-      form.setFieldValue('district', Address.district);
-      form.setFieldValue('neighborhoods', Address.neighborhoods);
-      form.setFieldValue('sokak_no', Address.sokak_no);
-      form.setFieldValue('building_no', Address.building_no);
-      form.setFieldValue('dukkan_no', Address.dukkan_no);
-      form.setFieldValue('flat_no', Address.flat_no);
-
-      if (data?.data?.areas_covered[0]?.city[0]?.city === "all" && data?.data?.areas_covered[0]?.city[0]?.districts[0] === "all") {
-        setSelectedDistricts([AllOption]); // في حالة تحديد جميع المناطق
-        setIsAllDistrictsSelected(true);
-        setSelectedCities([AllOption])
-        setIsAllCitiesSelected(true)
-      } else {
-        const districts = data.data.areas_covered[0].city[0].districts;
-        const filteredCities = data.data.areas_covered[0].city.filter((city: any) => city.city !== "istanbul");
-        const updatedCities = filteredCities?.map((item: any) => {
-          return {
-            label: item.city,
-            value: item.city,
-          }
-        });
-        setSelectedCities(updatedCities)
-        setSelectedDistricts(districts); // إعداد المناطق المحددة
-      }
-
-      const newCategories = data?.data?.categories.map((item: any) => ({
-        label: item.name,
-        value: item.id,
-      }));
-
-      setSelectedCategories(newCategories)
-
-      form.setFieldsValue({ categories: selectedCategories });
-      form.setFieldsValue({ district_istanbul: selectedDistricts });
-      form.setFieldsValue({ cities: selectedCities });
-
-    }
-  }, [infoData, getData]);
-
+  // console.log(isAllDistrictsSelected)
   const districtsWithAll = [
     { label: 'Select All', value: AllOption },
     ...istDistrict.map((item: any) => ({ ...item, disabled: isAllDistrictsSelected, })),
@@ -260,8 +294,10 @@ const PageContent = ({ locale }: Props) => {
     let areas_covered: any = [{ country: "turkey", city: { "": [] } }]
     if (isAllDistrictsSelected && isAllCitiesSelected) {
       areas_covered = [{ country: "turkey", city: { all: ["all"] } }]
+      console.log("if")
 
     } else if (isAllDistrictsSelected && !isAllCitiesSelected) {
+      console.log("1 else if")
       areas_covered = [{ country: "turkey", city: { istanbul: ["all"] } }]
       selectedCities.map((val: any) => {
         areas_covered[0].city = {
@@ -271,6 +307,7 @@ const PageContent = ({ locale }: Props) => {
 
       });
     } else if (!isAllDistrictsSelected && isAllCitiesSelected) {
+      console.log("2 else if")
       areas_covered = [{ country: "turkey", city: { istanbul: [] } }]
       selectedDistricts.map((item) => {
         areas_covered[0].city.istanbul.push(item)
@@ -284,6 +321,7 @@ const PageContent = ({ locale }: Props) => {
 
     } else if (!isAllDistrictsSelected && !isAllCitiesSelected) {
       areas_covered = [{ country: "turkey", city: { istanbul: [] } }]
+      console.log("3 else if")
       selectedDistricts.map((item) => {
         areas_covered[0].city.istanbul.push(item)
       });
@@ -316,9 +354,13 @@ const PageContent = ({ locale }: Props) => {
 
     formdata.append("_method", "patch");
     // End Fixed Code *************
+    const id_of_categories = selectedCategories.map((item: any) => item.value);
 
-    formdata.append("categories", JSON.stringify(selectedCategories));
+    formdata.append("categories", (selectedCategories[0].value ? JSON.stringify(id_of_categories) : JSON.stringify(selectedCategories)));
     formdata.append("areas_covered", JSON.stringify(areas_covered));
+    for (var pair of formdata.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
+    }
     EditInfo(formdata)
       .then((res) => {
         if (res?.data?.message == "the user exists already") {

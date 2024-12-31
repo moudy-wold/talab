@@ -18,3 +18,7 @@ export async function GetCommissions(): Promise<AxiosResponse<any>> {
 export async function GetLogoAndIcon(): Promise<AxiosResponse<any>> {
   return await axios.get(`/website/logo`);
 }
+
+export async function GetFooterData() {
+  return await axios.get(`/website/footer`);
+}

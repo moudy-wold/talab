@@ -237,6 +237,7 @@ const FormComponent = ({ locale }: Props) => {
     }
     formdata.append("categories", JSON.stringify(selectedCategories));
     formdata.append("areas_covered", JSON.stringify(areas_covered));
+    
     Register(formdata)
       .then((res) => {
         if (res?.data?.message == "the user exists already") {

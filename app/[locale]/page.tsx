@@ -24,14 +24,7 @@ export default function Page() {
       }
     }, 100)
   }, [logined,setLogined]);
-  // const logend = localStorage.getItem("isLogend");
-  //     if (logend == undefined || logend !== "true") {
-  //       console.log("if")
-  //       router.push("/auth/login")
-  //     } else {
-  //       console.log("else")
-  //       router.push("/dashboard")
-  //     }
+ 
   return (
     <div >
       <LargeLoader />

@@ -137,7 +137,7 @@ function Navbar({ locale,logo }: Props) {
           <div className="flex items-center justify-start  ">
             <Link href="/" className="mr-2">
               <Image
-                src="/assets/logo.png"
+                src={logo}
                 height={154}
                 width={154}
                 alt="Logo"

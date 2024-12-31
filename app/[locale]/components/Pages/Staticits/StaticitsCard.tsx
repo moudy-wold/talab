@@ -18,10 +18,12 @@ function StaticitsCard({ locale, data, type }: Props) {
             {/* Start Top Products */}
             <div className="">
                 {/* Start Title */}
-                <h1 className="mb-3 font-semibold text-xl">
-                    {type == "top_viewed_product" ? t("top_viewed_products") : t("top_orded_products")}
+                {data.length > 0 &&
+                    <h1 className="mb-3 font-semibold text-xl">
+                        {type == "top_viewed_product" ? t("top_viewed_products") : t("top_orded_products")}
 
-                </h1>
+                    </h1>
+                }
                 {/* end Title */}
 
                 {/* Start Products */}
