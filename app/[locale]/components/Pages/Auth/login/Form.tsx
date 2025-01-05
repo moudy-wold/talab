@@ -41,6 +41,7 @@ function FormComponent({ locale }: Props) {
           })
           Cookies.set('token', res.data.token, { expires: 7, path: "/" });
           localStorage.setItem("isLogend", "true");
+          localStorage.setItem("userId",res.data.data.id)
           // setLogined(true)
           router.push("/")
         }

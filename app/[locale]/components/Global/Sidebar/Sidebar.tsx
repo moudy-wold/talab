@@ -153,7 +153,7 @@ function Sidebar({ locale, openBurgerMenu, setOpenBurgerMenu }: Props) {
   }
   return (
     <>
-      <div className={` ${locale == "ar" ? (openBurgerMenu ? "shadow-2xl right-0 " : "-right-[320px] lg:!right-0") : (openBurgerMenu ? "shadow-2xl left-0" : "-left-[320px] lg:!left-0 ")} lg:shadow-md fixed z-10 top-0 transition-all duration-150 bg-white  w-[320px] h-[100vh]`}>
+      <div className={` ${locale == "ar" ? (openBurgerMenu ? "shadow-2xl right-0 " : "-right-[320px] lg:!right-0") : (openBurgerMenu ? "  left-0" : "-left-[320px] lg:!left-0 ")} border-r-2 border-l-2  border-gray-300  fixed   z-10 top-0 transition-all duration-150 bg-white  w-[320px] min-h-[50vh]`}>
         <div className={`px-6 py-1 mt-12 lg:mt-28`}>
           <div className="flex items-center border-b-2 border-gray-300 lg:hidden px-2 h-16 ">
             {/* Start Select */}
@@ -264,7 +264,7 @@ function Sidebar({ locale, openBurgerMenu, setOpenBurgerMenu }: Props) {
               )}
             </div>
           ))}
-          <div className="flex items-center relative cursor-pointer mt-2" onClick={() => { setOpenLogOut(true) }}>
+          <div className="lg:hidden flex items-center relative cursor-pointer mt-2" onClick={() => { setOpenLogOut(true) }}>
             <p className="mx-2">  <CiLogout className=" text-xl text-[#8c8c8c]" /></p>
             <span className=" lg:hidden block mt-[4px] text-center text-xl font-semibold">{t("logout")}</span>
           </div>

@@ -135,14 +135,14 @@ function Navbar({ locale,logo }: Props) {
         <div className={`hidden lg:grid ${path.includes("auth") ? "grid-cols-[75%_25%] md:w-1/2 mx-auto md:px-20" : "grid-cols-[25%_50%_25%]"}   items-center justify-between`}>
           {/* Start Logo */}
           <div className="flex items-center justify-start  ">
-            <Link href="/" className="mr-2">
+            {/* <Link href="/" className="mr-2">
               <Image
                 src={logo}
                 height={154}
                 width={154}
                 alt="Logo"
               />
-            </Link>
+            </Link> */}
           </div>
           {/* End Logo */}
 

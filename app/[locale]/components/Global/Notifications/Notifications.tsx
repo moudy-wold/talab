@@ -3,13 +3,13 @@ import { DeleteAllNotifications, DeleteNotoficationById, GetAllNotifications, Se
 import { IoNotificationsOutline } from "react-icons/io5";
 import { Menu, notification, Pagination, Space, Spin } from "antd";
 import { useTranslation } from "@/app/i18n/client";
-import Loader from "@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader";
-import {  useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { MdDeleteForever, MdOutlineDone } from "react-icons/md";
 import Link from "next/link";
 import { SlOptions } from "react-icons/sl"
 import { IoIosNotificationsOff } from "react-icons/io";
 import useEcho from "@/app/[locale]/api/echo";
+import moment from "moment";
 
 function Notifications({ locale, isLogend }: any) {
     const { t } = useTranslation(locale, "common");
@@ -17,20 +17,19 @@ function Notifications({ locale, isLogend }: any) {
     const [isHoveredOnNotificationIcon, setIssHoveredOnNotificationIcon] = useState(false);
     const [notificationsLength, setNotificationsLength] = useState<any>(0);
     const [isLoadingOnAllNotificationAsRead, setIsLoadingOnAllNotificationAsRead] = useState(false)
-    const [notificatioItems, setNotificatioItems] = useState([]);
+    const [notificatioItems, setNotificatioItems] = useState<any>([]);
     const [isLoadingOnNotificationAsRead, setIsLoadingOnNotificationAsRead] = useState(false)
     const [isLoadingForPagination, setIsLoadingForPagination] = useState(false)
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [totalItems, setTotalItems] = useState<any>(0);
 
-
-    // useEffect(() => {
-    //     const isLogend: any = localStorage.getItem("isLogend");
-    //     if (isLogend == "true") {
-    //         getNotificationData();
-    //     }
-    // }, [isLogend]);
+    useEffect(() => {
+        const isLogend: any = localStorage.getItem("isLogend");
+        if (isLogend == "true") {
+            getNotificationData();
+        }
+    }, [isLogend]);
 
     const handlePageChange = async (page: any) => {
         setIsLoadingForPagination(true);
@@ -48,7 +47,6 @@ function Notifications({ locale, isLogend }: any) {
         } finally {
             setIsLoadingForPagination(false);
         }
-
     };
 
     // Fetch Notification Data In First 
@@ -59,6 +57,7 @@ function Notifications({ locale, isLogend }: any) {
             setPageSize(res.data.pagination.per_page);
             setNotificatioItems(res?.data?.data)
             setNotificationsLength(res?.data?.data[0]?.unread_count)
+            console.log(res?.data?.data)
         } catch (err: any) {
             console.log(err)
         }
@@ -109,17 +108,19 @@ function Notifications({ locale, isLogend }: any) {
 
         }
     }
+
     const SetNotificationAsReadOnClic = async (id: string) => {
         try {
             await SetNotoficationAsReadById(id);
             setNotificationsLength(notificationsLength - 1)
             router.refresh();
-
+            getNotificationData();
         } catch (err: any) {
             console.log(err.response)
 
         }
     }
+
     const SetNotificationAsRead = async (id: string) => {
         setIsLoadingOnNotificationAsRead(true);
         try {
@@ -149,7 +150,7 @@ function Notifications({ locale, isLogend }: any) {
                 message: t("set_notification_as_readed")
             })
             router.refresh()
-            setNotificatioItems(prevData => prevData.filter((item: any) => item.id !== id));
+            setNotificatioItems((prevData: any) => prevData.filter((item: any) => item.id !== id));
         } catch (err: any) {
             console.log(err.response)
             notification.error({
@@ -164,16 +165,34 @@ function Notifications({ locale, isLogend }: any) {
     useEffect(() => {
         const user_id = localStorage.getItem("userId");
         if (user_id != undefined && user_id != "undefined") {
-
+            // console.log(user_id)
             if (echo) {
-                // console.log('Echo connection success:', echo);
-                var userID = JSON.parse(user_id); // Replace the following with the current user's ID from authentication
+                console.log('Echo connection success:', echo);
+                // Replace the following with the current user's ID from authentication
 
-                const channelName = `notifications.${userID}`;
+                const channelName = `notifications.${user_id}`;
 
                 const channel = echo.private(channelName)
                     .listen('.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated', async (event: any) => {
+                        let new_event = {
+                            created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
+                            data: {
+                                data: {
+                                    ...(event?.data?.id && { id: event?.data?.id }),
+                                    ...(event?.data?.status && { status: event?.data?.status }),
+                                },
+                                message: event?.message,
+                                title: event?.title,
+                                ...(event?.data?.customer_name && { customer_name: event.data.customer_name }),
+                            },
+                            id: event?.id,
+                            read_at: "",
+                            unread_count: event.unread_count,
+                        }
+                        setNotificationsLength(event?.unread_count)
+                        setNotificatioItems((prev: any) => [new_event, ...prev])
                         console.log('Notification received:', event);
+
                         // your code funtions or logic here write for notify web socket
                     })
                     .error((error: any) => {
@@ -200,7 +219,7 @@ function Notifications({ locale, isLogend }: any) {
 
                 return () => {
                     channel.stopListening('.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated');
-                    echo.leaveChannel(`private-notifications.${userID}`);
+                    echo.leaveChannel(`private-notifications.${user_id}`);
                     // echo.leave(`notifications.${userID}`);
                 };
 
@@ -248,19 +267,19 @@ function Notifications({ locale, isLogend }: any) {
                         </li>
                         {notificatioItems.length ? (notificatioItems?.map((item: any, index: number) => (
                             <li key={index} className="bg-white rounded-md my-3 py-1 px-3">
-                                <Link
+                                <Link                                
                                     className="relative"
                                     onClick={() => { SetNotificationAsReadOnClic(item.id) }}
-                                    href={item.data.title === "new_order" ? "/dashboard/orders" : item.data.title === "new_question" ? `/dashboard/products/edit/${item?.data?.data?.id}` : item.data.title === "commission_weekly" ? `/dashboard/accounting` : item.data.title === " distributor_product" ? `/dashboard/products/edit/${item?.data?.data?.id}` : "#"}
+                                    href={item?.data?.title === "new_order" ? "/dashboard/orders" : item?.data?.title === "new_question" ? `/dashboard/products/edit/${item?.data?.data?.id}` : item?.data?.title === "commission_weekly" ? `/dashboard/accounting` : item?.data?.title === " distributor_product" ? `/dashboard/products/edit/${item?.data?.data?.id}` : "#"}
                                 >
                                     <span className={`${item.read_at != "" ? "hidden" : "block"} w-2 h-2 bg-red-600 rounded-full absolute top-1 -right-[6px] `}></span>
                                     <p className="mr-2 text-sm  transition-all duration-200 hover:scale-105">
-                                        {item.data.message}  {item.data.title == "product" || item.data.title == "order" && `${t("from"), item.data.data.customer_name}`}
-                                        {item.data.title == "order_status" && `${t("to"), item.data.data.status} `}
+                                        {item?.data?.message}  {item?.data?.title == "product" || item?.data?.title == "order" && `${t("from"), item?.data?.data.customer_name}`}
+                                        {item?.data?.title == "order_status" && `${t("to"), item?.data?.status}`}
                                     </p>
                                 </Link>
                                 <div className="mt-1 flex items-center justify-between">
-                                    <span className="text-xs text-[#8c8c8c] ">{item.created_at}</span>
+                                    <span className="text-xs text-[#8c8c8c] ">{item?.created_at}</span>
                                     <Menu
                                         className="!m-0 notification-menu"
                                         mode="horizontal"
@@ -271,7 +290,7 @@ function Notifications({ locale, isLogend }: any) {
                                             children: [
                                                 {
                                                     type: 'group',
-                                                    label: <button onClick={() => { SetNotificationAsRead(item.id) }} disabled={item.read_at != "" ? true : false} className={`${item.read_at != "" ? "cursor-not-allowed" : "cursor-pointer"} flex items-center justify-between  gap-2 text-sm text-black  border-[#8c8c8c] p-[2px] rounded-md hover:text-[#006496] hover:border-[#006496] transition-all duration-150`}>
+                                                    label: <button onClick={() => { SetNotificationAsRead(item?.id) }} disabled={item?.read_at != "" ? true : false} className={`${item?.read_at != "" ? "cursor-not-allowed" : "cursor-pointer"} flex items-center justify-between  gap-2 text-sm text-black  border-[#8c8c8c] p-[2px] rounded-md hover:text-[#006496] hover:border-[#006496] transition-all duration-150`}>
                                                         <MdOutlineDone className="text-lg" />
                                                         <p>{t("set_as_readed")}</p>
 
@@ -279,7 +298,7 @@ function Notifications({ locale, isLogend }: any) {
                                                 },
                                                 {
                                                     type: 'group',
-                                                    label: <button onClick={() => { DeleteNotificationById(item.id) }} className={`flex items-center justify-between  gap-2 text-sm text-black  border-[#8c8c8c] p-[2px] rounded-md hover:text-[#006496] hover:border-[#006496] transition-all duration-150`}>
+                                                    label: <button onClick={() => { DeleteNotificationById(item?.id) }} className={`flex items-center justify-between  gap-2 text-sm text-black  border-[#8c8c8c] p-[2px] rounded-md hover:text-[#006496] hover:border-[#006496] transition-all duration-150`}>
                                                         <MdDeleteForever className="text-lg" />
                                                         <p>{t('delete_notification')}</p>
 

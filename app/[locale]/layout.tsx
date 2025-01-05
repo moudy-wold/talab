@@ -56,8 +56,8 @@ export async function generateMetadata({ }) {
 }
 
 export default async function RootLayout({ params: { locale }, children }: RootLayoutProps) {
-  const logoData = await GetLogoAndIcon();  
-  const logo = logoData?.data?.data?.logo || "";  
+  const logoData = await GetLogoAndIcon();
+  const logo = logoData?.data?.data?.logo || "";
   const footerData = await GetFooterData();
 
   return (
@@ -73,8 +73,8 @@ export default async function RootLayout({ params: { locale }, children }: RootL
             {children}
           </div>
           <div>
-            <Footer locale={locale} data={footerData?.data?.data} logo={logo}/>
-            </div>
+            <Footer locale={locale} data={footerData?.data?.data} logo={logo} />
+          </div>
         </MyProvider>
       </body>
     </html>

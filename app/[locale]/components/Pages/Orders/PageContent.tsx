@@ -28,7 +28,7 @@ function OrdersList({ locale }: any) {
       setCurrentPage(res.data.pagination.current_page);
       setTotalItems(res.data.pagination.total)
       setPageSize(res.data.pagination.per_page)
-      console.log(res.data.data)
+      console.log(res.data)
       setData(res.data.data)
     }
     getData()
@@ -36,10 +36,9 @@ function OrdersList({ locale }: any) {
 
   const handlePageChange = async (page: any) => {
     setIsLoading(true)
-    console.log(page)
     try {
       const res = await GetAllOrder(page);
-      setData(res.data.customers)
+      setData(res.data.data)
       setCurrentPage(res.data.pagination.current_page);
       setIsLoading(false)
       console.log(res.data.data)
@@ -85,6 +84,11 @@ function OrdersList({ locale }: any) {
       title: t("phoneNumber"),
       dataIndex: "phoneNumber",
       key: "phoneNumber",
+    },
+    {
+      title: t("note"),
+      dataIndex: "note",
+      key: "note",
     },
     {
       title: t("address"),
@@ -150,29 +154,47 @@ function OrdersList({ locale }: any) {
       title: t("products"),
       key: "action",
       render: (_, record) => (
-        <Space size="middle" className="border-2 border-gray-300 rounded-lg p-2 text-lg cursor-pointer hover:scale-105 hover:text-[#006496] hover:border-[#006496] duration-150 transition-all" onClick={() => { setOpenOrderDetails(true); setIndex(record.index); }}>
+        <Space size="middle" className="border-2 border-gray-300 rounded-lg p-2 text-lg cursor-pointer hover:scale-105 hover:text-[#006496] hover:border-[#006496] duration-150 transition-all" onClick={() => { setIndex(record.index); setOpenOrderDetails(true); }}>
           {t("show")}
         </Space>
       ),
     },
   ];
+  const customerDataToShow = data?.map((item: any, index: number) => {
+    let addr;
+    if (item.address != null) {
+      let obj = JSON.parse(item?.address);
+      addr = obj.city !== undefined ? obj : JSON.parse(obj);
+    }
 
-  const customerDataToShow = data?.map((item: any, index: number) => ({
-    index: index,
-    id: item.id,
-    userName: item.user_name,
-    phoneNumber: item.phone,
-    address: item.address,
-    price: item.total,
-    quantity: item.quantity,
-    order_status: item.status,
-    admin_id: item.user_admin_id
-  }));
-
+    const addressParts = [
+      addr?.city ? `${t("city")} ${addr.city} | ` : "",
+      addr?.district ? `${t("district")} ${addr.district} | ` : "",
+      addr?.neighborhoods ? `${t("neighborhoods")} ${addr.neighborhoods} | ` : "",
+      addr?.sokak ? `${t("sokak")} ${addr.sokak} | ` : "",
+      addr?.building_no ? `${t("building_no")} ${addr.building_no} | ` : "",
+      addr?.dukkan_no ? `${t("dukkan_no")} ${addr.dukkan_no} | ` : "",
+      addr?.flat_no ? `${t("flat_no")} ${addr.flat_no} | ` : "",
+      addr?.floor ? `${t("floor")} ${addr.floor} | ` : "",
+    ].join("");
+    let total_quantity = item.order_details.reduce((total: number, current: any) => total + current.quantity, 0);
+    return {
+      index: index,
+      id: item.id,
+      userName: item.user_name,
+      phoneNumber: item.phone,
+      address: addressParts.replace(/\|\s*$/, ""),
+      note: item.note,
+      price: item.total,
+      quantity: total_quantity,
+      order_status: item.status,
+      admin_id: item.user_admin_id,
+    };
+  });
   return (
     <div className="p-5">
       {isLoading && <Loader />}
-      <div >
+      <div>
         <Table
           columns={columns}
           dataSource={customerDataToShow}

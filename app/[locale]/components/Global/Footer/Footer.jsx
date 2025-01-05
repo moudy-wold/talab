@@ -11,7 +11,7 @@ function Footer({ locale, data,logo }) {
   const currentYear = new Date().getFullYear();
   const [domain, setDomain] = useState("LOGICPRODEV");
   return (
-    <div className="mt-20 border-t-2 border-gray-300 p-[10px]   lg:px-20 relative z-50 bg-white">
+    <div className="mt-20 border-t-2 border-gray-300 px-[10px]  pb-6  lg:px-20 relative z-10 bg-white">
       {/* Start Large Screen  */}
       <div className="hidden lg:block">
         <div className="flex justify-between items-start ">
@@ -32,7 +32,7 @@ function Footer({ locale, data,logo }) {
           {/* Start Logo */}
           <div className="">
             <Link href="/" >
-          <Image src={logo} alt="logo" width={150} height={150} className="" />
+          {/* <Image src={logo} alt="logo" width={150} height={150} className="" /> */}
           </Link>
           </div>
           {/* End Logo */}
@@ -113,7 +113,7 @@ function Footer({ locale, data,logo }) {
         {/* Start Logo */}
         <div className="">
           <Link href="/">
-          <Image src={logo} alt="logo" width={150} height={150} className="" />
+          {/* <Image src={logo} alt="logo" width={150} height={150} className="" /> */}
           </Link>
           </div>
           {/* End Logo */}
