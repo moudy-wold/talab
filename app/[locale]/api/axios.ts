@@ -33,16 +33,16 @@ axiosInstance.interceptors.response.use(
   },
   async (error: any) => {
     console.log(error.response, "error from main axios fild");
-    // if (error?.response?.status == 401) {
-    //   console.log("from 401");
-    //   // await RedirectInCsc();
-    // }
+    if (error?.response?.status == 401) {
+      console.log("from 401");
+      // await RedirectInCsc();
+    }
     if (
       error?.response?.data?.message == "Unauthorized" ||
       error?.response?.data?.message == "Unauthenticated."
     ) {
       console.log("from un");
-      // await RedirectInCsc();
+      await RedirectInCsc();
     }
     // if (
     //   error?.response?.status === 403 &&

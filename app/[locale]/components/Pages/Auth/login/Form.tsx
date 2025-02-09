@@ -15,44 +15,45 @@ type Props = {
 
 type FieldType = {
   password?: string;
-  email:string;
+  email: string;
   remember?: string;
 };
 
 function FormComponent({ locale }: Props) {
   const { t } = useTranslation(locale, "common")
   const [isLoading, setIsLoading] = useState(false);
-  const { setLogined } = useContext(MyContext);
+  const { logined, setLogined } = useContext(MyContext);
   const [obj, setObj] = useState({
     email: "",
     password: ""
   });
   const router = useRouter()
 
-  const onFinish = () => {
+  const onFinish = async () => {
     setIsLoading(true)
     Cookies.remove('token');
-    Login(obj.email, obj.password)
-      .then((res) => {
-        if (res.status == 201) {
-          setIsLoading(false)
-          notification.success({
-            message: t("succeffly_login")
-          })
-          Cookies.set('token', res.data.token, { expires: 7, path: "/" });
-          localStorage.setItem("isLogend", "true");
-          localStorage.setItem("userId",res.data.data.id)
-          // setLogined(true)
-          router.push("/")
-        }
+    try {
+      const res = await Login(obj.email, obj.password)
+      setLogined((prevLogined: boolean) => !prevLogined);
+      setIsLoading(false)
+      notification.success({
+        message: t("succeffly_login")
       })
-      .catch((err: any) => {
-        setIsLoading(false)
-        console.log(err)
-        notification.error({
-          message: err.response.data.message
-        })
+      Cookies.set('token', res.data.token, { expires: 7, path: "/" });
+      localStorage.setItem("isLogend", "true");
+      localStorage.setItem("userId", res.data.data.id)
+      router.push("/")
+    }
+    catch (err: any) {
+      console.log(err)
+      notification.error({
+        message: err.response.data.message
       })
+    }
+    finally {
+      setIsLoading(false)
+
+    }
   };
 
   return (

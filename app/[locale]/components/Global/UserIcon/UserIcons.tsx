@@ -44,7 +44,8 @@ function UserIcons({ locale, isLogend }: Props) {
         notification.success({ message: t("succeffly_logout") });
         localStorage.clear();
         Cookies.remove('token');
-        setLogined(false)
+        setLogined((prevLogined: any) => !prevLogined);
+
         setTimeout(() => {
           window.location.reload();
         }, 100);
@@ -58,31 +59,7 @@ function UserIcons({ locale, isLogend }: Props) {
       });
   }
 
-  useEffect(() => {
-    if ("Notification" in window) {
-      if (Notification.permission === "default") {
-        Notification.requestPermission().then((permission) => {
-          if (permission === "granted") {
-            console.log("إذن الإشعارات مقبول.");
-          } else {
-            console.log("تم رفض إذن الإشعارات.");
-          }
-        });
-      }
-    } else {
-      console.log("المتصفح لا يدعم الإشعارات.");
-    }
-  }, []);
 
-  // دالة لعرض إشعار
-  const showNotification = () => {
-    if (Notification.permission === "granted") {
-      new Notification("عنوان الإشعار", {
-        body: "هذه هي رسالة الإشعار.",
-        icon: "/assets/logo.png", // اختياري: أيقونة للإشعار
-      });
-    }
-  };
   return (
     <main className="">
       {isLoading && <Loader />}
@@ -91,11 +68,9 @@ function UserIcons({ locale, isLogend }: Props) {
         <div className="mx-5">
           <select
             defaultValue={locale}
-
             onChange={(e) => {
               handleLocaleChange(e.target.value);
             }}
-            className=""
           >
             {Languages.map((item: { id: number; title: string; value: string }, index: number) => {
               return (

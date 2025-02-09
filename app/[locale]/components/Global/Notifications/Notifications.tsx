@@ -8,7 +8,7 @@ import { MdDeleteForever, MdOutlineDone } from "react-icons/md";
 import Link from "next/link";
 import { SlOptions } from "react-icons/sl"
 import { IoIosNotificationsOff } from "react-icons/io";
-import useEcho from "@/app/[locale]/api/echo";
+// import useEcho from "@/app/[locale]/api/echo";
 import moment from "moment";
 
 function Notifications({ locale, isLogend }: any) {
@@ -24,10 +24,23 @@ function Notifications({ locale, isLogend }: any) {
     const [pageSize, setPageSize] = useState(10);
     const [totalItems, setTotalItems] = useState<any>(0);
 
+    // Fetch Notification Data In First 
+    const getNotificationData = async () => {
+        try {
+            const res = await GetAllNotifications(1);
+            setTotalItems(res.data.pagination.total);
+            setPageSize(res.data.pagination.per_page);
+            setNotificatioItems(res?.data?.data)
+            setNotificationsLength(res?.data?.data[0]?.unread_count)
+        } catch (err: any) {
+            console.log(err)
+        }
+    }
     useEffect(() => {
-        const isLogend: any = localStorage.getItem("isLogend");
-        if (isLogend == "true") {
-            getNotificationData();
+        if (isLogend) {
+            setTimeout(() => {
+                getNotificationData();
+            }, 6000)
         }
     }, [isLogend]);
 
@@ -49,19 +62,7 @@ function Notifications({ locale, isLogend }: any) {
         }
     };
 
-    // Fetch Notification Data In First 
-    const getNotificationData = async () => {
-        try {
-            const res = await GetAllNotifications(1);
-            setTotalItems(res.data.pagination.total);
-            setPageSize(res.data.pagination.per_page);
-            setNotificatioItems(res?.data?.data)
-            setNotificationsLength(res?.data?.data[0]?.unread_count)
-            console.log(res?.data?.data)
-        } catch (err: any) {
-            console.log(err)
-        }
-    }
+
     const handleMouseEnterOnNotificationsIcon = () => {
         setIssHoveredOnNotificationIcon(true);
     };
@@ -160,76 +161,84 @@ function Notifications({ locale, isLogend }: any) {
             setIsLoadingOnNotificationAsRead(false);
         }
     }
-    const echo: any = useEcho();
+    // const echo: any = useEcho();
+    // useEffect(() => {
+    //     const user_id = localStorage.getItem("userId");
+    //     if (user_id != undefined && user_id != "undefined") {
+    //         // console.log(user_id)
+    //         if (echo) {
+    //             console.log('Echo connection success:', echo);
+    //             // Replace the following with the current user's ID from authentication
+
+    //             const channelName = `notifications.${user_id}`;
+
+    //             const channel = echo.private(channelName)
+    //                 .listen('.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated', async (event: any) => {
+    //                     let new_event = {
+    //                         created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
+    //                         data: {
+    //                             data: {
+    //                                 ...(event?.data?.id && { id: event?.data?.id }),
+    //                                 ...(event?.data?.status && { status: event?.data?.status }),
+    //                             },
+    //                             message: event?.message,
+    //                             title: event?.title,
+    //                             ...(event?.data?.customer_name && { customer_name: event.data.customer_name }),
+    //                         },
+    //                         id: event?.id,
+    //                         read_at: "",
+    //                         unread_count: event.unread_count,
+    //                     }
+    //                     showNotification(new_event?.data?.title, new_event?.data?.message)
+    //                     setNotificationsLength(event?.unread_count)
+    //                     setNotificatioItems((prev: any) => [new_event, ...prev])
+    //                     console.log('Notification received:', event);
+    //                 })
+    //                 .error((error: any) => {
+    //                     console.error('Error in channel subscription:', error);
+    //                 });
+
+    //             // test channel test
+    //             echo.channel('new').listen('NewEvent', async (e: any) => {
+    //                 console.log(e);
+    //             });
+
+    //             return () => {
+    //                 channel.stopListening('.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated');
+    //                 echo.leaveChannel(`private-notifications.${user_id}`);
+    //             };
+
+    //         } else {
+    //             console.log('WebSocket not connected');
+    //         }
+    //     }
+
+    // }, [echo]);
 
     useEffect(() => {
-        const user_id = localStorage.getItem("userId");
-        if (user_id != undefined && user_id != "undefined") {
-            // console.log(user_id)
-            if (echo) {
-                console.log('Echo connection success:', echo);
-                // Replace the following with the current user's ID from authentication
-
-                const channelName = `notifications.${user_id}`;
-
-                const channel = echo.private(channelName)
-                    .listen('.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated', async (event: any) => {
-                        let new_event = {
-                            created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
-                            data: {
-                                data: {
-                                    ...(event?.data?.id && { id: event?.data?.id }),
-                                    ...(event?.data?.status && { status: event?.data?.status }),
-                                },
-                                message: event?.message,
-                                title: event?.title,
-                                ...(event?.data?.customer_name && { customer_name: event.data.customer_name }),
-                            },
-                            id: event?.id,
-                            read_at: "",
-                            unread_count: event.unread_count,
-                        }
-                        setNotificationsLength(event?.unread_count)
-                        setNotificatioItems((prev: any) => [new_event, ...prev])
-                        console.log('Notification received:', event);
-
-                        // your code funtions or logic here write for notify web socket
-                    })
-                    .error((error: any) => {
-                        console.error('Error in channel subscription:', error);
-                    });
-
-
-                // test channel test
-                echo.channel('new').listen('NewEvent', async (e: any) => {
-                    console.log(e);
+        if ("Notification" in window) {
+            if (Notification.permission === "default") {
+                Notification.requestPermission().then((permission) => {
+                    if (permission === "granted") {
+                        console.log("إذن الإشعارات مقبول.");
+                    } else {
+                        console.log("تم رفض إذن الإشعارات.");
+                    }
                 });
-
-                // can u use the const chaneel or the down code channel_1 for listen notifications
-                // *******************************
-
-                // const channel_1 = echo.private(channelName).notification((notification) => {
-                //     console.log('notify',notification);
-                // })
-                // .error((error) => {
-                //     console.error('Error in channel subscription:', error);
-                // });
-
-                // console.log(channel);
-
-                return () => {
-                    channel.stopListening('.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated');
-                    echo.leaveChannel(`private-notifications.${user_id}`);
-                    // echo.leave(`notifications.${userID}`);
-                };
-
-            } else {
-                console.log('WebSocket not connected');
             }
+        } else {
+            console.log("المتصفح لا يدعم الإشعارات.");
         }
+    }, []);
 
-    }, [echo]);
-
+    const showNotification = (title: string, message: string) => {
+        if (Notification.permission === "granted") {
+            new Notification(title, {
+                body: message,
+                icon: "/assets/logo.png",
+            });
+        }
+    };
     return (
         <div>
             <div
@@ -267,7 +276,7 @@ function Notifications({ locale, isLogend }: any) {
                         </li>
                         {notificatioItems.length ? (notificatioItems?.map((item: any, index: number) => (
                             <li key={index} className="bg-white rounded-md my-3 py-1 px-3">
-                                <Link                                
+                                <Link
                                     className="relative"
                                     onClick={() => { SetNotificationAsReadOnClic(item.id) }}
                                     href={item?.data?.title === "new_order" ? "/dashboard/orders" : item?.data?.title === "new_question" ? `/dashboard/products/edit/${item?.data?.data?.id}` : item?.data?.title === "commission_weekly" ? `/dashboard/accounting` : item?.data?.title === " distributor_product" ? `/dashboard/products/edit/${item?.data?.data?.id}` : "#"}

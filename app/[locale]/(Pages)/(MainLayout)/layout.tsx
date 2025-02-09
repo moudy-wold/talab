@@ -3,7 +3,7 @@ import React, { ReactNode, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 const Sidebar = dynamic(() => import("@/app/[locale]/components/Global/Sidebar/Sidebar"), { ssr: false })
-const Footer = dynamic(()=> import("@/app/[locale]/components/Global/Footer/Footer"))
+// const Footer = dynamic(()=> import("@/app/[locale]/components/Global/Footer/Footer"))
 interface RootLayoutProps {
   params: {
     locale: string;

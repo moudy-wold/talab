@@ -5,7 +5,7 @@ import "./globals.css";
 // import { languages } from "@/app/i18n/settings";
 import { dir } from "i18next";
 import dynamic from "next/dynamic";
-import { MyProvider } from './context/myContext';
+import { MyProvider } from './context/myContext.js';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { GetFooterData, GetInfo, GetLogoAndIcon } from "./api/info";
@@ -59,7 +59,7 @@ export default async function RootLayout({ params: { locale }, children }: RootL
   const logoData = await GetLogoAndIcon();
   const logo = logoData?.data?.data?.logo || "";
   const footerData = await GetFooterData();
-
+  
   return (
     <html lang={locale} dir={dir(locale)} style={{ direction: locale == "ar" ? "rtl" : "ltr" }}>
       <body
@@ -68,11 +68,10 @@ export default async function RootLayout({ params: { locale }, children }: RootL
           <div className="fixed lg:relative z-40 bg-white w-full">
             <Navbar locale={locale} logo={logo} />
           </div>
-
           <div>
             {children}
           </div>
-          <div>
+          <div className="mt-10">
             <Footer locale={locale} data={footerData?.data?.data} logo={logo} />
           </div>
         </MyProvider>

@@ -18,19 +18,17 @@ import { IoIosCloseCircleOutline } from "react-icons/io";
 
 type Props = {
   locale: string,
-  logo:string,
+  logo: string,
 }
 
-function Navbar({ locale,logo }: Props) {
+function Navbar({ locale, logo }: Props) {
   const { t, i18n } = useTranslation(locale, "common");
   const currentPathname = usePathname();
-
-  const [isLoading, setIsLoading] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
   const [openBurgerMenu, setOpenBurgerMenu] = useState(false);
   const [isLogend, setIsLogend] = useState(false);
   const path = usePathname();
-  const { logined, setLogined } = useContext(MyContext);
+  const { logined, } = useContext(MyContext);
   const [currentLocale, setCurrentLocale] = useState(locale);
   const router = useRouter();
 
@@ -47,26 +45,23 @@ function Navbar({ locale,logo }: Props) {
 
   useEffect(() => {
     const logend = localStorage.getItem("isLogend");
-    if (logend != undefined && logend == "true") {
-      setIsLogend(true)
-    } else {
-      setIsLogend(false)
+    if (logend === "true") {
+      setIsLogend(true);
     }
-  }, [logined])
+  }, [logined]);
 
   return (
     <div className="">
-      {isLoading && <Loader />}
-      <main className={`container py-3 lg:py-6 `}>
+      <main className={`container py-3 lg:py-6 px-3 `}>
 
-        {/* Start Burger Menu */}
+        {/* Start Smal Screen*/}
         <div className={`lg:hidden ${isLogend ? " grid grid-cols-[8%_68%_17%] gap-4 " : "w-full flex  justify-between"}  items-center `}>
           {/* Start  Burger Icon*/}
           <div className={`${isLogend ? "block" : "hidden"}`}>
-            <div className={`${locale == "ar" ? "right-[2px]" : "left-[2px]"} !absolute !z-50 top-2 mt-[2px] `}>
+            <div className={`${locale == "ar" ? "right-[4px]" : "left-[4px]"} !absolute !z-50 top-2 mt-[2px] `}>
               <GiHamburgerMenu
                 className="text-3xl"
-                onClick={() => { setOpenBurgerMenu(!openBurgerMenu) }}
+                onClick={() => { setOpenBurgerMenu(!openBurgerMenu); setOpenSearch(false) }}
               />
             </div>
           </div>
@@ -102,7 +97,7 @@ function Navbar({ locale,logo }: Props) {
               {openSearch ? (
                 <p><IoIosCloseCircleOutline onClick={() => { setOpenSearch(false) }} className={`text-xl`} /></p>
               ) : (
-                <p> <CiSearch onClick={() => { setOpenSearch(true) }} className="border-2 border-gray-300 p-[1px] text-xl rounded-md" /></p>
+                <p> <CiSearch onClick={() => { setOpenSearch(true); setOpenBurgerMenu(false) }} className="border-2 border-gray-300 p-[1px] text-xl rounded-md" /></p>
               )}
             </div>
             <div
@@ -119,30 +114,30 @@ function Navbar({ locale,logo }: Props) {
           <div className="flex items-center justify-end pt-1">
             <Link href="/">
               <Image
-                src="/assets/logo.png"
+                src={logo}
                 width={107}
                 height={80}
                 alt="Logo"
-                className="!w-full !h-full  "
+                className="!w-[160px] !h-[25px] object-fill "
               />
             </Link>
           </div>
           {/* End Logo */}
         </div>
-        {/* End Burger Menu */}
+        {/* End Smal Screen*/}
 
         {/* Start Lg Screen */}
         <div className={`hidden lg:grid ${path.includes("auth") ? "grid-cols-[75%_25%] md:w-1/2 mx-auto md:px-20" : "grid-cols-[25%_50%_25%]"}   items-center justify-between`}>
           {/* Start Logo */}
           <div className="flex items-center justify-start  ">
-            {/* <Link href="/" className="mr-2">
+            <Link href="/" className="mr-2">
               <Image
                 src={logo}
                 height={154}
                 width={154}
                 alt="Logo"
               />
-            </Link> */}
+            </Link>
           </div>
           {/* End Logo */}
 

@@ -138,7 +138,7 @@ function Sidebar({ locale, openBurgerMenu, setOpenBurgerMenu }: Props) {
         notification.success({ message: t("succeffly_logout") });
         localStorage.clear();
         Cookies.remove('token');
-        setLogined(false)
+        setLogined((prevLogined: any) => !prevLogined);
         setTimeout(() => {
           window.location.reload();
         }, 100);
@@ -153,8 +153,8 @@ function Sidebar({ locale, openBurgerMenu, setOpenBurgerMenu }: Props) {
   }
   return (
     <>
-      <div className={` ${locale == "ar" ? (openBurgerMenu ? "shadow-2xl right-0 " : "-right-[320px] lg:!right-0") : (openBurgerMenu ? "  left-0" : "-left-[320px] lg:!left-0 ")} border-r-2 border-l-2  border-gray-300  fixed   z-10 top-0 transition-all duration-150 bg-white  w-[320px] min-h-[50vh]`}>
-        <div className={`px-6 py-1 mt-12 lg:mt-28`}>
+      <div className={`w-[320px] min-h-[50vh] fixed lg:relative z-10 top-0 ${locale == "ar" ? (openBurgerMenu ? "shadow-2xl right-0 " : "-right-[320px] lg:!right-0") : (openBurgerMenu ? "  left-0" : "-left-[320px] lg:!left-0 ")} border-r-2 border-l-2  border-gray-300   transition-all duration-150 bg-white  `}>
+        <div className={`px-6 py-1 mt-12 lg:mt-0  `}>
           <div className="flex items-center border-b-2 border-gray-300 lg:hidden px-2 h-16 ">
             {/* Start Select */}
             <div className="border-2 border-gray-300 rounded-lg p-1">

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import Loader from "@/app/[locale]/components/Global/Loader/Loader";
+import LargeLoader from "@/app/[locale]/components/Global/Loader/LargeLoader/LargeLoader"
 import { Checkbox, Form, Input, notification, Modal, Button, Upload, Select } from "antd";
 import Link from "next/link";
 import { Register } from "@/app/[locale]/api/auth";
@@ -237,7 +237,7 @@ const FormComponent = ({ locale }: Props) => {
     }
     formdata.append("categories", JSON.stringify(selectedCategories));
     formdata.append("areas_covered", JSON.stringify(areas_covered));
-    
+
     Register(formdata)
       .then((res) => {
         if (res?.data?.message == "the user exists already") {
@@ -249,6 +249,9 @@ const FormComponent = ({ locale }: Props) => {
             message: t("register_success"),
           });
           push("/auth/login")
+          setTimeout(() => {
+            push("/auth/login")
+          }, 500)
         }
       })
       .catch((err: any) => {
@@ -262,36 +265,34 @@ const FormComponent = ({ locale }: Props) => {
       });
   };
 
-  const handleFinishFailed = (errorInfo:any) => {
+  const handleFinishFailed = (errorInfo: any) => {
     form.scrollToField(errorInfo.errorFields[0].name, {
       behavior: 'smooth',
       block: 'center',
     });
   };
+  const getCategories = async () => {
+    try {
+      const res = await GetMainCategories();
+      const newCategories = res.data.data.map((item: any) => ({
+        label: item.name,
+        value: item.id,
+      }));
+      setCategories(newCategories);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const getCitiesAndDistricts = async () => {
+    try {
+      await GetCiteisAndDistricts();
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   useEffect(() => {
-    const getCategories = async () => {
-      try {
-        const res = await GetMainCategories();
-
-        const newCategories = res.data.data.map((item: any) => ({
-          label: item.name,
-          value: item.id,
-        }));
-        setCategories(newCategories);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    const getCitiesAndDistricts = async () => {
-      try {
-        await GetCiteisAndDistricts();
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
     if (!getData) {
       getCategories();
       getCitiesAndDistricts();
@@ -301,7 +302,7 @@ const FormComponent = ({ locale }: Props) => {
 
   return (
     <div>
-      {isLoading && <Loader />}
+      {isLoading && <LargeLoader />}
       <Form
         name="register-form"
         onFinish={onFinish}
@@ -615,13 +616,13 @@ const FormComponent = ({ locale }: Props) => {
         {/* End accept */}
 
         {/* Start recaptcha*/}
-        <Form.Item<FieldType>
+        {/* <Form.Item<FieldType>
           name="recaptcha"
           rules={[{ required: false, message: t("please_confirm_that_you_are_not_robot") },]}
         >
-          {/* <ReCAPTCHA sitekey={process.env.SITE_KEY!} onChange={setCapched} /> */}
+          <ReCAPTCHA sitekey={process.env.SITE_KEY!} onChange={setCapched} />
           <ReCAPTCHA sitekey={process.env.SITE_KEY!} />
-        </Form.Item>
+        </Form.Item> */}
         {/*End  recaptcha*/}
 
         {/* Start Submit Register */}

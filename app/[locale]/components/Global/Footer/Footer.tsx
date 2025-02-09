@@ -4,18 +4,18 @@ import { useTranslation } from "../../../../i18n/client";
 import Image from "next/image";
 import Link from "next/link";
 import StripHtmlTags from "../StripHTMLTags/StrippHTMLTag";
- 
-function Footer({ locale, data,logo }) {
+
+function Footer({ locale, data, logo }:any) {
   const { t } = useTranslation(locale, "common");
-  const [openAppTypeQuestion, setOpenAppTypeQUestion] = useState(false);
   const currentYear = new Date().getFullYear();
   const [domain, setDomain] = useState("LOGICPRODEV");
+
   return (
-    <div className="mt-20 border-t-2 border-gray-300 px-[10px]  pb-6  lg:px-20 relative z-10 bg-white">
+    <div className="mt-10 border-t-2 border-gray-300 px-[10px]  pb-6  lg:px-20 relative z-10 bg-white">
       {/* Start Large Screen  */}
       <div className="hidden lg:block">
         <div className="flex justify-between items-start ">
-           
+
           {/* Start Addrees */}
           {/* <div className=" mt-3">
                 <p className="text-[#F5F5F5] text-sm">
@@ -32,8 +32,8 @@ function Footer({ locale, data,logo }) {
           {/* Start Logo */}
           <div className="">
             <Link href="/" >
-          {/* <Image src={logo} alt="logo" width={150} height={150} className="" /> */}
-          </Link>
+              {/* <Image src={logo} alt="logo" width={150} height={150} className="" /> */}
+            </Link>
           </div>
           {/* End Logo */}
 
@@ -65,7 +65,7 @@ function Footer({ locale, data,logo }) {
               E-mail :
 
             </div>
-             
+
 
           </div>
           {/* End Email && WhatsApp*/}
@@ -77,7 +77,7 @@ function Footer({ locale, data,logo }) {
             </p>
             <div className="flex items-center justify-end gap-5 mt-3 ">
               <Link
-                href="https://www.facebook.com/ecigrouptr/"
+                href={`${data?.socail_media[1]?.url}`}
                 className="hover:scale-110 transition-all duration-200"
               >
                 <Image
@@ -89,7 +89,7 @@ function Footer({ locale, data,logo }) {
                 />
               </Link>
               <Link
-                href={"@MuhammedAkil97"}
+                href={`${data?.socail_media[0]?.url}`}
                 className="hover:scale-110 transition-all duration-200"
               >
                 <Image
@@ -113,10 +113,10 @@ function Footer({ locale, data,logo }) {
         {/* Start Logo */}
         <div className="">
           <Link href="/">
-          {/* <Image src={logo} alt="logo" width={150} height={150} className="" /> */}
+            {/* <Image src={logo} alt="logo" width={150} height={150} className="" /> */}
           </Link>
-          </div>
-          {/* End Logo */}
+        </div>
+        {/* End Logo */}
 
         {/* Start Addrees */}
         {/* <div className=" border-y-[2px] border-white py-6">
@@ -147,7 +147,7 @@ function Footer({ locale, data,logo }) {
               " ahmad.najy5@gmail.com "
             )}
           </div>
- 
+
         </div>
         {/* End Email && WahstApp */}
 
@@ -169,7 +169,7 @@ function Footer({ locale, data,logo }) {
               className={`  gap-5 justify-between flex items-center mt-2`}
             >
               <Link
- href={"@MuhammedAkil97"}
+                href={`${data?.socail_media[1]?.url}`}
                 className=""
               >
                 <Image
@@ -181,7 +181,7 @@ function Footer({ locale, data,logo }) {
                 />
               </Link>
               <Link
-                href="https://www.facebook.com/ecigrouptr/"
+                href={`${data?.socail_media[0]?.url}`}
                 className=""
               >
                 <Image
@@ -203,7 +203,8 @@ function Footer({ locale, data,logo }) {
 
       {/* Start Question Modae */}
       <div className="relative">
-        {openAppTypeQuestion && <AppTypeQuestion locale={locale} openAppTypeQuestion={openAppTypeQuestion} setOpenAppTypeQUestion={setOpenAppTypeQUestion} />}
+
+        {/* {openAppTypeQuestion && <AppTypeQuestion locale={locale} openAppTypeQuestion={openAppTypeQuestion} setOpenAppTypeQUestion={setOpenAppTypeQUestion} />} */}
       </div>
       {/* End Question Modae */}
     </div>
