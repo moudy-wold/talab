@@ -372,7 +372,7 @@ function CreateProduct({ locale }: any) {
 
         {/* Start Offer Details */}
         {is_offer &&
-          <div className="col-span-2 flex gap-8 items-center ">
+          <div className="lgLcol-span-2 lg:flex lg:gap-8 lg:items-center ">
             {/* Start discount */}
             <Form.Item<FieldType>
               name="discount_price"
@@ -404,7 +404,7 @@ function CreateProduct({ locale }: any) {
               rules={[{ required: is_offer, message: t("please_enter_end_date") }]}
               className={` w-1/2`}
             >
-              <DatePicker placeholder={t("choose_date")} disabledDate={disabledDate} onChange={(value, option) => { setDates((prev: any) => ({ ...prev, offer_start_date: option })) }} className={`w-full !h-12`} />
+              <DatePicker placeholder={t("choose_date")} disabledDate={disabledDate} onChange={(value, option) => { setDates((prev: any) => ({ ...prev, offer_expiry_date: option })) }} className={`w-full !h-12`} />
             </Form.Item>
 
             {/* End Date For Offer */}

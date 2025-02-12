@@ -229,7 +229,7 @@ function EditProduct({ locale, id }: Props) {
       });
   };
 
-  const handleFinishFailed = (errorInfo:any) => {
+  const handleFinishFailed = (errorInfo: any) => {
     form.scrollToField(errorInfo.errorFields[0].name, {
       behavior: 'smooth',
       block: 'center',
@@ -294,7 +294,7 @@ function EditProduct({ locale, id }: Props) {
         <Form.Item<FieldType>
           name="product_name"
           label={<span className="text-sm  md:text-base">{t("product_name")}</span>}
-          rules={[{ required: true, message: t("please_enter_product_name") }]}          
+          rules={[{ required: true, message: t("please_enter_product_name") }]}
         >
           <Input className="!rounded-[8px] !py-3" />
         </Form.Item>
@@ -445,52 +445,52 @@ function EditProduct({ locale, id }: Props) {
         </Form.Item>
         {/* End description */}
 
-          {/* Start offers On Of */}
-          <Form.Item<FieldType>
-            name="is_on_offer"
-            label={<span className="text-sm  md:text-base">{t("is_it_included_in_the_list_of_offers")}</span>}
-          >
-            <Switch onChange={() => { setIs_offer(!is_offer) }} />
-          </Form.Item>
-          {/* End offers On Of*/}
+        {/* Start offers On Of */}
+        <Form.Item<FieldType>
+          name="is_on_offer"
+          label={<span className="text-sm  md:text-base">{t("is_it_included_in_the_list_of_offers")}</span>}
+        >
+          <Switch onChange={() => { setIs_offer(!is_offer) }} />
+        </Form.Item>
+        {/* End offers On Of*/}
 
-          {/* Start Offer Details */}
-          {is_offer &&
-            <div className="col-span-2 flex gap-8 items-center ">
-              {/* Start discount */}
+        {/* Start Offer Details */}
+        {is_offer &&
+          <div className="col-span-2 flex gap-8 items-center ">
+            {/* Start discount */}
+            <Form.Item<FieldType>
+              name="discount_price"
+              label={<span className="text-sm  md:text-base">{t("discount_price")}</span>}
+              className="w-1/2"
+            >
+              <Input className="!rounded-[8px] !py-3" />
+            </Form.Item>
+            {/* End discount */}
+            {/* Start Start Date */}
+            <div className="w-1/2 ">
               <Form.Item<FieldType>
-                name="discount_price"
-                label={<span className="text-sm  md:text-base">{t("discount_price")}</span>}
-                className="w-1/2"
-              >
-                <Input className="!rounded-[8px] !py-3" />
-              </Form.Item>
-              {/* End discount */}
-              {/* Start Start Date */}
-              <div className="w-1/2 ">
-                <Form.Item<FieldType>
-                  name="offer_start_date"
-                  label={<span className="text-sm  md:text-base">{t("offer_start_date")}</span>}
-                  rules={[{ required: is_offer, message: t("please_enter_start_date") }]}
-                >
-                  <DatePicker placeholder={t("choose_date")} disabledDate={disabledDate} onChange={(value, option) => { setDates((prev: any) => ({ ...prev, offer_start_date: option })) }} className={`w-full !h-12`} />
-                </Form.Item>
-              </div>
-              {/* End Start Date */}
-              {/* Start Date For Offer */}
-              <Form.Item<FieldType>
-                name="offer_expiry_date"
+                name="offer_start_date"
                 label={<span className="text-sm  md:text-base">{t("offer_start_date")}</span>}
-                rules={[{ required: false, message: t("please_enter_start_date") }]}
-                className={` w-1/2`}
+                rules={[{ required: is_offer, message: t("please_enter_start_date") }]}
               >
                 <DatePicker placeholder={t("choose_date")} disabledDate={disabledDate} onChange={(value, option) => { setDates((prev: any) => ({ ...prev, offer_start_date: option })) }} className={`w-full !h-12`} />
               </Form.Item>
-
-              {/* End Date For Offer */}
             </div>
-          }
-          {/* End Offer Details */}
+            {/* End Start Date */}
+            {/* Start Date For Offer */}
+            <Form.Item<FieldType>
+              name="offer_expiry_date"
+              label={<span className="text-sm  md:text-base">{t("offer_start_date")}</span>}
+              rules={[{ required: false, message: t("please_enter_start_date") }]}
+              className={` w-1/2`}
+            >
+              <DatePicker placeholder={t("choose_date")} disabledDate={disabledDate} onChange={(value, option) => { setDates((prev: any) => ({ ...prev, offer_expiry_date: option })) }} className={`w-full !h-12`} />
+            </Form.Item>
+
+            {/* End Date For Offer */}
+          </div>
+        }
+        {/* End Offer Details */}
 
 
 
@@ -569,12 +569,12 @@ function EditProduct({ locale, id }: Props) {
                         onChange={(e) => handleDetailChange(index, "content", e.target.value)}
                         className="!rounded-[8px] !py-3"
                       />
-                       {/* Start Hint */}
-                  <div className=" px-1 py-2  flex items-center gap-1">
-                    <IoInformationCircleOutline />
-                    <p className="text-xs">{t("for_choose_one_option")}</p>
-                  </div>
-                  {/* End Hint */}
+                      {/* Start Hint */}
+                      <div className=" px-1 py-2  flex items-center gap-1">
+                        <IoInformationCircleOutline />
+                        <p className="text-xs">{t("for_choose_one_option")}</p>
+                      </div>
+                      {/* End Hint */}
                     </Form.Item>
                     <div className="px-1 my-3">
 

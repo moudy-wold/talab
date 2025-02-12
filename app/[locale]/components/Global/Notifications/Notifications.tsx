@@ -8,7 +8,7 @@ import { MdDeleteForever, MdOutlineDone } from "react-icons/md";
 import Link from "next/link";
 import { SlOptions } from "react-icons/sl"
 import { IoIosNotificationsOff } from "react-icons/io";
-// import useEcho from "@/app/[locale]/api/echo";
+import useEcho from "@/app/[locale]/api/echo";
 import moment from "moment";
 
 function Notifications({ locale, isLogend }: any) {
@@ -161,59 +161,59 @@ function Notifications({ locale, isLogend }: any) {
             setIsLoadingOnNotificationAsRead(false);
         }
     }
-    // const echo: any = useEcho();
-    // useEffect(() => {
-    //     const user_id = localStorage.getItem("userId");
-    //     if (user_id != undefined && user_id != "undefined") {
-    //         // console.log(user_id)
-    //         if (echo) {
-    //             console.log('Echo connection success:', echo);
-    //             // Replace the following with the current user's ID from authentication
+    const echo: any = useEcho();
+    useEffect(() => {
+        const user_id = localStorage.getItem("userId");
+        if (user_id != undefined && user_id != "undefined") {
+            // console.log(user_id)
+            if (echo) {
+                console.log('Echo connection success:', echo);
+                // Replace the following with the current user's ID from authentication
 
-    //             const channelName = `notifications.${user_id}`;
+                const channelName = `notifications.${user_id}`;
 
-    //             const channel = echo.private(channelName)
-    //                 .listen('.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated', async (event: any) => {
-    //                     let new_event = {
-    //                         created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
-    //                         data: {
-    //                             data: {
-    //                                 ...(event?.data?.id && { id: event?.data?.id }),
-    //                                 ...(event?.data?.status && { status: event?.data?.status }),
-    //                             },
-    //                             message: event?.message,
-    //                             title: event?.title,
-    //                             ...(event?.data?.customer_name && { customer_name: event.data.customer_name }),
-    //                         },
-    //                         id: event?.id,
-    //                         read_at: "",
-    //                         unread_count: event.unread_count,
-    //                     }
-    //                     showNotification(new_event?.data?.title, new_event?.data?.message)
-    //                     setNotificationsLength(event?.unread_count)
-    //                     setNotificatioItems((prev: any) => [new_event, ...prev])
-    //                     console.log('Notification received:', event);
-    //                 })
-    //                 .error((error: any) => {
-    //                     console.error('Error in channel subscription:', error);
-    //                 });
+                const channel = echo.private(channelName)
+                    .listen('.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated', async (event: any) => {
+                        let new_event = {
+                            created_at: moment().format("YYYY-MM-DD HH:mm:ss"),
+                            data: {
+                                data: {
+                                    ...(event?.data?.id && { id: event?.data?.id }),
+                                    ...(event?.data?.status && { status: event?.data?.status }),
+                                },
+                                message: event?.message,
+                                title: event?.title,
+                                ...(event?.data?.customer_name && { customer_name: event.data.customer_name }),
+                            },
+                            id: event?.id,
+                            read_at: "",
+                            unread_count: event.unread_count,
+                        }
+                        showNotification(new_event?.data?.title, new_event?.data?.message)
+                        setNotificationsLength(event?.unread_count)
+                        setNotificatioItems((prev: any) => [new_event, ...prev])
+                        console.log('Notification received:', event);
+                    })
+                    .error((error: any) => {
+                        console.error('Error in channel subscription:', error);
+                    });
 
-    //             // test channel test
-    //             echo.channel('new').listen('NewEvent', async (e: any) => {
-    //                 console.log(e);
-    //             });
+                // test channel test
+                echo.channel('new').listen('NewEvent', async (e: any) => {
+                    console.log(e);
+                });
 
-    //             return () => {
-    //                 channel.stopListening('.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated');
-    //                 echo.leaveChannel(`private-notifications.${user_id}`);
-    //             };
+                return () => {
+                    channel.stopListening('.Illuminate\\Notifications\\Events\\BroadcastNotificationCreated');
+                    echo.leaveChannel(`private-notifications.${user_id}`);
+                };
 
-    //         } else {
-    //             console.log('WebSocket not connected');
-    //         }
-    //     }
+            } else {
+                console.log('WebSocket not connected');
+            }
+        }
 
-    // }, [echo]);
+    }, [echo]);
 
     useEffect(() => {
         if ("Notification" in window) {

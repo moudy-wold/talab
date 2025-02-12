@@ -10,15 +10,6 @@ const nextConfig = {
     REVERB_SERVER_HOST: "0.0.0.0",
     REVERB_SERVER_PORT: "9000",
     REVERB_SCHEME: "https",
-    // API_BASE_URL: "http://127.0.0.1:8000/api",
-    // SITE_KEY: "6Lf8yigqAAAAAOJAK-FeTazsJ3r72g0LcKSiNLHs",
-    // RECAPTCHA_SECRET_KEY: "6Lf8yigqAAAAAPKQ-Zxh9DcGVR4mmtd9_xSenjV3",
-    // REVERB_APP_ID : '959138',
-    // REVERB_APP_KEY : '7kloc5wo6lks4gldux23',
-    // REVERB_APP_SECRET : 'mai5uptgfxdmc2jlcu2k',
-    // REVERB_HOST : '127.0.0.1',
-    // REVERB_PORT : '8080',
-    // REVERB_SCHEME : 'http',
   },
   images: {
     // remotePatterns: [
